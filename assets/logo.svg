@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="astroutasLogoTitle">
+  <title id="astroutasLogoTitle">شعار قسم الأنشطة الطلابية</title>
+  <defs>
+    <linearGradient id="astroShield" x1="18" y1="8" x2="110" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3D8BEF"/>
+      <stop offset="0.55" stop-color="#1E6FD9"/>
+      <stop offset="1" stop-color="#0E2F5E"/>
+    </linearGradient>
+    <linearGradient id="astroStar" x1="40" y1="30" x2="90" y2="86" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFC178"/>
+      <stop offset="0.45" stop-color="#FFA24A"/>
+      <stop offset="1" stop-color="#F5851F"/>
+    </linearGradient>
+    <linearGradient id="astroInner" x1="64" y1="10" x2="64" y2="118" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.02"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Crest -->
+  <path d="M64 9 L113 28 V62 c0 29-21 47-49 57 C36 109 15 91 15 62 V28 Z"
+        fill="url(#astroInner)" stroke="url(#astroShield)" stroke-width="5"
+        stroke-linejoin="round"/>
+
+  <!-- Orbit -->
+  <ellipse cx="64" cy="57" rx="41" ry="16" fill="none"
+           stroke="#3D8BEF" stroke-opacity="0.85" stroke-width="2.6"
+           transform="rotate(-22 64 57)"/>
+  <circle cx="99" cy="44" r="4" fill="#F5851F"/>
+
+  <!-- Star -->
+  <path d="M64 31 C66 45, 72 51, 89 57 C72 63, 66 69, 64 83 C62 69, 56 63, 39 57 C56 51, 62 45, 64 31 Z"
+        fill="url(#astroStar)"/>
+
+  <!-- Base bar -->
+  <rect x="46" y="93" width="36" height="5" rx="2.5" fill="#3D8BEF" fill-opacity="0.9"/>
+</svg>
