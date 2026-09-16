@@ -1,0 +1,133 @@
+/* ==========================================================================
+   صفحة النادي خلف شاشة التحميل — قالب معاينة مشترك.
+   لا يحمل أي ألوان خاصة به: يقرأ عقد الألوان (--club-*) الذي يعرّفه ثيم كل نادٍ،
+   فيتلوّن تلقائيًا مع الموقع الذي يعمل تحته.
+   استبدله بتنسيق موقعك الحقيقي عند الدمج.
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--club-bg, #06162c);
+  color: var(--club-ink, #fff);
+  font-family: var(--splash-font);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.club {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  gap: clamp(2rem, 6vh, 3.5rem);
+}
+
+/* --- الترويسة --- */
+.club__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.club__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-weight: 700;
+  font-size: clamp(0.95rem, 3.4vw, 1.1rem);
+}
+
+.club__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--club-accent, #f5851f);
+  box-shadow: 0 0 14px var(--club-accent, #f5851f);
+}
+
+.club__back {
+  color: var(--club-muted, rgba(255, 255, 255, 0.6));
+  text-decoration: none;
+  font-size: 0.82rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  transition: color 200ms ease, border-color 200ms ease;
+}
+.club__back:hover,
+.club__back:focus-visible { color: var(--club-accent, #fff); }
+
+/* --- المحتوى --- */
+.club__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(1.5rem, 4vw, 2.25rem);
+  max-width: 46rem;
+}
+
+.club__eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  color: var(--club-accent, #f5851f);
+}
+
+.club__title {
+  margin: 0;
+  font-size: clamp(1.9rem, 8vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.club__lede {
+  margin: 0;
+  font-size: clamp(0.95rem, 3.6vw, 1.15rem);
+  color: var(--club-muted, rgba(255, 255, 255, 0.65));
+  text-wrap: pretty;
+}
+
+.club__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.club__chips li {
+  border: 1px solid color-mix(in srgb, var(--club-accent, #f5851f) 45%, transparent);
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  background: color-mix(in srgb, var(--club-accent, #f5851f) 10%, transparent);
+}
+
+/* متصفّحات بلا color-mix: حدود بيضاء شفافة بدل اللون المخلوط */
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+  .club__chips li {
+    border-color: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.club__footer {
+  font-size: 0.78rem;
+  color: var(--club-muted, rgba(255, 255, 255, 0.55));
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1.25rem;
+}
+
+.club__note {
+  margin: 0.4rem 0 0;
+  font-size: 0.72rem;
+  opacity: 0.7;
+}

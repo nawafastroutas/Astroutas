@@ -1,0 +1,41 @@
+<div class="splash the" id="splash" role="status" aria-live="polite"
+     aria-label="{{aria}}" data-splash>
+
+  <div class="the__spot" aria-hidden="true"></div>
+  <span class="the__mote the__mote--1" aria-hidden="true"></span>
+  <span class="the__mote the__mote--2" aria-hidden="true"></span>
+  <span class="the__mote the__mote--3" aria-hidden="true"></span>
+
+  <div class="the__curtain the__curtain--start" aria-hidden="true"></div>
+  <div class="the__curtain the__curtain--end" aria-hidden="true"></div>
+  <div class="the__pelmet" aria-hidden="true"></div>
+
+  <div class="the__core">
+    <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+    <svg class="the__mask" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <path d="M14 14h36v20c0 10-8 18-18 18s-18-8-18-18V14Z"
+            stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M23 27c1.6-1.8 4.4-1.8 6 0M35 27c1.6-1.8 4.4-1.8 6 0"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M25 39c4 3.6 10 3.6 14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M10 14h44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+
+    <div>
+      <h1 class="the__title">{{name}}</h1>
+      <p class="the__tagline">{{tagline}}</p>
+    </div>
+  </div>
+
+  <div class="the__marquee">
+    <div class="the__bulbs" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+         aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+      <span class="the__off"></span>
+      <span class="the__on"></span>
+    </div>
+    <div class="the__meta">
+      <span data-splash-status>{{loading}}</span>
+      <span class="the__pct"><b data-splash-percent>0</b>٪</span>
+    </div>
+  </div>
+</div>

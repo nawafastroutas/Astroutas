@@ -1,0 +1,209 @@
+/* ==========================================================================
+   ١٢ — نادي اللغات
+   المفهوم: «الحروف» — حلقة حروف من لغات مختلفة تدور حول فقاعتَي حوار،
+   وسطرٌ يُكتب حرفًا حرفًا بمقدار التحميل.
+   ========================================================================== */
+
+:root {
+  --lan-ground: #0a0d18;
+  --lan-ground-2: #161a33;
+  --lan-violet: #8b5cf6;
+  --lan-sky: #38bdf8;
+  --lan-ink: #f3f2ff;
+  --lan-muted: rgba(243, 242, 255, 0.52);
+  --lan-ring: clamp(9rem, 27vw, 12rem);
+
+  --club-bg: var(--lan-ground);
+  --club-ink: var(--lan-ink);
+  --club-accent: var(--lan-violet);
+  --club-accent-2: var(--lan-sky);
+  --club-muted: var(--lan-muted);
+}
+
+.lan {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  background:
+    radial-gradient(42% 36% at 22% 24%, rgba(139, 92, 246, 0.28), transparent 70%),
+    radial-gradient(40% 34% at 82% 76%, rgba(56, 189, 248, 0.2), transparent 70%),
+    linear-gradient(168deg, var(--lan-ground-2) 0%, var(--lan-ground) 58%, #04060e 100%);
+  color: var(--lan-ink);
+}
+
+.lan__core {
+  grid-row: 1;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.4rem, 4vw, 2rem);
+  padding: 2rem 1.25rem 0;
+  text-align: center;
+}
+
+/* --- حلقة الحروف --- */
+.lan__orbit {
+  position: relative;
+  width: var(--lan-ring);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  animation: lan-in 980ms var(--splash-ease) 60ms forwards;
+}
+
+.lan__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed rgba(243, 242, 255, 0.14);
+  animation: lan-spin 26s linear infinite;
+}
+
+/* كل حرف يُوضع بزاويته ثم يُعاد تقويمه ليبقى قائمًا */
+.lan__slot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform:
+    rotate(var(--a))
+    translateY(calc(var(--lan-ring) / -2))
+    rotate(calc(var(--a) * -1));
+}
+
+.lan__glyph {
+  position: absolute;
+  translate: -50% -50%;
+  font-size: clamp(0.95rem, 3.4vw, 1.25rem);
+  font-weight: 600;
+  color: var(--lan-sky);
+  /* يعاكس دوران الحلقة فيبقى الحرف مقروءًا دائمًا */
+  animation: lan-spin 26s linear infinite reverse, lan-breathe 4s ease-in-out infinite;
+}
+.lan__slot:nth-child(2n) .lan__glyph { color: var(--lan-violet); animation-delay: 0s, 0.5s; }
+.lan__slot:nth-child(3n) .lan__glyph { animation-delay: 0s, 1.2s; }
+
+.lan__bubbles {
+  position: relative;
+  z-index: 2;
+  width: 46%;
+  height: auto;
+  color: var(--lan-ink);
+  filter: drop-shadow(0 10px 26px rgba(139, 92, 246, 0.4));
+}
+.lan__bubble--a { fill: var(--lan-violet); }
+.lan__bubble--b { fill: var(--lan-sky); }
+.lan__bubbles text {
+  fill: #0a0d18;
+  font-size: 15px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+/* --- النصوص --- */
+.lan__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 5.6vw, 2.05rem);
+  font-weight: 700;
+  line-height: 1.35;
+  opacity: 0;
+  animation: lan-up 780ms var(--splash-ease) 400ms forwards;
+}
+
+.lan__tagline {
+  margin: 0.55rem 0 0;
+  font-size: clamp(0.85rem, 3.4vw, 1rem);
+  letter-spacing: 0.12em;
+  color: var(--lan-muted);
+  opacity: 0;
+  animation: lan-up 780ms var(--splash-ease) 520ms forwards;
+}
+
+/* --- السطر الذي يُكتب = مؤشّر التقدّم --- */
+.lan__typer {
+  grid-row: 2;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding-block-end: clamp(2rem, 7vh, 3.5rem);
+  opacity: 0;
+  animation: lan-up 760ms var(--splash-ease) 640ms forwards;
+}
+
+.lan__line {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  inline-size: min(20rem, 76vw);
+  font-size: clamp(0.8rem, 3vw, 0.95rem);
+  letter-spacing: 0.04em;
+}
+
+.lan__typed {
+  overflow: hidden;
+  white-space: nowrap;
+  /* يتّسع بمقدار التقدّم — فيبدو النص وكأنه يُكتب حرفًا حرفًا */
+  inline-size: calc(var(--splash-progress) * 100%);
+  transition: inline-size 180ms cubic-bezier(0.33, 1, 0.68, 1);
+  color: var(--lan-sky);
+}
+
+.lan__caret {
+  flex: none;
+  width: 2px;
+  height: 1.1em;
+  background: var(--lan-violet);
+  animation: lan-caret 1s steps(1, end) infinite;
+}
+
+.lan__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--lan-muted);
+}
+.lan__pct { color: var(--lan-ink); }
+
+/* --- الحركات --- */
+@keyframes lan-spin { to { transform: rotate(360deg); } }
+
+@keyframes lan-breathe {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 1; }
+}
+
+@keyframes lan-caret {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes lan-in {
+  from { opacity: 0; transform: scale(0.86); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes lan-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-height: 560px) {
+  :root { --lan-ring: clamp(6rem, 17vh, 7.5rem); }
+  .lan__tagline { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lan__orbit, .lan__title, .lan__tagline, .lan__typer {
+    animation-duration: 1ms; animation-delay: 0ms; opacity: 1;
+  }
+  .lan__ring, .lan__glyph, .lan__caret { animation: none; }
+  .lan__glyph { opacity: 0.9; }
+}

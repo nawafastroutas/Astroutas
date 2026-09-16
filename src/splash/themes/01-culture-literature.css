@@ -1,0 +1,210 @@
+/* ==========================================================================
+   ٠١ — نادي الثقافة والأدب
+   المفهوم: «المخطوطة» — إطار مذهّب، كتابٌ تُقلَب أوراقه، وحبرٌ يسري في السطر.
+   ========================================================================== */
+
+:root {
+  --cul-ground: #1a0f14;
+  --cul-ground-2: #2a151d;
+  --cul-gold: #c9a227;
+  --cul-wine: #8e2d43;
+  --cul-parchment: #f4ece0;
+  --cul-muted: rgba(244, 236, 224, 0.55);
+
+  /* عقد الألوان لصفحة المعاينة خلف الشاشة */
+  --club-bg: var(--cul-ground);
+  --club-ink: var(--cul-parchment);
+  --club-accent: var(--cul-gold);
+  --club-accent-2: var(--cul-wine);
+  --club-muted: var(--cul-muted);
+}
+
+.cul {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  background:
+    radial-gradient(64% 52% at 50% 38%, var(--cul-ground-2) 0%, transparent 72%),
+    radial-gradient(40% 34% at 84% 92%, rgba(142, 45, 67, 0.32), transparent 70%),
+    linear-gradient(168deg, #221219 0%, var(--cul-ground) 56%, #0d070a 100%);
+  color: var(--cul-parchment);
+}
+
+/* ورق مسطّر باهت جدًا — إحساس دفتر قديم */
+.cul__paper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(244, 236, 224, 0.045) 0 1px,
+    transparent 1px 34px
+  );
+  -webkit-mask-image: radial-gradient(74% 62% at 50% 44%, #000 20%, transparent 80%);
+  mask-image: radial-gradient(74% 62% at 50% 44%, #000 20%, transparent 80%);
+}
+
+.cul__stage {
+  grid-row: 1;
+  z-index: 1;
+  padding: 2rem 1.25rem 0;
+  width: min(32rem, 92vw);
+}
+
+/* --- الإطار المذهّب المزدوج --- */
+.cul__frame {
+  position: relative;
+  padding: clamp(2rem, 6vw, 3rem) clamp(1.5rem, 5vw, 2.5rem);
+  text-align: center;
+  border: 1px solid rgba(201, 162, 39, 0.34);
+  outline: 1px solid rgba(201, 162, 39, 0.14);
+  outline-offset: 6px;
+  opacity: 0;
+  animation: cul-frame-in 1100ms var(--splash-ease) 80ms forwards;
+}
+
+.cul__corner {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  background: var(--cul-gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 14px rgba(201, 162, 39, 0.55);
+}
+.cul__corner--tr { top: -4px; inset-inline-end: -4px; }
+.cul__corner--tl { top: -4px; inset-inline-start: -4px; }
+.cul__corner--br { bottom: -4px; inset-inline-end: -4px; }
+.cul__corner--bl { bottom: -4px; inset-inline-start: -4px; }
+
+/* --- الكتاب: ثلاث أوراق تُقلَب حول الكعب --- */
+.cul__book {
+  position: relative;
+  width: clamp(5.5rem, 15vw, 7.25rem);
+  aspect-ratio: 1;
+  margin: 0 auto clamp(1.5rem, 4vw, 2rem);
+  perspective: 700px;
+  display: grid;
+  place-items: center;
+}
+
+/* مواضع فيزيائية مقصودة: الورقة تنقلب حول «كعب» الكتاب في المنتصف،
+   من اليسار إلى اليمين — وهو اتجاه تقليب الكتاب العربي. */
+.cul__leaf {
+  position: absolute;
+  top: 12%;
+  left: 14%;
+  width: 36%;
+  height: 68%;
+  background: linear-gradient(to right, rgba(244, 236, 224, 0.92), rgba(216, 202, 182, 0.72));
+  border-radius: 6px 2px 2px 6px;
+  transform-origin: right center;
+  backface-visibility: hidden;
+  animation: cul-flip 3.2s cubic-bezier(0.55, 0, 0.45, 1) infinite;
+  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.35);
+}
+.cul__leaf--1 { animation-delay: 0ms; }
+.cul__leaf--2 { animation-delay: 420ms; }
+.cul__leaf--3 { animation-delay: 840ms; }
+
+.cul__mark {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: auto;
+  color: var(--cul-gold);
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.55));
+}
+
+/* --- النصوص --- */
+.cul__eyebrow {
+  margin: 0 0 0.9rem;
+  font-size: clamp(0.62rem, 2.4vw, 0.72rem);
+  letter-spacing: 0.3em;
+  color: rgba(201, 162, 39, 0.85);
+}
+
+.cul__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 5.6vw, 2.1rem);
+  font-weight: 700;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+.cul__tagline {
+  margin: 1rem 0 0;
+  font-size: clamp(0.82rem, 3.2vw, 0.95rem);
+  line-height: 1.8;
+  color: var(--cul-muted);
+  text-wrap: balance;
+}
+
+/* --- السطر الذي يمتلئ حبرًا = مؤشّر التقدّم --- */
+.cul__rule {
+  position: relative;
+  width: min(16rem, 70%);
+  height: 2px;
+  margin: 1.15rem auto 0;
+  background: rgba(244, 236, 224, 0.13);
+  overflow: hidden;
+}
+
+.cul__ink {
+  position: absolute;
+  inset: 0;
+  transform-origin: right center;   /* RTL: يسري من اليمين */
+  transform: scaleX(0);
+  background: linear-gradient(to left, var(--cul-wine), var(--cul-gold) 70%, #f0d79a);
+  transition: transform 180ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+[dir="ltr"] .cul__ink { transform-origin: left center; }
+
+/* --- التذييل --- */
+.cul__foot {
+  grid-row: 2;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  padding-block-end: clamp(2rem, 7vh, 3.5rem);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--cul-muted);
+  opacity: 0;
+  animation: cul-fade-in 800ms var(--splash-ease) 640ms forwards;
+}
+
+.cul__pct { color: rgba(201, 162, 39, 0.9); }
+.cul__pct i { font-style: normal; opacity: 0.6; }
+
+/* --- الحركات --- */
+@keyframes cul-frame-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes cul-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes cul-flip {
+  0%, 12%   { transform: rotateY(0deg); }
+  45%, 100% { transform: rotateY(168deg); }
+}
+
+@media (max-height: 560px) {
+  .cul__book { width: clamp(3.75rem, 11vh, 5rem); margin-bottom: 1rem; }
+  .cul__tagline { display: none; }
+  .cul__frame { padding-block: 1.35rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cul__frame,
+  .cul__foot { animation-duration: 1ms; animation-delay: 0ms; opacity: 1; }
+  .cul__leaf { animation: none; transform: rotateY(150deg); }
+  .cul__leaf--2 { transform: rotateY(120deg); }
+  .cul__leaf--3 { transform: rotateY(90deg); }
+}

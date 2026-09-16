@@ -1,0 +1,250 @@
+/* ==========================================================================
+   ٠٤ — نادي الطلبة الدوليين
+   المفهوم: «خطوط الطول» — كرة أرضية سلكية تدور، ومسارات سفر تعبر فوقها.
+   ========================================================================== */
+
+:root {
+  --int-ground: #04182b;
+  --int-ground-2: #073350;
+  --int-teal: #22b8cf;
+  --int-coral: #ff8360;
+  --int-ink: #eaf6ff;
+  --int-muted: rgba(234, 246, 255, 0.52);
+
+  --club-bg: var(--int-ground);
+  --club-ink: var(--int-ink);
+  --club-accent: var(--int-teal);
+  --club-accent-2: var(--int-coral);
+  --club-muted: var(--int-muted);
+}
+
+.int {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  background:
+    radial-gradient(48% 40% at 50% 32%, rgba(34, 184, 207, 0.22), transparent 72%),
+    radial-gradient(38% 32% at 86% 88%, rgba(255, 131, 96, 0.14), transparent 70%),
+    linear-gradient(166deg, var(--int-ground-2) 0%, var(--int-ground) 54%, #010a14 100%);
+  color: var(--int-ink);
+}
+
+/* شبكة إحداثيات باهتة في الخلفية */
+.int__grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(234, 246, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(234, 246, 255, 0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(72% 60% at 50% 42%, #000 20%, transparent 80%);
+  mask-image: radial-gradient(72% 60% at 50% 42%, #000 20%, transparent 80%);
+}
+
+.int__core {
+  grid-row: 1;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.4rem, 4vw, 2rem);
+  padding: 2rem 1.25rem 0;
+  text-align: center;
+}
+
+/* --- الكرة الأرضية --- */
+.int__globe {
+  position: relative;
+  width: clamp(8.5rem, 25vw, 11.5rem);
+  aspect-ratio: 1;
+  opacity: 0;
+  animation: int-in 1000ms var(--splash-ease) 60ms forwards;
+}
+
+.int__globe svg { width: 100%; height: 100%; overflow: visible; }
+
+.int__sphere {
+  fill: rgba(34, 184, 207, 0.06);
+  stroke: rgba(34, 184, 207, 0.55);
+  stroke-width: 1.2;
+}
+
+.int__lat {
+  fill: none;
+  stroke: rgba(234, 246, 255, 0.2);
+  stroke-width: 0.9;
+}
+
+/* خطوط الطول: يتغيّر نصف قطرها الأفقي فيبدو أن الكرة تدور */
+.int__lon {
+  fill: none;
+  stroke: rgba(234, 246, 255, 0.28);
+  stroke-width: 0.9;
+  animation: int-rotate 7s ease-in-out infinite;
+}
+.int__lon--2 { animation-delay: -1.75s; }
+.int__lon--3 { animation-delay: -3.5s; }
+.int__lon--4 { animation-delay: -5.25s; }
+
+/* نقاط مدن تنبض على سطح الكرة */
+.int__city {
+  fill: var(--int-coral);
+  animation: int-city 2.4s ease-in-out infinite;
+}
+.int__city--2 { animation-delay: 0.8s; }
+.int__city--3 { animation-delay: 1.6s; }
+
+/* مسارات سفر متقطّعة تزحف */
+.int__route {
+  fill: none;
+  stroke: var(--int-coral);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-dasharray: 4 7;
+  opacity: 0.85;
+  animation: int-route 2.2s linear infinite;
+}
+.int__route--2 { stroke: var(--int-teal); animation-duration: 3s; animation-direction: reverse; }
+
+/* --- النصوص --- */
+.int__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 5.6vw, 2.05rem);
+  font-weight: 700;
+  line-height: 1.35;
+  opacity: 0;
+  animation: int-up 780ms var(--splash-ease) 400ms forwards;
+  text-wrap: balance;
+}
+
+.int__tagline {
+  margin: 0.6rem 0 0;
+  font-size: clamp(0.82rem, 3.2vw, 0.95rem);
+  line-height: 1.75;
+  color: var(--int-muted);
+  opacity: 0;
+  animation: int-up 780ms var(--splash-ease) 520ms forwards;
+  text-wrap: balance;
+}
+
+/* ترحيب بلغات متعدّدة — يتناوب */
+.int__hello {
+  margin-top: 0.85rem;
+  height: 1.2em;
+  overflow: hidden;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  color: var(--int-teal);
+  opacity: 0;
+  animation: int-up 780ms var(--splash-ease) 600ms forwards;
+}
+.int__hello ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  animation: int-hello 9s steps(1, end) infinite;
+}
+.int__hello li { height: 1.2em; line-height: 1.2em; }
+
+/* --- مسار الرحلة = مؤشّر التقدّم --- */
+.int__journey {
+  grid-row: 2;
+  z-index: 1;
+  width: min(21rem, 74vw);
+  padding-block-end: clamp(2rem, 7vh, 3.5rem);
+  opacity: 0;
+  animation: int-up 760ms var(--splash-ease) 680ms forwards;
+}
+
+.int__track {
+  position: relative;
+  height: 2px;
+  border-radius: 999px;
+  background: repeating-linear-gradient(
+    to left,
+    rgba(234, 246, 255, 0.28) 0 6px,
+    transparent 6px 12px
+  );
+}
+
+.int__flown {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  /* الطول نفسه يتبع التقدّم — لا تحجيم، فلا تشوّه للنقاط */
+  inline-size: calc(var(--splash-progress) * 100%);
+  border-radius: inherit;
+  background: linear-gradient(to left, var(--int-teal), var(--int-coral));
+  transition: inline-size 180ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* الطائرة تركب رأس المسار */
+.int__plane {
+  position: absolute;
+  top: 50%;
+  inset-inline-start: calc(var(--splash-progress) * 100%);
+  width: 18px;
+  height: 18px;
+  translate: 50% -50%;   /* RTL: يتحرّك نحو اليسار */
+  color: var(--int-coral);
+  transition: inset-inline-start 180ms cubic-bezier(0.33, 1, 0.68, 1);
+  filter: drop-shadow(0 0 8px rgba(255, 131, 96, 0.7));
+}
+[dir="ltr"] .int__plane { translate: -50% -50%; }
+
+.int__meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.85rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--int-muted);
+}
+.int__pct { color: var(--int-teal); }
+
+/* --- الحركات --- */
+@keyframes int-rotate {
+  0%, 100% { rx: 42; opacity: 0.55; }
+  50%      { rx: 3;  opacity: 1; }
+}
+
+@keyframes int-city {
+  0%, 100% { opacity: 0.35; r: 1.6; }
+  50%      { opacity: 1;    r: 2.6; }
+}
+
+@keyframes int-route { to { stroke-dashoffset: -22; } }
+
+@keyframes int-hello {
+  0%   { transform: translateY(0); }
+  25%  { transform: translateY(-1.2em); }
+  50%  { transform: translateY(-2.4em); }
+  75%  { transform: translateY(-3.6em); }
+  100% { transform: translateY(-4.8em); }
+}
+
+@keyframes int-in {
+  from { opacity: 0; transform: scale(0.88) rotate(-6deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes int-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-height: 560px) {
+  .int__globe { width: clamp(5.5rem, 16vh, 7rem); }
+  .int__tagline, .int__hello { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .int__globe, .int__title, .int__tagline, .int__hello, .int__journey {
+    animation-duration: 1ms; animation-delay: 0ms; opacity: 1;
+  }
+  .int__lon, .int__city, .int__route { animation: none; }
+  .int__lon { rx: 24; }
+  .int__hello ul { animation: none; }
+}

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نادي الثقافة والأدب — قسم الأنشطة الطلابية</title>
+<meta name="description" content="حيث تُكتب الفكرة قبل أن تُقال">
+<meta name="theme-color" content="#1a0f14">
+
+<!-- ======================================================================
+     ترتيب <head> مقصود — لا تغيّره:
+     ١) نواة الشاشة + ثيم النادي: ملفّا التنسيق الوحيدان اللذان يحجبان الرسم،
+        وهما صغيران، فتظهر شاشة التحميل فورًا.
+     ٢) السكربت التمهيدي بعدهما مباشرة.
+     ٣) تنسيق الموقع يُحمَّل بشكل غير حاجب حتى لا يؤخّر ظهور الشاشة —
+        المحتوى مخفي خلفها على أي حال.
+     ====================================================================== -->
+<link rel="stylesheet" href="../../src/splash/core.css">
+<link rel="stylesheet" href="../../src/splash/themes/01-culture-literature.css">
+
+<script>
+  (function () {
+    var r = document.documentElement;
+    r.classList.add('js');
+    setTimeout(function () {
+      if (r.classList.contains('app-ready')) return;
+      r.classList.remove('splash-lock');
+      r.classList.add('app-ready');
+      var s = document.querySelector('[data-splash]');
+      if (s) s.remove();
+      if (document.body) document.body.removeAttribute('aria-busy');
+    }, 10000);
+  })();
+</script>
+
+<link rel="stylesheet" href="../../assets/club-site.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="../../assets/club-site.css"></noscript>
+</head>
+
+<body>
+
+<!-- ====== شاشة التحميل (أول عنصر في الصفحة) ====== -->
+<div class="splash cul" id="splash" role="status" aria-live="polite"
+     aria-label="جارٍ تحميل موقع نادي الثقافة والأدب" data-splash>
+
+  <div class="cul__paper" aria-hidden="true"></div>
+
+  <div class="cul__stage">
+    <div class="cul__frame">
+      <span class="cul__corner cul__corner--tr" aria-hidden="true"></span>
+      <span class="cul__corner cul__corner--tl" aria-hidden="true"></span>
+      <span class="cul__corner cul__corner--br" aria-hidden="true"></span>
+      <span class="cul__corner cul__corner--bl" aria-hidden="true"></span>
+
+      <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+      <div class="cul__book" aria-hidden="true">
+        <span class="cul__leaf cul__leaf--1"></span>
+        <span class="cul__leaf cul__leaf--2"></span>
+        <span class="cul__leaf cul__leaf--3"></span>
+        <svg class="cul__mark" viewBox="0 0 64 64" fill="none">
+          <path d="M32 6.5 34.6 10 32 13.5 29.4 10Z" fill="currentColor"/>
+          <path d="M32 18v34" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M32 18c-4.6-3.4-10.4-4.6-17-3.6a2 2 0 0 0-1.7 2v29.3a2 2 0 0 0 2.3 2c6-.9 11.4.3 16.4 3.5"
+                stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M32 18c4.6-3.4 10.4-4.6 17-3.6a2 2 0 0 1 1.7 2v29.3a2 2 0 0 1-2.3 2c-6-.9-11.4.3-16.4 3.5"
+                stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <p class="cul__eyebrow">الأنشطة الطلابية</p>
+      <h1 class="cul__title">نادي الثقافة والأدب</h1>
+
+      <div class="cul__rule" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+           aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+        <span class="cul__ink" data-splash-fill></span>
+      </div>
+
+      <p class="cul__tagline">حيث تُكتب الفكرة قبل أن تُقال</p>
+    </div>
+  </div>
+
+  <div class="cul__foot">
+    <span data-splash-status>نفتح الصفحة…</span>
+    <span class="cul__pct"><b data-splash-percent>0</b><i>٪</i></span>
+  </div>
+</div>
+
+<!-- ====== موقع النادي (معاينة — استبدلها بموقعكم الحقيقي) ====== -->
+<div class="club" data-app-root>
+  <header class="club__header" data-splash-enter>
+    <span class="club__brand"><i class="club__dot" aria-hidden="true"></i>نادي الثقافة والأدب</span>
+    <a class="club__back" href="../index.html">كل الشاشات</a>
+  </header>
+
+  <main class="club__main">
+    <p class="club__eyebrow" data-splash-enter>الأنشطة الطلابية</p>
+    <h1 class="club__title" data-splash-enter>الكلمة التي تبقى</h1>
+    <p class="club__lede" data-splash-enter>أمسيات شعرية، حلقات قراءة، وورش كتابة تصنع صوتك الخاص.</p>
+    <ul class="club__chips" data-splash-enter>
+      <li>أمسية شعرية</li>
+      <li>نادي القراءة الشهري</li>
+      <li>ورشة الكتابة الإبداعية</li>
+    </ul>
+  </main>
+
+  <footer class="club__footer" data-splash-enter>
+    <p>© نادي الثقافة والأدب — قسم الأنشطة الطلابية.</p>
+    <p class="club__note">هذه معاينة توضيحية لما يظهر بعد اختفاء شاشة التحميل.</p>
+  </footer>
+</div>
+
+<script type="module">
+  import { createSplash, indexEnterTargets } from '../../src/splash/splash.js';
+
+  indexEnterTargets();          // ترقيم عناصر الدخول للحصول على تتابُع
+  createSplash({
+    appRoot: '[data-app-root]',
+    loadingText: "نفتح الصفحة…",
+    readyText: "تفضّل بالقراءة",
+    sessionKey: 'astroutas:splash:culture-literature',
+  });
+</script>
+
+</body>
+</html>

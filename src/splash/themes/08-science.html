@@ -1,0 +1,46 @@
+<div class="splash sci" id="splash" role="status" aria-live="polite"
+     aria-label="{{aria}}" data-splash>
+
+  <div class="sci__lattice" aria-hidden="true"></div>
+
+  <div class="sci__core">
+    <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+    <div class="sci__flask">
+      <svg viewBox="0 0 100 124" aria-hidden="true">
+        <defs>
+          <clipPath id="sciInside">
+            <path d="M42 14v30L18 96a8 8 0 0 0 7 12h50a8 8 0 0 0 7-12L58 44V14Z"/>
+          </clipPath>
+        </defs>
+
+        <g clip-path="url(#sciInside)">
+          <rect class="sci__liquid" x="0" y="0" width="100" height="124"/>
+          <rect class="sci__foam"   x="0" y="0" width="100" height="4"/>
+          <circle class="sci__bubble"            cx="40" cy="96" r="2.6"/>
+          <circle class="sci__bubble sci__bubble--2" cx="55" cy="100" r="2"/>
+          <circle class="sci__bubble sci__bubble--3" cx="48" cy="92" r="1.6"/>
+        </g>
+
+        <path class="sci__glass" d="M42 14v30L18 96a8 8 0 0 0 7 12h50a8 8 0 0 0 7-12L58 44V14"/>
+        <path class="sci__glass" d="M37 12h26"/>
+
+        <path class="sci__bond" d="M14 34 30 22M86 34 70 22M50 6v6"/>
+        <circle class="sci__node"            cx="12" cy="36" r="3"/>
+        <circle class="sci__node sci__node--2" cx="88" cy="36" r="3"/>
+        <circle class="sci__node sci__node--3" cx="50" cy="4"  r="3"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="sci__title">{{name}}</h1>
+      <p class="sci__tagline">{{tagline}}</p>
+    </div>
+  </div>
+
+  <div class="sci__readout" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+       aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+    <span data-splash-status>{{loading}}</span>
+    <span class="sci__sep" aria-hidden="true"></span>
+    <span><b data-splash-percent>0</b>٪</span>
+  </div>
+</div>

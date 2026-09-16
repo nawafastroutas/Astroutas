@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نادي الفلك — قسم الأنشطة الطلابية</title>
+<meta name="description" content="ارفع رأسك… السماء أقرب مما تظن">
+<meta name="theme-color" content="#050718">
+
+<!-- ======================================================================
+     ترتيب <head> مقصود — لا تغيّره:
+     ١) نواة الشاشة + ثيم النادي: ملفّا التنسيق الوحيدان اللذان يحجبان الرسم،
+        وهما صغيران، فتظهر شاشة التحميل فورًا.
+     ٢) السكربت التمهيدي بعدهما مباشرة.
+     ٣) تنسيق الموقع يُحمَّل بشكل غير حاجب حتى لا يؤخّر ظهور الشاشة —
+        المحتوى مخفي خلفها على أي حال.
+     ====================================================================== -->
+<link rel="stylesheet" href="../../src/splash/core.css">
+<link rel="stylesheet" href="../../src/splash/themes/03-astronomy.css">
+
+<script>
+  (function () {
+    var r = document.documentElement;
+    r.classList.add('js');
+    setTimeout(function () {
+      if (r.classList.contains('app-ready')) return;
+      r.classList.remove('splash-lock');
+      r.classList.add('app-ready');
+      var s = document.querySelector('[data-splash]');
+      if (s) s.remove();
+      if (document.body) document.body.removeAttribute('aria-busy');
+    }, 10000);
+  })();
+</script>
+
+<link rel="stylesheet" href="../../assets/club-site.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="../../assets/club-site.css"></noscript>
+</head>
+
+<body>
+
+<!-- ====== شاشة التحميل (أول عنصر في الصفحة) ====== -->
+<div class="splash ast" id="splash" role="status" aria-live="polite"
+     aria-label="جارٍ تحميل موقع نادي الفلك" data-splash>
+
+  <div class="ast__stars" aria-hidden="true"></div>
+
+  <div class="ast__core">
+    <div class="ast__system">
+      <svg class="ast__orbits" viewBox="0 0 200 200" aria-hidden="true">
+        <g class="ast__ring ast__ring--1">
+          <ellipse cx="100" cy="100" rx="78" ry="31"/>
+          <circle class="ast__planet--1" cx="178" cy="100" r="4.5"/>
+        </g>
+        <g class="ast__ring ast__ring--2">
+          <ellipse cx="100" cy="100" rx="64" ry="52"/>
+          <circle class="ast__planet--2" cx="164" cy="100" r="3.6"/>
+        </g>
+        <g class="ast__ring ast__ring--3">
+          <ellipse cx="100" cy="100" rx="50" ry="20"/>
+          <circle class="ast__planet--3" cx="150" cy="100" r="3"/>
+        </g>
+      </svg>
+
+      <svg class="ast__gauge" viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="ast__track" cx="50" cy="50" r="45"/>
+        <circle class="ast__arc" cx="50" cy="50" r="45"/>
+      </svg>
+
+      <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+      <svg class="ast__sun" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M41 10a23 23 0 1 0 13.2 41.6A26 26 0 0 1 41 10Z" fill="currentColor"/>
+        <path d="M46.5 14.5 48.8 20l5.7 2.3-5.7 2.3-2.3 5.6-2.3-5.6-5.7-2.3 5.7-2.3 2.3-5.5Z" fill="currentColor" opacity=".85"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="ast__title">نادي الفلك</h1>
+      <p class="ast__tagline">ارفع رأسك… السماء أقرب مما تظن</p>
+    </div>
+  </div>
+
+  <div class="ast__foot" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+       aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+    <span class="ast__dot" aria-hidden="true"></span>
+    <span data-splash-status>نرصد السماء…</span>
+    <span class="ast__pct"><b data-splash-percent>0</b>٪</span>
+  </div>
+</div>
+
+<!-- ====== موقع النادي (معاينة — استبدلها بموقعكم الحقيقي) ====== -->
+<div class="club" data-app-root>
+  <header class="club__header" data-splash-enter>
+    <span class="club__brand"><i class="club__dot" aria-hidden="true"></i>نادي الفلك</span>
+    <a class="club__back" href="../index.html">كل الشاشات</a>
+  </header>
+
+  <main class="club__main">
+    <p class="club__eyebrow" data-splash-enter>الأنشطة الطلابية</p>
+    <h1 class="club__title" data-splash-enter>ليلة تحت النجوم</h1>
+    <p class="club__lede" data-splash-enter>رحلات رصد، محاضرات فلكية، وتصوير لأعماق السماء.</p>
+    <ul class="club__chips" data-splash-enter>
+      <li>ليلة رصد صحراوية</li>
+      <li>تصوير الفلك</li>
+      <li>متابعة الكسوف</li>
+    </ul>
+  </main>
+
+  <footer class="club__footer" data-splash-enter>
+    <p>© نادي الفلك — قسم الأنشطة الطلابية.</p>
+    <p class="club__note">هذه معاينة توضيحية لما يظهر بعد اختفاء شاشة التحميل.</p>
+  </footer>
+</div>
+
+<script type="module">
+  import { createSplash, indexEnterTargets } from '../../src/splash/splash.js';
+
+  indexEnterTargets();          // ترقيم عناصر الدخول للحصول على تتابُع
+  createSplash({
+    appRoot: '[data-app-root]',
+    loadingText: "نرصد السماء…",
+    readyText: "الرؤية صافية",
+    sessionKey: 'astroutas:splash:astronomy',
+  });
+</script>
+
+</body>
+</html>

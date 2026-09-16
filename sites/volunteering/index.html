@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نادي العمل التطوعي — قسم الأنشطة الطلابية</title>
+<meta name="description" content="أثرٌ يبقى بعدك">
+<meta name="theme-color" content="#15060f">
+
+<!-- ======================================================================
+     ترتيب <head> مقصود — لا تغيّره:
+     ١) نواة الشاشة + ثيم النادي: ملفّا التنسيق الوحيدان اللذان يحجبان الرسم،
+        وهما صغيران، فتظهر شاشة التحميل فورًا.
+     ٢) السكربت التمهيدي بعدهما مباشرة.
+     ٣) تنسيق الموقع يُحمَّل بشكل غير حاجب حتى لا يؤخّر ظهور الشاشة —
+        المحتوى مخفي خلفها على أي حال.
+     ====================================================================== -->
+<link rel="stylesheet" href="../../src/splash/core.css">
+<link rel="stylesheet" href="../../src/splash/themes/10-volunteering.css">
+
+<script>
+  (function () {
+    var r = document.documentElement;
+    r.classList.add('js');
+    setTimeout(function () {
+      if (r.classList.contains('app-ready')) return;
+      r.classList.remove('splash-lock');
+      r.classList.add('app-ready');
+      var s = document.querySelector('[data-splash]');
+      if (s) s.remove();
+      if (document.body) document.body.removeAttribute('aria-busy');
+    }, 10000);
+  })();
+</script>
+
+<link rel="stylesheet" href="../../assets/club-site.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="../../assets/club-site.css"></noscript>
+</head>
+
+<body>
+
+<!-- ====== شاشة التحميل (أول عنصر في الصفحة) ====== -->
+<div class="splash vol" id="splash" role="status" aria-live="polite"
+     aria-label="جارٍ تحميل موقع نادي العمل التطوعي" data-splash>
+
+  <div class="vol__core">
+    <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+    <div class="vol__impact">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="vol__ripple"               cx="50" cy="50" r="30"/>
+        <circle class="vol__ripple vol__ripple--2" cx="50" cy="50" r="30"/>
+        <circle class="vol__ripple vol__ripple--3" cx="50" cy="50" r="30"/>
+
+        <circle class="vol__gauge" cx="50" cy="50"/>
+
+        <circle class="vol__seed"               cx="50" cy="4"  r="2.2"/>
+        <circle class="vol__seed vol__seed--2"  cx="90" cy="27" r="2.2"/>
+        <circle class="vol__seed vol__seed--3"  cx="90" cy="73" r="2.2"/>
+        <circle class="vol__seed vol__seed--4"  cx="50" cy="96" r="2.2"/>
+        <circle class="vol__seed vol__seed--5"  cx="10" cy="73" r="2.2"/>
+        <circle class="vol__seed vol__seed--6"  cx="10" cy="27" r="2.2"/>
+
+        <path class="vol__heart"
+              d="M50 68S32 56.4 32 45.4A8.6 8.6 0 0 1 50 41a8.6 8.6 0 0 1 18 4.4C68 56.4 50 68 50 68Z"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="vol__title">نادي العمل التطوعي</h1>
+      <p class="vol__tagline">أثرٌ يبقى بعدك</p>
+    </div>
+  </div>
+
+  <div class="vol__foot" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+       aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+    <span class="vol__pct"><b data-splash-percent>0</b><i>٪</i></span>
+    <span class="vol__status" data-splash-status>نجمع الأيادي…</span>
+  </div>
+</div>
+
+<!-- ====== موقع النادي (معاينة — استبدلها بموقعكم الحقيقي) ====== -->
+<div class="club" data-app-root>
+  <header class="club__header" data-splash-enter>
+    <span class="club__brand"><i class="club__dot" aria-hidden="true"></i>نادي العمل التطوعي</span>
+    <a class="club__back" href="../index.html">كل الشاشات</a>
+  </header>
+
+  <main class="club__main">
+    <p class="club__eyebrow" data-splash-enter>الأنشطة الطلابية</p>
+    <h1 class="club__title" data-splash-enter>ساعة منك… تغيّر يومًا</h1>
+    <p class="club__lede" data-splash-enter>حملات مجتمعية، كسوة الشتاء، وبرامج دعم الأسر والبيئة.</p>
+    <ul class="club__chips" data-splash-enter>
+      <li>حملة الشتاء</li>
+      <li>إفطار صائم</li>
+      <li>تنظيف الشاطئ</li>
+    </ul>
+  </main>
+
+  <footer class="club__footer" data-splash-enter>
+    <p>© نادي العمل التطوعي — قسم الأنشطة الطلابية.</p>
+    <p class="club__note">هذه معاينة توضيحية لما يظهر بعد اختفاء شاشة التحميل.</p>
+  </footer>
+</div>
+
+<script type="module">
+  import { createSplash, indexEnterTargets } from '../../src/splash/splash.js';
+
+  indexEnterTargets();          // ترقيم عناصر الدخول للحصول على تتابُع
+  createSplash({
+    appRoot: '[data-app-root]',
+    loadingText: "نجمع الأيادي…",
+    readyText: "لنبدأ العطاء",
+    sessionKey: 'astroutas:splash:volunteering',
+  });
+</script>
+
+</body>
+</html>

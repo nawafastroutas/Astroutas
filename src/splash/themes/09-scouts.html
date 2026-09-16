@@ -1,0 +1,62 @@
+<div class="splash sco" id="splash" role="status" aria-live="polite"
+     aria-label="{{aria}}" data-splash>
+
+  <div class="sco__contour" aria-hidden="true"></div>
+
+  <div class="sco__core">
+    <!-- شعار العشيرة — استبدل هذا الـ SVG بشعاركم الرسمي -->
+    <div class="sco__compass">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="sco__bezel" cx="50" cy="50" r="46"/>
+        <circle class="sco__inner" cx="50" cy="50" r="38"/>
+
+        <g class="sco__tick">
+          <line x1="50" y1="6"  x2="50" y2="12"/>
+          <line x1="94" y1="50" x2="88" y2="50"/>
+          <line x1="50" y1="94" x2="50" y2="88"/>
+          <line x1="6"  y1="50" x2="12" y2="50"/>
+          <line x1="81" y1="19" x2="77" y2="23"/>
+          <line x1="81" y1="81" x2="77" y2="77"/>
+          <line x1="19" y1="81" x2="23" y2="77"/>
+          <line x1="19" y1="19" x2="23" y2="23"/>
+        </g>
+
+        <text class="sco__letter" x="50" y="20">ش</text>
+        <text class="sco__letter" x="80" y="50">ق</text>
+        <text class="sco__letter" x="50" y="80">ج</text>
+        <text class="sco__letter" x="20" y="50">غ</text>
+
+        <g class="sco__needle">
+          <path class="sco__north" d="M50 16 56 50 50 46 44 50Z"/>
+          <path class="sco__south" d="M50 84 44 50 50 54 56 50Z"/>
+        </g>
+        <circle class="sco__pin" cx="50" cy="50" r="3.4"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="sco__title">{{name}}</h1>
+      <p class="sco__tagline">{{tagline}}</p>
+    </div>
+  </div>
+
+  <div class="sco__trail">
+    <svg viewBox="0 0 300 64" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+         aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+      <path class="sco__path-bg"
+            d="M290 48C254 48 246 18 208 20S150 50 114 44 54 14 22 22" pathLength="100"/>
+      <path class="sco__path-walked"
+            d="M290 48C254 48 246 18 208 20S150 50 114 44 54 14 22 22" pathLength="100"/>
+
+      <circle class="sco__waypoint" cx="208" cy="20" r="3"/>
+      <circle class="sco__waypoint" cx="114" cy="44" r="3"/>
+
+      <path class="sco__tent" d="M22 22 32 44H12L22 22Zm0 22V30"/>
+    </svg>
+
+    <div class="sco__meta">
+      <span data-splash-status>{{loading}}</span>
+      <span class="sco__pct"><b data-splash-percent>0</b>٪</span>
+    </div>
+  </div>
+</div>

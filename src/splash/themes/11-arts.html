@@ -1,0 +1,42 @@
+<div class="splash art" id="splash" role="status" aria-live="polite"
+     aria-label="{{aria}}" data-splash>
+
+  <div class="art__canvas" aria-hidden="true"></div>
+
+  <div class="art__core">
+    <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+    <div class="art__palette">
+      <svg viewBox="0 0 110 80" aria-hidden="true">
+        <path class="art__board"
+              d="M55 6c26 0 47 14 47 31 0 10-8 13-15 13h-7c-6 0-10 3-10 8 0 4 3 6 3 10 0 4-4 6-10 6C32 74 8 58 8 37 8 20 29 6 55 6Z"/>
+        <circle class="art__thumb" cx="62" cy="62" r="7"/>
+        <circle class="art__blob art__blob--1" cx="30" cy="34" r="7"/>
+        <circle class="art__blob art__blob--2" cx="54" cy="26" r="7"/>
+        <circle class="art__blob art__blob--3" cx="76" cy="38" r="7"/>
+        <circle class="art__blob art__blob--4" cx="44" cy="54" r="7"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="art__title">{{name}}</h1>
+      <p class="art__tagline">{{tagline}}</p>
+    </div>
+  </div>
+
+  <div class="art__stroke-wrap">
+    <div class="art__stroke" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+         aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+      <span class="art__wet"></span>
+      <span class="art__paint"></span>
+      <svg class="art__brush" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M14.5 3.5 20.5 9.5 11 19a4 4 0 0 1-2.2 1.1l-4.3.7.7-4.3A4 4 0 0 1 6.3 14l8.2-10.5Z"
+              stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M13 6 18 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="art__meta">
+      <span data-splash-status>{{loading}}</span>
+      <span class="art__pct"><b data-splash-percent>0</b>٪</span>
+    </div>
+  </div>
+</div>

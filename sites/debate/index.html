@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نادي المناظرات — قسم الأنشطة الطلابية</title>
+<meta name="description" content="الحجّة تُقنع… لا الصوت">
+<meta name="theme-color" content="#080c16">
+
+<!-- ======================================================================
+     ترتيب <head> مقصود — لا تغيّره:
+     ١) نواة الشاشة + ثيم النادي: ملفّا التنسيق الوحيدان اللذان يحجبان الرسم،
+        وهما صغيران، فتظهر شاشة التحميل فورًا.
+     ٢) السكربت التمهيدي بعدهما مباشرة.
+     ٣) تنسيق الموقع يُحمَّل بشكل غير حاجب حتى لا يؤخّر ظهور الشاشة —
+        المحتوى مخفي خلفها على أي حال.
+     ====================================================================== -->
+<link rel="stylesheet" href="../../src/splash/core.css">
+<link rel="stylesheet" href="../../src/splash/themes/06-debate.css">
+
+<script>
+  (function () {
+    var r = document.documentElement;
+    r.classList.add('js');
+    setTimeout(function () {
+      if (r.classList.contains('app-ready')) return;
+      r.classList.remove('splash-lock');
+      r.classList.add('app-ready');
+      var s = document.querySelector('[data-splash]');
+      if (s) s.remove();
+      if (document.body) document.body.removeAttribute('aria-busy');
+    }, 10000);
+  })();
+</script>
+
+<link rel="stylesheet" href="../../assets/club-site.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="../../assets/club-site.css"></noscript>
+</head>
+
+<body>
+
+<!-- ====== شاشة التحميل (أول عنصر في الصفحة) ====== -->
+<div class="splash deb" id="splash" role="status" aria-live="polite"
+     aria-label="جارٍ تحميل موقع نادي المناظرات" data-splash>
+
+  <div class="deb__split" aria-hidden="true"></div>
+  <div class="deb__seam" aria-hidden="true"></div>
+
+  <div class="deb__core">
+    <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+    <div class="deb__scale">
+      <div class="deb__quotes" aria-hidden="true"><b>”</b><b>“</b></div>
+      <svg viewBox="0 0 120 92" aria-hidden="true">
+        <g class="deb__sway">
+          <path d="M18 26H102"/>
+          <line x1="24" y1="27" x2="24" y2="40"/>
+          <line x1="96" y1="27" x2="96" y2="40"/>
+          <circle class="deb__pan deb__pan--b" cx="24" cy="46" r="6.5"/>
+          <circle class="deb__pan deb__pan--a" cx="96" cy="46" r="6.5"/>
+        </g>
+        <path d="M60 26V74"/>
+        <path d="M42 78h36"/>
+        <circle class="deb__fulcrum" cx="60" cy="24" r="4"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="deb__title">نادي المناظرات</h1>
+      <p class="deb__tagline">الحجّة تُقنع… لا الصوت</p>
+    </div>
+  </div>
+
+  <div class="deb__podium">
+    <div class="deb__bars" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+         aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+      <span class="deb__side--a"></span>
+      <span class="deb__side--b"></span>
+    </div>
+    <div class="deb__meta">
+      <span data-splash-status>نُعدّ المنصّة…</span>
+      <span class="deb__pct"><b data-splash-percent>0</b>٪</span>
+    </div>
+  </div>
+</div>
+
+<!-- ====== موقع النادي (معاينة — استبدلها بموقعكم الحقيقي) ====== -->
+<div class="club" data-app-root>
+  <header class="club__header" data-splash-enter>
+    <span class="club__brand"><i class="club__dot" aria-hidden="true"></i>نادي المناظرات</span>
+    <a class="club__back" href="../index.html">كل الشاشات</a>
+  </header>
+
+  <main class="club__main">
+    <p class="club__eyebrow" data-splash-enter>الأنشطة الطلابية</p>
+    <h1 class="club__title" data-splash-enter>فكّر… ثم تكلّم</h1>
+    <p class="club__lede" data-splash-enter>بطولات مناظرة، تدريب على الإلقاء، وبناء الحجّة المنطقية.</p>
+    <ul class="club__chips" data-splash-enter>
+      <li>بطولة المناظرات</li>
+      <li>ورشة بناء الحجّة</li>
+      <li>تدريب التحكيم</li>
+    </ul>
+  </main>
+
+  <footer class="club__footer" data-splash-enter>
+    <p>© نادي المناظرات — قسم الأنشطة الطلابية.</p>
+    <p class="club__note">هذه معاينة توضيحية لما يظهر بعد اختفاء شاشة التحميل.</p>
+  </footer>
+</div>
+
+<script type="module">
+  import { createSplash, indexEnterTargets } from '../../src/splash/splash.js';
+
+  indexEnterTargets();          // ترقيم عناصر الدخول للحصول على تتابُع
+  createSplash({
+    appRoot: '[data-app-root]',
+    loadingText: "نُعدّ المنصّة…",
+    readyText: "الكلمة لك",
+    sessionKey: 'astroutas:splash:debate',
+  });
+</script>
+
+</body>
+</html>

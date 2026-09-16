@@ -1,0 +1,42 @@
+<div class="splash deb" id="splash" role="status" aria-live="polite"
+     aria-label="{{aria}}" data-splash>
+
+  <div class="deb__split" aria-hidden="true"></div>
+  <div class="deb__seam" aria-hidden="true"></div>
+
+  <div class="deb__core">
+    <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+    <div class="deb__scale">
+      <div class="deb__quotes" aria-hidden="true"><b>”</b><b>“</b></div>
+      <svg viewBox="0 0 120 92" aria-hidden="true">
+        <g class="deb__sway">
+          <path d="M18 26H102"/>
+          <line x1="24" y1="27" x2="24" y2="40"/>
+          <line x1="96" y1="27" x2="96" y2="40"/>
+          <circle class="deb__pan deb__pan--b" cx="24" cy="46" r="6.5"/>
+          <circle class="deb__pan deb__pan--a" cx="96" cy="46" r="6.5"/>
+        </g>
+        <path d="M60 26V74"/>
+        <path d="M42 78h36"/>
+        <circle class="deb__fulcrum" cx="60" cy="24" r="4"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="deb__title">{{name}}</h1>
+      <p class="deb__tagline">{{tagline}}</p>
+    </div>
+  </div>
+
+  <div class="deb__podium">
+    <div class="deb__bars" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+         aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+      <span class="deb__side--a"></span>
+      <span class="deb__side--b"></span>
+    </div>
+    <div class="deb__meta">
+      <span data-splash-status>{{loading}}</span>
+      <span class="deb__pct"><b data-splash-percent>0</b>٪</span>
+    </div>
+  </div>
+</div>

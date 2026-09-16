@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نادي المسرح — قسم الأنشطة الطلابية</title>
+<meta name="description" content="ثلاث دقّات… ويبدأ كل شيء">
+<meta name="theme-color" content="#1a0409">
+
+<!-- ======================================================================
+     ترتيب <head> مقصود — لا تغيّره:
+     ١) نواة الشاشة + ثيم النادي: ملفّا التنسيق الوحيدان اللذان يحجبان الرسم،
+        وهما صغيران، فتظهر شاشة التحميل فورًا.
+     ٢) السكربت التمهيدي بعدهما مباشرة.
+     ٣) تنسيق الموقع يُحمَّل بشكل غير حاجب حتى لا يؤخّر ظهور الشاشة —
+        المحتوى مخفي خلفها على أي حال.
+     ====================================================================== -->
+<link rel="stylesheet" href="../../src/splash/core.css">
+<link rel="stylesheet" href="../../src/splash/themes/05-theatre.css">
+
+<script>
+  (function () {
+    var r = document.documentElement;
+    r.classList.add('js');
+    setTimeout(function () {
+      if (r.classList.contains('app-ready')) return;
+      r.classList.remove('splash-lock');
+      r.classList.add('app-ready');
+      var s = document.querySelector('[data-splash]');
+      if (s) s.remove();
+      if (document.body) document.body.removeAttribute('aria-busy');
+    }, 10000);
+  })();
+</script>
+
+<link rel="stylesheet" href="../../assets/club-site.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="../../assets/club-site.css"></noscript>
+</head>
+
+<body>
+
+<!-- ====== شاشة التحميل (أول عنصر في الصفحة) ====== -->
+<div class="splash the" id="splash" role="status" aria-live="polite"
+     aria-label="جارٍ تحميل موقع نادي المسرح" data-splash>
+
+  <div class="the__spot" aria-hidden="true"></div>
+  <span class="the__mote the__mote--1" aria-hidden="true"></span>
+  <span class="the__mote the__mote--2" aria-hidden="true"></span>
+  <span class="the__mote the__mote--3" aria-hidden="true"></span>
+
+  <div class="the__curtain the__curtain--start" aria-hidden="true"></div>
+  <div class="the__curtain the__curtain--end" aria-hidden="true"></div>
+  <div class="the__pelmet" aria-hidden="true"></div>
+
+  <div class="the__core">
+    <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+    <svg class="the__mask" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <path d="M14 14h36v20c0 10-8 18-18 18s-18-8-18-18V14Z"
+            stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M23 27c1.6-1.8 4.4-1.8 6 0M35 27c1.6-1.8 4.4-1.8 6 0"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M25 39c4 3.6 10 3.6 14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M10 14h44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+
+    <div>
+      <h1 class="the__title">نادي المسرح</h1>
+      <p class="the__tagline">ثلاث دقّات… ويبدأ كل شيء</p>
+    </div>
+  </div>
+
+  <div class="the__marquee">
+    <div class="the__bulbs" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+         aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+      <span class="the__off"></span>
+      <span class="the__on"></span>
+    </div>
+    <div class="the__meta">
+      <span data-splash-status>نرفع الستارة…</span>
+      <span class="the__pct"><b data-splash-percent>0</b>٪</span>
+    </div>
+  </div>
+</div>
+
+<!-- ====== موقع النادي (معاينة — استبدلها بموقعكم الحقيقي) ====== -->
+<div class="club" data-app-root>
+  <header class="club__header" data-splash-enter>
+    <span class="club__brand"><i class="club__dot" aria-hidden="true"></i>نادي المسرح</span>
+    <a class="club__back" href="../index.html">كل الشاشات</a>
+  </header>
+
+  <main class="club__main">
+    <p class="club__eyebrow" data-splash-enter>الأنشطة الطلابية</p>
+    <h1 class="club__title" data-splash-enter>الخشبة تنتظرك</h1>
+    <p class="club__lede" data-splash-enter>عروض فصلية، ورش تمثيل وإلقاء، وكتابة نصوص مسرحية.</p>
+    <ul class="club__chips" data-splash-enter>
+      <li>العرض السنوي</li>
+      <li>ورشة الارتجال</li>
+      <li>كتابة النص المسرحي</li>
+    </ul>
+  </main>
+
+  <footer class="club__footer" data-splash-enter>
+    <p>© نادي المسرح — قسم الأنشطة الطلابية.</p>
+    <p class="club__note">هذه معاينة توضيحية لما يظهر بعد اختفاء شاشة التحميل.</p>
+  </footer>
+</div>
+
+<script type="module">
+  import { createSplash, indexEnterTargets } from '../../src/splash/splash.js';
+
+  indexEnterTargets();          // ترقيم عناصر الدخول للحصول على تتابُع
+  createSplash({
+    appRoot: '[data-app-root]',
+    loadingText: "نرفع الستارة…",
+    readyText: "العرض يبدأ",
+    sessionKey: 'astroutas:splash:theatre',
+  });
+</script>
+
+</body>
+</html>

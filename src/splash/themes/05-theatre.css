@@ -1,0 +1,259 @@
+/* ==========================================================================
+   ٠٥ — نادي المسرح
+   المفهوم: «الستارة» — ستارتان مخمليّتان تحت ضوء كاشف، وصفّ مصابيح يضيء تباعًا.
+   ========================================================================== */
+
+:root {
+  --the-ground: #1a0409;
+  --the-ground-2: #2c0710;
+  --the-velvet: #b01430;
+  --the-velvet-dark: #6d0a1d;
+  --the-brass: #e8c56a;
+  --the-ink: #fdf3e3;
+  --the-muted: rgba(253, 243, 227, 0.55);
+
+  --club-bg: var(--the-ground);
+  --club-ink: var(--the-ink);
+  --club-accent: var(--the-brass);
+  --club-accent-2: var(--the-velvet);
+  --club-muted: var(--the-muted);
+}
+
+.the {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  background:
+    radial-gradient(56% 46% at 50% 8%, rgba(232, 197, 106, 0.14), transparent 70%),
+    linear-gradient(180deg, var(--the-ground-2) 0%, var(--the-ground) 48%, #0b0104 100%);
+  color: var(--the-ink);
+}
+
+/* أرضية الخشبة */
+.the::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 0;
+  height: 22%;
+  background:
+    linear-gradient(to top, rgba(232, 197, 106, 0.09), transparent),
+    repeating-linear-gradient(to right, rgba(0,0,0,.35) 0 1px, transparent 1px 44px);
+  -webkit-mask-image: linear-gradient(to top, #000, transparent);
+  mask-image: linear-gradient(to top, #000, transparent);
+}
+
+/* --- الضوء الكاشف --- */
+.the__spot {
+  position: absolute;
+  top: -6%;
+  inset-inline-start: 50%;
+  z-index: 0;
+  width: min(46rem, 120vw);
+  height: 86%;
+  translate: -50% 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(255, 244, 214, 0.2), rgba(255, 244, 214, 0));
+  clip-path: polygon(44% 0%, 56% 0%, 84% 100%, 16% 100%);
+  animation: the-flicker 5.5s ease-in-out infinite;
+}
+
+/* ذرّات غبار في شعاع الضوء */
+.the__mote {
+  position: absolute;
+  z-index: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 244, 214, 0.75);
+  animation: the-mote 7s linear infinite;
+}
+.the__mote--1 { inset-inline-start: 44%; top: 62%; animation-delay: 0s; }
+.the__mote--2 { inset-inline-start: 56%; top: 70%; animation-delay: -2.4s; }
+.the__mote--3 { inset-inline-start: 50%; top: 54%; animation-delay: -4.8s; }
+
+/* --- الستائر --- */
+.the__curtain {
+  position: absolute;
+  inset-block: 0;
+  z-index: 2;
+  width: 27%;
+  background:
+    repeating-linear-gradient(to right,
+      var(--the-velvet-dark) 0 6px,
+      var(--the-velvet) 14px,
+      var(--the-velvet-dark) 28px),
+    var(--the-velvet);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
+  transform-origin: top center;
+}
+
+/* ظلّ داخلي يفصل الستارة عن الخشبة فتبدو أمامها لا في مستواها */
+.the__curtain--start::after,
+.the__curtain--end::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  width: 18px;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.55), transparent);
+}
+.the__curtain--start::after { inset-inline-end: -18px; }
+.the__curtain--end::after {
+  inset-inline-start: -18px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.55), transparent);
+}
+
+.the__curtain--start {
+  inset-inline-start: 0;
+  animation: the-sway-a 8s ease-in-out infinite alternate;
+}
+.the__curtain--end {
+  inset-inline-end: 0;
+  animation: the-sway-b 8s ease-in-out infinite alternate;
+}
+
+/* الكرنيش النحاسي أعلى الخشبة */
+.the__pelmet {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 3;
+  height: clamp(2.5rem, 7vh, 4rem);
+  background: linear-gradient(to bottom, var(--the-velvet), var(--the-velvet-dark));
+  border-bottom: 2px solid rgba(232, 197, 106, 0.55);
+  clip-path: polygon(0 0, 100% 0, 100% 62%, 50% 100%, 0 62%);
+}
+
+/* --- المحتوى على الخشبة --- */
+.the__core {
+  grid-row: 1;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.25rem, 3.6vw, 1.75rem);
+  padding: clamp(3rem, 9vh, 5rem) 1.25rem 0;
+  text-align: center;
+}
+
+.the__mask {
+  width: clamp(5rem, 15vw, 7rem);
+  height: auto;
+  color: var(--the-brass);
+  filter: drop-shadow(0 14px 32px rgba(0, 0, 0, 0.7));
+  opacity: 0;
+  animation: the-rise 1000ms var(--splash-ease) 120ms forwards;
+}
+
+.the__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 5.6vw, 2.05rem);
+  font-weight: 700;
+  line-height: 1.35;
+  opacity: 0;
+  animation: the-rise 820ms var(--splash-ease) 380ms forwards;
+}
+
+.the__tagline {
+  margin: 0.55rem 0 0;
+  font-size: clamp(0.82rem, 3.2vw, 0.95rem);
+  letter-spacing: 0.1em;
+  color: var(--the-muted);
+  opacity: 0;
+  animation: the-rise 820ms var(--splash-ease) 500ms forwards;
+}
+
+/* --- صفّ المصابيح = مؤشّر التقدّم --- */
+.the__marquee {
+  grid-row: 2;
+  z-index: 3;
+  width: min(22rem, 76vw);
+  padding-block-end: clamp(2rem, 7vh, 3.25rem);
+  opacity: 0;
+  animation: the-rise 800ms var(--splash-ease) 620ms forwards;
+}
+
+.the__bulbs {
+  position: relative;
+  height: 12px;
+}
+
+.the__bulbs span {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, currentColor 0 3px, transparent 3.6px);
+  background-size: 22px 12px;
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+.the__bulbs .the__off { color: rgba(232, 197, 106, 0.22); }
+
+/* المصابيح المضيئة تُكشف من اليمين بمقدار التقدّم */
+.the__bulbs .the__on {
+  color: var(--the-brass);
+  filter: drop-shadow(0 0 6px rgba(232, 197, 106, 0.9));
+  clip-path: inset(0 0 0 calc((1 - var(--splash-progress)) * 100%));
+  transition: clip-path 180ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+[dir="ltr"] .the__bulbs .the__on {
+  clip-path: inset(0 calc((1 - var(--splash-progress)) * 100%) 0 0);
+}
+
+.the__meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.8rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--the-muted);
+}
+.the__pct { color: var(--the-brass); }
+
+/* --- الحركات --- */
+@keyframes the-sway-a {
+  from { transform: skewX(0deg)   translateX(0); }
+  to   { transform: skewX(0.7deg) translateX(-6px); }
+}
+@keyframes the-sway-b {
+  from { transform: skewX(0deg)    translateX(0); }
+  to   { transform: skewX(-0.7deg) translateX(6px); }
+}
+
+@keyframes the-flicker {
+  0%, 100% { opacity: 1; }
+  42%      { opacity: 0.82; }
+  46%      { opacity: 1; }
+  70%      { opacity: 0.9; }
+}
+
+@keyframes the-mote {
+  from { transform: translateY(0) translateX(0); opacity: 0; }
+  15%  { opacity: 0.9; }
+  85%  { opacity: 0.6; }
+  to   { transform: translateY(-190px) translateX(22px); opacity: 0; }
+}
+
+@keyframes the-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-width: 620px) {
+  .the__curtain { width: 20%; }
+}
+
+@media (max-height: 560px) {
+  .the__mask { width: clamp(3.5rem, 11vh, 4.5rem); }
+  .the__tagline { display: none; }
+  .the__core { padding-top: 2.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .the__mask, .the__title, .the__tagline, .the__marquee {
+    animation-duration: 1ms; animation-delay: 0ms; opacity: 1;
+  }
+  .the__curtain, .the__spot, .the__mote { animation: none; }
+  .the__mote { opacity: 0.5; }
+}

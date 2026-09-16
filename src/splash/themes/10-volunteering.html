@@ -1,0 +1,37 @@
+<div class="splash vol" id="splash" role="status" aria-live="polite"
+     aria-label="{{aria}}" data-splash>
+
+  <div class="vol__core">
+    <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+    <div class="vol__impact">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="vol__ripple"               cx="50" cy="50" r="30"/>
+        <circle class="vol__ripple vol__ripple--2" cx="50" cy="50" r="30"/>
+        <circle class="vol__ripple vol__ripple--3" cx="50" cy="50" r="30"/>
+
+        <circle class="vol__gauge" cx="50" cy="50"/>
+
+        <circle class="vol__seed"               cx="50" cy="4"  r="2.2"/>
+        <circle class="vol__seed vol__seed--2"  cx="90" cy="27" r="2.2"/>
+        <circle class="vol__seed vol__seed--3"  cx="90" cy="73" r="2.2"/>
+        <circle class="vol__seed vol__seed--4"  cx="50" cy="96" r="2.2"/>
+        <circle class="vol__seed vol__seed--5"  cx="10" cy="73" r="2.2"/>
+        <circle class="vol__seed vol__seed--6"  cx="10" cy="27" r="2.2"/>
+
+        <path class="vol__heart"
+              d="M50 68S32 56.4 32 45.4A8.6 8.6 0 0 1 50 41a8.6 8.6 0 0 1 18 4.4C68 56.4 50 68 50 68Z"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="vol__title">{{name}}</h1>
+      <p class="vol__tagline">{{tagline}}</p>
+    </div>
+  </div>
+
+  <div class="vol__foot" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+       aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+    <span class="vol__pct"><b data-splash-percent>0</b><i>٪</i></span>
+    <span class="vol__status" data-splash-status>{{loading}}</span>
+  </div>
+</div>

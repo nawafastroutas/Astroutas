@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>النادي العلمي — قسم الأنشطة الطلابية</title>
+<meta name="description" content="السؤال أوّل التجربة">
+<meta name="theme-color" content="#031218">
+
+<!-- ======================================================================
+     ترتيب <head> مقصود — لا تغيّره:
+     ١) نواة الشاشة + ثيم النادي: ملفّا التنسيق الوحيدان اللذان يحجبان الرسم،
+        وهما صغيران، فتظهر شاشة التحميل فورًا.
+     ٢) السكربت التمهيدي بعدهما مباشرة.
+     ٣) تنسيق الموقع يُحمَّل بشكل غير حاجب حتى لا يؤخّر ظهور الشاشة —
+        المحتوى مخفي خلفها على أي حال.
+     ====================================================================== -->
+<link rel="stylesheet" href="../../src/splash/core.css">
+<link rel="stylesheet" href="../../src/splash/themes/08-science.css">
+
+<script>
+  (function () {
+    var r = document.documentElement;
+    r.classList.add('js');
+    setTimeout(function () {
+      if (r.classList.contains('app-ready')) return;
+      r.classList.remove('splash-lock');
+      r.classList.add('app-ready');
+      var s = document.querySelector('[data-splash]');
+      if (s) s.remove();
+      if (document.body) document.body.removeAttribute('aria-busy');
+    }, 10000);
+  })();
+</script>
+
+<link rel="stylesheet" href="../../assets/club-site.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="../../assets/club-site.css"></noscript>
+</head>
+
+<body>
+
+<!-- ====== شاشة التحميل (أول عنصر في الصفحة) ====== -->
+<div class="splash sci" id="splash" role="status" aria-live="polite"
+     aria-label="جارٍ تحميل موقع النادي العلمي" data-splash>
+
+  <div class="sci__lattice" aria-hidden="true"></div>
+
+  <div class="sci__core">
+    <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+    <div class="sci__flask">
+      <svg viewBox="0 0 100 124" aria-hidden="true">
+        <defs>
+          <clipPath id="sciInside">
+            <path d="M42 14v30L18 96a8 8 0 0 0 7 12h50a8 8 0 0 0 7-12L58 44V14Z"/>
+          </clipPath>
+        </defs>
+
+        <g clip-path="url(#sciInside)">
+          <rect class="sci__liquid" x="0" y="0" width="100" height="124"/>
+          <rect class="sci__foam"   x="0" y="0" width="100" height="4"/>
+          <circle class="sci__bubble"            cx="40" cy="96" r="2.6"/>
+          <circle class="sci__bubble sci__bubble--2" cx="55" cy="100" r="2"/>
+          <circle class="sci__bubble sci__bubble--3" cx="48" cy="92" r="1.6"/>
+        </g>
+
+        <path class="sci__glass" d="M42 14v30L18 96a8 8 0 0 0 7 12h50a8 8 0 0 0 7-12L58 44V14"/>
+        <path class="sci__glass" d="M37 12h26"/>
+
+        <path class="sci__bond" d="M14 34 30 22M86 34 70 22M50 6v6"/>
+        <circle class="sci__node"            cx="12" cy="36" r="3"/>
+        <circle class="sci__node sci__node--2" cx="88" cy="36" r="3"/>
+        <circle class="sci__node sci__node--3" cx="50" cy="4"  r="3"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="sci__title">النادي العلمي</h1>
+      <p class="sci__tagline">السؤال أوّل التجربة</p>
+    </div>
+  </div>
+
+  <div class="sci__readout" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+       aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+    <span data-splash-status>نُجري التجربة…</span>
+    <span class="sci__sep" aria-hidden="true"></span>
+    <span><b data-splash-percent>0</b>٪</span>
+  </div>
+</div>
+
+<!-- ====== موقع النادي (معاينة — استبدلها بموقعكم الحقيقي) ====== -->
+<div class="club" data-app-root>
+  <header class="club__header" data-splash-enter>
+    <span class="club__brand"><i class="club__dot" aria-hidden="true"></i>النادي العلمي</span>
+    <a class="club__back" href="../index.html">كل الشاشات</a>
+  </header>
+
+  <main class="club__main">
+    <p class="club__eyebrow" data-splash-enter>الأنشطة الطلابية</p>
+    <h1 class="club__title" data-splash-enter>من الفرضية إلى البرهان</h1>
+    <p class="club__lede" data-splash-enter>معرض علمي، مسابقات بحثية، وزيارات للمختبرات والمصانع.</p>
+    <ul class="club__chips" data-splash-enter>
+      <li>المعرض العلمي</li>
+      <li>تحدّي الروبوت</li>
+      <li>زيارة ميدانية</li>
+    </ul>
+  </main>
+
+  <footer class="club__footer" data-splash-enter>
+    <p>© النادي العلمي — قسم الأنشطة الطلابية.</p>
+    <p class="club__note">هذه معاينة توضيحية لما يظهر بعد اختفاء شاشة التحميل.</p>
+  </footer>
+</div>
+
+<script type="module">
+  import { createSplash, indexEnterTargets } from '../../src/splash/splash.js';
+
+  indexEnterTargets();          // ترقيم عناصر الدخول للحصول على تتابُع
+  createSplash({
+    appRoot: '[data-app-root]',
+    loadingText: "نُجري التجربة…",
+    readyText: "النتيجة جاهزة",
+    sessionKey: 'astroutas:splash:science',
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<div class="splash med" id="splash" role="status" aria-live="polite"
+     aria-label="{{aria}}" data-splash>
+
+  <div class="med__grain" aria-hidden="true"></div>
+  <div class="med__perf med__perf--top" aria-hidden="true"></div>
+  <div class="med__perf med__perf--bottom" aria-hidden="true"></div>
+  <div class="med__frame" aria-hidden="true">
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="med__rec"><i aria-hidden="true"></i>REC</div>
+
+  <div class="med__core">
+    <div class="med__lens">
+      <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+      <svg class="med__mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M8 22a5 5 0 0 1 5-5h7l4-6h16l4 6h7a5 5 0 0 1 5 5v22a5 5 0 0 1-5 5H13a5 5 0 0 1-5-5V22Z"
+              stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+        <circle cx="32" cy="33" r="10" stroke="currentColor" stroke-width="2.4"/>
+      </svg>
+
+      <svg class="med__iris" viewBox="0 0 100 100" aria-hidden="true">
+        <defs>
+          <linearGradient id="medBladeFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#32323b"/>
+            <stop offset="1" stop-color="#17171c"/>
+          </linearGradient>
+          <mask id="medIrisMask">
+            <circle cx="50" cy="50" r="46" fill="#fff"/>
+            <polygon class="med__hole" points="50,10 84.6,30 84.6,70 50,90 15.4,70 15.4,30" fill="#000"/>
+          </mask>
+        </defs>
+        <circle class="med__body" cx="50" cy="50" r="46" mask="url(#medIrisMask)"/>
+        <g class="med__seams" mask="url(#medIrisMask)">
+          <line x1="50" y1="50" x2="50" y2="4"/>
+          <line x1="50" y1="50" x2="90" y2="27"/>
+          <line x1="50" y1="50" x2="90" y2="73"/>
+          <line x1="50" y1="50" x2="50" y2="96"/>
+          <line x1="50" y1="50" x2="10" y2="73"/>
+          <line x1="50" y1="50" x2="10" y2="27"/>
+        </g>
+        <circle class="med__rim" cx="50" cy="50" r="46"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="med__title">{{name}}</h1>
+      <p class="med__tagline">{{tagline}}</p>
+    </div>
+  </div>
+
+  <div class="med__exif" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+       aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+    <span data-splash-status>{{loading}}</span>
+    <s aria-hidden="true">|</s>
+    <span>f/1.8</span>
+    <s aria-hidden="true">|</s>
+    <span><b data-splash-percent>0</b>٪</span>
+  </div>
+</div>

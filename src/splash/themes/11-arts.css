@@ -1,0 +1,209 @@
+/* ==========================================================================
+   ١١ — نادي الفنون
+   المفهوم: «اللوحة» — قماشٌ معتم، ألوانٌ تتفتّح، وضربة فرشاة تُرسَم مع التحميل.
+   ========================================================================== */
+
+:root {
+  --art-ground: #14100c;
+  --art-ground-2: #241c14;
+  --art-pink: #ff5d8f;
+  --art-teal: #3ec9c0;
+  --art-yellow: #ffd166;
+  --art-violet: #9b7bff;
+  --art-ink: #f6efe3;
+  --art-muted: rgba(246, 239, 227, 0.55);
+
+  --club-bg: var(--art-ground);
+  --club-ink: var(--art-ink);
+  --club-accent: var(--art-pink);
+  --club-accent-2: var(--art-teal);
+  --club-muted: var(--art-muted);
+}
+
+.art {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  background:
+    radial-gradient(44% 38% at 18% 20%, rgba(255, 93, 143, 0.34), transparent 70%),
+    radial-gradient(42% 36% at 86% 28%, rgba(62, 201, 192, 0.28), transparent 70%),
+    radial-gradient(40% 34% at 64% 90%, rgba(255, 209, 102, 0.24), transparent 70%),
+    radial-gradient(34% 30% at 8% 74%, rgba(155, 123, 255, 0.22), transparent 70%),
+    linear-gradient(168deg, var(--art-ground-2) 0%, var(--art-ground) 58%, #0a0805 100%);
+  color: var(--art-ink);
+}
+
+/* نسيج القماش */
+.art__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    repeating-linear-gradient(to right,  rgba(246,239,227,.045) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(to bottom, rgba(246,239,227,.045) 0 1px, transparent 1px 4px);
+}
+
+.art__core {
+  grid-row: 1;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.4rem, 4vw, 2rem);
+  padding: 2rem 1.25rem 0;
+  text-align: center;
+}
+
+/* --- لوحة الألوان --- */
+.art__palette {
+  position: relative;
+  width: clamp(9rem, 27vw, 12rem);
+  opacity: 0;
+  animation: art-in 950ms var(--splash-ease) 60ms forwards;
+}
+.art__palette svg { width: 100%; height: auto; overflow: visible; }
+
+.art__board {
+  fill: rgba(246, 239, 227, 0.08);
+  stroke: rgba(246, 239, 227, 0.4);
+  stroke-width: 2;
+}
+
+/* بُقع اللون تتفتّح واحدة تلو الأخرى */
+.art__blob {
+  transform-box: view-box;
+  animation: art-bloom 3.2s ease-in-out infinite;
+}
+.art__blob--1 { fill: var(--art-pink);   transform-origin: 30px 34px; }
+.art__blob--2 { fill: var(--art-teal);   transform-origin: 54px 26px; animation-delay: 0.4s; }
+.art__blob--3 { fill: var(--art-yellow); transform-origin: 76px 38px; animation-delay: 0.8s; }
+.art__blob--4 { fill: var(--art-violet); transform-origin: 44px 54px; animation-delay: 1.2s; }
+
+.art__thumb { fill: var(--art-ground); }
+
+/* --- النصوص --- */
+.art__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 5.6vw, 2.05rem);
+  font-weight: 700;
+  line-height: 1.35;
+  opacity: 0;
+  animation: art-up 780ms var(--splash-ease) 400ms forwards;
+}
+
+.art__tagline {
+  margin: 0.55rem 0 0;
+  font-size: clamp(0.85rem, 3.4vw, 1rem);
+  letter-spacing: 0.14em;
+  color: var(--art-muted);
+  opacity: 0;
+  animation: art-up 780ms var(--splash-ease) 520ms forwards;
+}
+
+/* --- ضربة الفرشاة = مؤشّر التقدّم --- */
+.art__stroke-wrap {
+  grid-row: 2;
+  z-index: 1;
+  width: min(24rem, 84vw);
+  padding-block-end: clamp(2rem, 7vh, 3.25rem);
+  opacity: 0;
+  animation: art-up 760ms var(--splash-ease) 640ms forwards;
+}
+
+.art__stroke {
+  position: relative;
+  height: 20px;
+}
+
+.art__stroke span {
+  position: absolute;
+  inset: 0;
+  /* حافة غير منتظمة تُحاكي شعيرات الفرشاة */
+  clip-path: polygon(
+    0% 34%, 4% 22%, 12% 30%, 22% 18%, 34% 28%, 46% 16%, 58% 26%,
+    70% 18%, 82% 28%, 92% 20%, 100% 32%,
+    100% 70%, 90% 82%, 78% 72%, 66% 84%, 54% 74%, 42% 86%, 30% 74%,
+    18% 84%, 8% 72%, 0% 80%
+  );
+}
+
+.art__stroke .art__wet {
+  background: rgba(246, 239, 227, 0.1);
+}
+
+/* اللون يُدهن من اليمين إلى اليسار بمقدار التقدّم */
+.art__stroke .art__paint {
+  background: linear-gradient(
+    to left,
+    var(--art-pink) 0%,
+    var(--art-violet) 34%,
+    var(--art-teal) 68%,
+    var(--art-yellow) 100%
+  );
+  -webkit-mask-image: linear-gradient(to left, #000 0 calc(var(--splash-progress) * 100%), transparent calc(var(--splash-progress) * 100%));
+  mask-image: linear-gradient(to left, #000 0 calc(var(--splash-progress) * 100%), transparent calc(var(--splash-progress) * 100%));
+}
+[dir="ltr"] .art__stroke .art__paint {
+  -webkit-mask-image: linear-gradient(to right, #000 0 calc(var(--splash-progress) * 100%), transparent calc(var(--splash-progress) * 100%));
+  mask-image: linear-gradient(to right, #000 0 calc(var(--splash-progress) * 100%), transparent calc(var(--splash-progress) * 100%));
+}
+
+/* رأس الفرشاة يتقدّم مع الدهان */
+.art__brush {
+  position: absolute;
+  top: 50%;
+  inset-inline-start: calc(var(--splash-progress) * 100%);
+  width: 22px;
+  height: 22px;
+  translate: 50% -50%;
+  color: var(--art-ink);
+  transition: inset-inline-start 180ms cubic-bezier(0.33, 1, 0.68, 1);
+  animation: art-dab 1.1s ease-in-out infinite;
+}
+[dir="ltr"] .art__brush { translate: -50% -50%; }
+
+.art__meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.9rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--art-muted);
+}
+.art__pct { color: var(--art-ink); }
+
+/* --- الحركات --- */
+@keyframes art-bloom {
+  0%, 100% { transform: scale(0.82); opacity: 0.55; }
+  50%      { transform: scale(1.1);  opacity: 1; }
+}
+
+@keyframes art-dab {
+  0%, 100% { rotate: -8deg; }
+  50%      { rotate: 6deg; }
+}
+
+@keyframes art-in {
+  from { opacity: 0; transform: translateY(16px) rotate(-8deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes art-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-height: 560px) {
+  .art__palette { width: clamp(5.5rem, 16vh, 7rem); }
+  .art__tagline { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art__palette, .art__title, .art__tagline, .art__stroke-wrap {
+    animation-duration: 1ms; animation-delay: 0ms; opacity: 1;
+  }
+  .art__blob, .art__brush { animation: none; }
+  .art__blob { opacity: 0.95; transform: none; }
+}

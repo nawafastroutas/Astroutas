@@ -1,0 +1,196 @@
+/* ==========================================================================
+   ٠٦ — نادي المناظرات
+   المفهوم: «المنصّة» — طرفان متقابلان، وميزانٌ يتأرجح ثم يستوي كلما اكتمل التحميل.
+   ========================================================================== */
+
+:root {
+  --deb-ground: #080c16;
+  --deb-blue: #2f6fed;
+  --deb-ember: #e4572e;
+  --deb-ink: #eef2fb;
+  --deb-muted: rgba(238, 242, 251, 0.5);
+
+  --club-bg: var(--deb-ground);
+  --club-ink: var(--deb-ink);
+  --club-accent: var(--deb-blue);
+  --club-accent-2: var(--deb-ember);
+  --club-muted: var(--deb-muted);
+}
+
+.deb {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  background: linear-gradient(170deg, #101728 0%, var(--deb-ground) 58%, #03060c 100%);
+  color: var(--deb-ink);
+}
+
+/* الأرضية المنقسمة: أزرق في جهة، جمري في الأخرى */
+.deb__split {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(44% 56% at 100% 30%, rgba(47, 111, 237, 0.26), transparent 70%),
+    radial-gradient(44% 56% at 0% 70%, rgba(228, 87, 46, 0.22), transparent 70%);
+}
+
+/* الخيط الضوئي الفاصل بين الطرفين */
+.deb__seam {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 50%;
+  z-index: 0;
+  width: 1px;
+  translate: -50% 0;
+  background: linear-gradient(to bottom, transparent, rgba(238, 242, 251, 0.28) 30%, rgba(238, 242, 251, 0.28) 70%, transparent);
+}
+
+.deb__core {
+  grid-row: 1;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.1rem, 3.4vw, 1.6rem);
+  padding: 2rem 1.25rem 0;
+  text-align: center;
+}
+
+/* --- الميزان --- */
+.deb__scale {
+  position: relative;
+  width: clamp(10rem, 30vw, 14rem);
+  opacity: 0;
+  animation: deb-in 950ms var(--splash-ease) 60ms forwards;
+}
+
+.deb__scale svg { width: 100%; height: auto; overflow: visible; }
+
+.deb__scale path,
+.deb__scale line {
+  fill: none;
+  stroke: var(--deb-ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.deb__fulcrum { fill: var(--deb-ink); stroke: none; }
+
+/* السعة تتناقص مع التقدّم: الميزان يهدأ حتى يستوي عند الاكتمال */
+.deb__sway {
+  transform-box: view-box;
+  transform-origin: 60px 26px;
+  --deb-amp: calc((1 - var(--splash-progress)) * 7);
+  animation: deb-sway 2.6s ease-in-out infinite;
+}
+
+.deb__pan--a { fill: var(--deb-blue);  stroke: none; }
+.deb__pan--b { fill: var(--deb-ember); stroke: none; }
+
+/* علامتا اقتباس متقابلتان تنبضان بالتناوب — تبادل الكلمة */
+.deb__quotes {
+  position: absolute;
+  inset-block: 18%;
+  inset-inline: -14%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: clamp(2rem, 7vw, 3rem);
+  line-height: 1;
+  pointer-events: none;
+}
+.deb__quotes b { font-weight: 700; animation: deb-turn 2.6s ease-in-out infinite; }
+.deb__quotes b:first-child { color: var(--deb-blue); }
+.deb__quotes b:last-child  { color: var(--deb-ember); animation-delay: 1.3s; }
+
+/* --- النصوص --- */
+.deb__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 5.6vw, 2.05rem);
+  font-weight: 700;
+  line-height: 1.35;
+  opacity: 0;
+  animation: deb-up 780ms var(--splash-ease) 400ms forwards;
+}
+
+.deb__tagline {
+  margin: 0.55rem 0 0;
+  font-size: clamp(0.82rem, 3.2vw, 0.95rem);
+  letter-spacing: 0.1em;
+  color: var(--deb-muted);
+  opacity: 0;
+  animation: deb-up 780ms var(--splash-ease) 520ms forwards;
+}
+
+/* --- المنصّتان تلتقيان في المنتصف = مؤشّر التقدّم --- */
+.deb__podium {
+  grid-row: 2;
+  z-index: 1;
+  width: min(22rem, 78vw);
+  padding-block-end: clamp(2rem, 7vh, 3.5rem);
+  opacity: 0;
+  animation: deb-up 760ms var(--splash-ease) 640ms forwards;
+}
+
+.deb__bars {
+  display: flex;
+  height: 3px;
+  background: rgba(238, 242, 251, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.deb__bars span {
+  display: block;
+  height: 100%;
+  inline-size: calc(var(--splash-progress) * 50%);
+  transition: inline-size 180ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+.deb__bars .deb__side--a { margin-inline-end: auto; background: var(--deb-blue); }
+.deb__bars .deb__side--b { margin-inline-start: auto; background: var(--deb-ember); }
+
+.deb__meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.85rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--deb-muted);
+}
+.deb__pct { color: var(--deb-ink); }
+
+/* --- الحركات --- */
+@keyframes deb-sway {
+  0%, 100% { transform: rotate(calc(var(--deb-amp) * 1deg)); }
+  50%      { transform: rotate(calc(var(--deb-amp) * -1deg)); }
+}
+
+@keyframes deb-turn {
+  0%, 44%, 100% { opacity: 0.3; transform: scale(0.92); }
+  16%, 30%      { opacity: 1;   transform: scale(1); }
+}
+
+@keyframes deb-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.94); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes deb-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-height: 560px) {
+  .deb__scale { width: clamp(7rem, 20vh, 9rem); }
+  .deb__tagline { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deb__scale, .deb__title, .deb__tagline, .deb__podium {
+    animation-duration: 1ms; animation-delay: 0ms; opacity: 1;
+  }
+  .deb__sway { animation: none; transform: rotate(calc(var(--deb-amp) * 1deg)); }
+  .deb__quotes b { animation: none; opacity: 0.8; }
+}

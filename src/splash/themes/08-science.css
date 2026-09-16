@@ -1,0 +1,192 @@
+/* ==========================================================================
+   ٠٨ — النادي العلمي
+   المفهوم: «التجربة» — دورقٌ يمتلئ بمقدار التحميل، وشبكة جزيئية تنبض خلفه.
+   ========================================================================== */
+
+:root {
+  --sci-ground: #031218;
+  --sci-ground-2: #06303a;
+  --sci-cyan: #00d1d1;
+  --sci-leaf: #7ee787;
+  --sci-ink: #e6feff;
+  --sci-muted: rgba(230, 254, 255, 0.5);
+
+  --club-bg: var(--sci-ground);
+  --club-ink: var(--sci-ink);
+  --club-accent: var(--sci-cyan);
+  --club-accent-2: var(--sci-leaf);
+  --club-muted: var(--sci-muted);
+}
+
+.sci {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  background:
+    radial-gradient(50% 42% at 50% 36%, rgba(0, 209, 209, 0.18), transparent 72%),
+    radial-gradient(36% 30% at 88% 84%, rgba(126, 231, 135, 0.1), transparent 70%),
+    linear-gradient(168deg, var(--sci-ground-2) 0%, var(--sci-ground) 56%, #000709 100%);
+  color: var(--sci-ink);
+}
+
+/* شبكة سداسية — إحساس بنية جزيئية */
+.sci__lattice {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(60deg,  rgba(0, 209, 209, 0.07) 1px, transparent 1px),
+    linear-gradient(-60deg, rgba(0, 209, 209, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 209, 209, 0.05) 1px, transparent 1px);
+  background-size: 46px 80px;
+  -webkit-mask-image: radial-gradient(76% 64% at 50% 44%, #000 18%, transparent 82%);
+  mask-image: radial-gradient(76% 64% at 50% 44%, #000 18%, transparent 82%);
+  animation: sci-lattice 12s ease-in-out infinite alternate;
+}
+
+.sci__core {
+  grid-row: 1;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.25rem, 3.6vw, 1.75rem);
+  padding: 2rem 1.25rem 0;
+  text-align: center;
+}
+
+/* --- الدورق --- */
+.sci__flask {
+  position: relative;
+  width: clamp(7.5rem, 23vw, 10.5rem);
+  opacity: 0;
+  animation: sci-in 950ms var(--splash-ease) 60ms forwards;
+}
+.sci__flask svg { width: 100%; height: auto; overflow: visible; }
+
+.sci__glass {
+  fill: none;
+  stroke: rgba(230, 254, 255, 0.75);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* السائل: يرتفع بمقدار --splash-progress */
+.sci__liquid {
+  fill: var(--sci-cyan);
+  transform-box: view-box;
+  /* المدى محصور في جسم الدورق: فارغ عند 106، ممتلئ تحت الرقبة عند 46 */
+  transform: translateY(calc(106px - var(--splash-progress) * 60px));
+  transition: transform 180ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.sci__foam {
+  fill: var(--sci-leaf);
+  opacity: 0.85;
+  transform-box: view-box;
+  transform: translateY(calc(106px - var(--splash-progress) * 60px));
+  transition: transform 180ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* فقاعات تصعد داخل الدورق */
+.sci__bubble {
+  fill: rgba(230, 254, 255, 0.75);
+  animation: sci-bubble 3.2s ease-in infinite;
+}
+.sci__bubble--2 { animation-delay: 1s;   animation-duration: 3.8s; }
+.sci__bubble--3 { animation-delay: 2.1s; animation-duration: 2.9s; }
+
+/* عُقد جزيئية حول الدورق */
+.sci__node {
+  fill: var(--sci-leaf);
+  animation: sci-node 2.4s ease-in-out infinite;
+}
+.sci__node--2 { animation-delay: 0.8s; }
+.sci__node--3 { animation-delay: 1.6s; }
+.sci__bond {
+  stroke: rgba(126, 231, 135, 0.4);
+  stroke-width: 1.4;
+  stroke-dasharray: 3 4;
+  animation: sci-bond 2s linear infinite;
+}
+
+/* --- النصوص --- */
+.sci__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 5.6vw, 2.05rem);
+  font-weight: 700;
+  line-height: 1.35;
+  opacity: 0;
+  animation: sci-up 780ms var(--splash-ease) 400ms forwards;
+}
+
+.sci__tagline {
+  margin: 0.55rem 0 0;
+  font-size: clamp(0.82rem, 3.2vw, 0.95rem);
+  letter-spacing: 0.1em;
+  color: var(--sci-muted);
+  opacity: 0;
+  animation: sci-up 780ms var(--splash-ease) 520ms forwards;
+}
+
+/* --- قراءة المختبر --- */
+.sci__readout {
+  grid-row: 2;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding-block-end: clamp(2rem, 7vh, 3.5rem);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--sci-muted);
+  opacity: 0;
+  animation: sci-up 760ms var(--splash-ease) 640ms forwards;
+}
+.sci__readout b { color: var(--sci-cyan); font-size: 0.95rem; }
+.sci__sep { width: 1px; height: 1.1rem; background: rgba(230, 254, 255, 0.18); }
+
+/* --- الحركات --- */
+@keyframes sci-lattice {
+  from { transform: translate3d(-8px, -6px, 0); }
+  to   { transform: translate3d(8px, 6px, 0); }
+}
+
+@keyframes sci-bubble {
+  0%   { transform: translateY(0) scale(0.6); opacity: 0; }
+  20%  { opacity: 0.9; }
+  100% { transform: translateY(-34px) scale(1); opacity: 0; }
+}
+
+@keyframes sci-node {
+  0%, 100% { opacity: 0.35; r: 2.4; }
+  50%      { opacity: 1;    r: 4; }
+}
+
+@keyframes sci-bond { to { stroke-dashoffset: -14; } }
+
+@keyframes sci-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.92); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes sci-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-height: 560px) {
+  .sci__flask { width: clamp(4.5rem, 14vh, 6rem); }
+  .sci__tagline { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sci__flask, .sci__title, .sci__tagline, .sci__readout {
+    animation-duration: 1ms; animation-delay: 0ms; opacity: 1;
+  }
+  .sci__lattice, .sci__bubble, .sci__node, .sci__bond { animation: none; }
+  .sci__bubble { opacity: 0.5; }
+}

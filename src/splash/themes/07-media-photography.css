@@ -1,0 +1,229 @@
+/* ==========================================================================
+   ٠٧ — نادي الإعلام والتصوير
+   المفهوم: «العدسة» — حدقة سداسية تتّسع مع التحميل فتكشف الشعار خلفها.
+   ========================================================================== */
+
+:root {
+  --med-ground: #0a0a0c;
+  --med-ground-2: #17171b;
+  --med-rec: #ff3b30;
+  --med-steel: #9aa0a6;
+  --med-ink: #f5f5f7;
+  --med-muted: rgba(245, 245, 247, 0.5);
+
+  --club-bg: var(--med-ground);
+  --club-ink: var(--med-ink);
+  --club-accent: var(--med-rec);
+  --club-accent-2: var(--med-steel);
+  --club-muted: var(--med-muted);
+}
+
+.med {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  place-items: center;
+  background:
+    radial-gradient(58% 48% at 50% 42%, var(--med-ground-2) 0%, transparent 74%),
+    linear-gradient(170deg, #121215 0%, var(--med-ground) 60%, #000 100%);
+  color: var(--med-ink);
+}
+
+/* حبيبات الفيلم */
+.med__grain {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image:
+    radial-gradient(1px 1px at 18% 24%, rgba(255,255,255,.22), transparent),
+    radial-gradient(1px 1px at 62% 12%, rgba(255,255,255,.16), transparent),
+    radial-gradient(1px 1px at 33% 74%, rgba(255,255,255,.2), transparent),
+    radial-gradient(1px 1px at 81% 58%, rgba(255,255,255,.14), transparent),
+    radial-gradient(1px 1px at 47% 44%, rgba(255,255,255,.18), transparent);
+  background-size: 140px 140px;
+  animation: med-grain 0.6s steps(3, end) infinite;
+}
+
+/* شريطا تثقيب الفيلم أعلى الشاشة وأسفلها */
+.med__perf {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 0;
+  height: 22px;
+  background-image: radial-gradient(
+    ellipse 6px 8px at 50% 50%, rgba(245, 245, 247, 0.16) 0 99%, transparent 100%
+  );
+  background-size: 26px 22px;
+  background-repeat: repeat-x;
+  animation: med-roll 1.6s linear infinite;
+}
+.med__perf--top { top: 0; }
+.med__perf--bottom { bottom: 0; }
+
+/* إطار عدسة الرؤية: أربع زوايا */
+.med__frame {
+  position: absolute;
+  inset: clamp(1.25rem, 4vw, 2.5rem);
+  z-index: 1;
+  pointer-events: none;
+}
+.med__frame span {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 2px solid rgba(245, 245, 247, 0.35);
+}
+.med__frame span:nth-child(1) { top: 0; left: 0;  border-right: 0; border-bottom: 0; }
+.med__frame span:nth-child(2) { top: 0; right: 0; border-left: 0;  border-bottom: 0; }
+.med__frame span:nth-child(3) { bottom: 0; left: 0;  border-right: 0; border-top: 0; }
+.med__frame span:nth-child(4) { bottom: 0; right: 0; border-left: 0;  border-top: 0; }
+
+/* شريط التسجيل أعلى */
+.med__rec {
+  grid-row: 1;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: clamp(2.5rem, 8vh, 4rem);
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  color: var(--med-muted);
+  opacity: 0;
+  animation: med-fade 700ms var(--splash-ease) 520ms forwards;
+}
+.med__rec i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--med-rec);
+  animation: med-blink 1.4s steps(1, end) infinite;
+}
+
+.med__core {
+  grid-row: 2;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.25rem, 3.6vw, 1.75rem);
+  padding: 0 1.25rem;
+  text-align: center;
+}
+
+/* --- الحدقة --- */
+.med__lens {
+  position: relative;
+  width: clamp(9rem, 27vw, 12.5rem);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  animation: med-in 950ms var(--splash-ease) 60ms forwards;
+}
+
+/* الشعار خلف الحدقة — تكشفه كلما اتّسعت */
+.med__mark {
+  position: absolute;
+  width: 38%;
+  height: auto;
+  color: var(--med-ink);
+}
+
+.med__iris {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.med__body { fill: url(#medBladeFill); }
+.med__rim  { fill: none; stroke: rgba(245, 245, 247, 0.28); stroke-width: 1.4; }
+.med__seams line { stroke: rgba(245, 245, 247, 0.3); stroke-width: 1; }
+
+/* الفتحة: تتّسع وتدور قليلًا — تمامًا كحدقة العدسة الحقيقية */
+.med__hole,
+.med__seams {
+  transform-box: view-box;
+  transform-origin: 50px 50px;
+  transform:
+    rotate(calc(var(--splash-progress) * 34deg))
+    scale(calc(0.2 + var(--splash-progress) * 0.78));
+  transition: transform 180ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+/* الشقوق تدور مع الفتحة لكنها لا تتقلّص معها */
+.med__seams { transform: rotate(calc(var(--splash-progress) * 34deg)); }
+
+/* --- النصوص --- */
+.med__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 5.6vw, 2.05rem);
+  font-weight: 700;
+  line-height: 1.35;
+  opacity: 0;
+  animation: med-up 780ms var(--splash-ease) 400ms forwards;
+  text-wrap: balance;
+}
+
+.med__tagline {
+  margin: 0.55rem 0 0;
+  font-size: clamp(0.82rem, 3.2vw, 0.95rem);
+  letter-spacing: 0.08em;
+  color: var(--med-muted);
+  opacity: 0;
+  animation: med-up 780ms var(--splash-ease) 520ms forwards;
+}
+
+/* --- شريط بيانات التعريض أسفل الشاشة --- */
+.med__exif {
+  grid-row: 3;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 3vw, 1.5rem);
+  margin-bottom: clamp(2.5rem, 8vh, 4rem);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--med-muted);
+  opacity: 0;
+  animation: med-up 760ms var(--splash-ease) 620ms forwards;
+}
+.med__exif b { color: var(--med-ink); font-weight: 600; }
+.med__exif s { text-decoration: none; opacity: 0.35; }
+
+/* --- الحركات --- */
+@keyframes med-grain { to { background-position: 40px -30px; } }
+@keyframes med-roll  { to { background-position-x: 26px; } }
+
+@keyframes med-blink {
+  0%, 55%   { opacity: 1; }
+  56%, 100% { opacity: 0.15; }
+}
+
+@keyframes med-in {
+  from { opacity: 0; transform: scale(0.9); filter: blur(8px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+
+@keyframes med-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes med-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (max-height: 560px) {
+  .med__lens { width: clamp(6rem, 18vh, 7.5rem); }
+  .med__tagline, .med__rec { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .med__lens, .med__title, .med__tagline, .med__exif, .med__rec {
+    animation-duration: 1ms; animation-delay: 0ms; opacity: 1;
+  }
+  .med__grain, .med__perf, .med__rec i { animation: none; }
+}

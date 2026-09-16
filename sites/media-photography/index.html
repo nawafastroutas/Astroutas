@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نادي الإعلام والتصوير — قسم الأنشطة الطلابية</title>
+<meta name="description" content="لقطةٌ واحدة تكفي لتروي">
+<meta name="theme-color" content="#0a0a0c">
+
+<!-- ======================================================================
+     ترتيب <head> مقصود — لا تغيّره:
+     ١) نواة الشاشة + ثيم النادي: ملفّا التنسيق الوحيدان اللذان يحجبان الرسم،
+        وهما صغيران، فتظهر شاشة التحميل فورًا.
+     ٢) السكربت التمهيدي بعدهما مباشرة.
+     ٣) تنسيق الموقع يُحمَّل بشكل غير حاجب حتى لا يؤخّر ظهور الشاشة —
+        المحتوى مخفي خلفها على أي حال.
+     ====================================================================== -->
+<link rel="stylesheet" href="../../src/splash/core.css">
+<link rel="stylesheet" href="../../src/splash/themes/07-media-photography.css">
+
+<script>
+  (function () {
+    var r = document.documentElement;
+    r.classList.add('js');
+    setTimeout(function () {
+      if (r.classList.contains('app-ready')) return;
+      r.classList.remove('splash-lock');
+      r.classList.add('app-ready');
+      var s = document.querySelector('[data-splash]');
+      if (s) s.remove();
+      if (document.body) document.body.removeAttribute('aria-busy');
+    }, 10000);
+  })();
+</script>
+
+<link rel="stylesheet" href="../../assets/club-site.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="../../assets/club-site.css"></noscript>
+</head>
+
+<body>
+
+<!-- ====== شاشة التحميل (أول عنصر في الصفحة) ====== -->
+<div class="splash med" id="splash" role="status" aria-live="polite"
+     aria-label="جارٍ تحميل موقع نادي الإعلام والتصوير" data-splash>
+
+  <div class="med__grain" aria-hidden="true"></div>
+  <div class="med__perf med__perf--top" aria-hidden="true"></div>
+  <div class="med__perf med__perf--bottom" aria-hidden="true"></div>
+  <div class="med__frame" aria-hidden="true">
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="med__rec"><i aria-hidden="true"></i>REC</div>
+
+  <div class="med__core">
+    <div class="med__lens">
+      <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+      <svg class="med__mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M8 22a5 5 0 0 1 5-5h7l4-6h16l4 6h7a5 5 0 0 1 5 5v22a5 5 0 0 1-5 5H13a5 5 0 0 1-5-5V22Z"
+              stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+        <circle cx="32" cy="33" r="10" stroke="currentColor" stroke-width="2.4"/>
+      </svg>
+
+      <svg class="med__iris" viewBox="0 0 100 100" aria-hidden="true">
+        <defs>
+          <linearGradient id="medBladeFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#32323b"/>
+            <stop offset="1" stop-color="#17171c"/>
+          </linearGradient>
+          <mask id="medIrisMask">
+            <circle cx="50" cy="50" r="46" fill="#fff"/>
+            <polygon class="med__hole" points="50,10 84.6,30 84.6,70 50,90 15.4,70 15.4,30" fill="#000"/>
+          </mask>
+        </defs>
+        <circle class="med__body" cx="50" cy="50" r="46" mask="url(#medIrisMask)"/>
+        <g class="med__seams" mask="url(#medIrisMask)">
+          <line x1="50" y1="50" x2="50" y2="4"/>
+          <line x1="50" y1="50" x2="90" y2="27"/>
+          <line x1="50" y1="50" x2="90" y2="73"/>
+          <line x1="50" y1="50" x2="50" y2="96"/>
+          <line x1="50" y1="50" x2="10" y2="73"/>
+          <line x1="50" y1="50" x2="10" y2="27"/>
+        </g>
+        <circle class="med__rim" cx="50" cy="50" r="46"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="med__title">نادي الإعلام والتصوير</h1>
+      <p class="med__tagline">لقطةٌ واحدة تكفي لتروي</p>
+    </div>
+  </div>
+
+  <div class="med__exif" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+       aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+    <span data-splash-status>نضبط التركيز…</span>
+    <s aria-hidden="true">|</s>
+    <span>f/1.8</span>
+    <s aria-hidden="true">|</s>
+    <span><b data-splash-percent>0</b>٪</span>
+  </div>
+</div>
+
+<!-- ====== موقع النادي (معاينة — استبدلها بموقعكم الحقيقي) ====== -->
+<div class="club" data-app-root>
+  <header class="club__header" data-splash-enter>
+    <span class="club__brand"><i class="club__dot" aria-hidden="true"></i>نادي الإعلام والتصوير</span>
+    <a class="club__back" href="../index.html">كل الشاشات</a>
+  </header>
+
+  <main class="club__main">
+    <p class="club__eyebrow" data-splash-enter>الأنشطة الطلابية</p>
+    <h1 class="club__title" data-splash-enter>احكِ القصة كما رأيتها</h1>
+    <p class="club__lede" data-splash-enter>تغطية الفعاليات، ورش تصوير ومونتاج، وإنتاج أفلام قصيرة.</p>
+    <ul class="club__chips" data-splash-enter>
+      <li>ورشة التصوير الليلي</li>
+      <li>مونتاج سريع</li>
+      <li>الفيلم الطلابي القصير</li>
+    </ul>
+  </main>
+
+  <footer class="club__footer" data-splash-enter>
+    <p>© نادي الإعلام والتصوير — قسم الأنشطة الطلابية.</p>
+    <p class="club__note">هذه معاينة توضيحية لما يظهر بعد اختفاء شاشة التحميل.</p>
+  </footer>
+</div>
+
+<script type="module">
+  import { createSplash, indexEnterTargets } from '../../src/splash/splash.js';
+
+  indexEnterTargets();          // ترقيم عناصر الدخول للحصول على تتابُع
+  createSplash({
+    appRoot: '[data-app-root]',
+    loadingText: "نضبط التركيز…",
+    readyText: "التقِط",
+    sessionKey: 'astroutas:splash:media-photography',
+  });
+</script>
+
+</body>
+</html>

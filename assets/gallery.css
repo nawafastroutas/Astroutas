@@ -1,0 +1,170 @@
+/* ==========================================================================
+   معرض شاشات التحميل الـ١٢
+   ========================================================================== */
+
+:root {
+  --gal-bg: #06111f;
+  --gal-ink: #eaf1fb;
+  --gal-muted: rgba(234, 241, 251, 0.55);
+  --gal-font: "SF Arabic", "Geeza Pro", "Noto Kufi Arabic", "Noto Naskh Arabic",
+    "Dubai", "Tajawal", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+  background:
+    radial-gradient(52% 40% at 78% 6%, rgba(30, 111, 217, 0.22), transparent 70%),
+    radial-gradient(40% 34% at 10% 92%, rgba(245, 133, 31, 0.12), transparent 70%),
+    linear-gradient(168deg, #0a1d33 0%, var(--gal-bg) 56%, #030a14 100%);
+  color: var(--gal-ink);
+  font-family: var(--gal-font);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- الترويسة --- */
+.gal__head {
+  max-width: 44rem;
+  margin: 0 auto clamp(2rem, 6vw, 3.25rem);
+  text-align: center;
+}
+
+.gal__eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  color: #f5851f;
+}
+
+.gal__title {
+  margin: 0;
+  font-size: clamp(1.9rem, 7vw, 3rem);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.gal__lede {
+  margin: 1rem 0 0;
+  color: var(--gal-muted);
+  font-size: clamp(0.9rem, 3.4vw, 1.05rem);
+  text-wrap: pretty;
+}
+
+/* --- الشبكة --- */
+.gal__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
+  gap: clamp(0.9rem, 2.4vw, 1.4rem);
+  max-width: 76rem;
+  margin: 0 auto;
+}
+
+.gal__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: clamp(1.1rem, 3vw, 1.5rem);
+  border-radius: 18px;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--card-ink, #fff);
+  background: var(--card-bg, #0b1626);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  isolation: isolate;
+  transition:
+    transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 320ms ease,
+    box-shadow 320ms ease;
+}
+
+/* لمحة من هوية كل نادٍ داخل بطاقته */
+.gal__card::before {
+  content: "";
+  position: absolute;
+  inset: -40% -10% auto -10%;
+  height: 130%;
+  z-index: -1;
+  background:
+    radial-gradient(38% 46% at 24% 24%, var(--card-accent) 0%, transparent 62%),
+    radial-gradient(34% 40% at 82% 78%, var(--card-accent-2) 0%, transparent 62%);
+  opacity: 0.32;
+  transition: opacity 320ms ease, transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gal__card:hover,
+.gal__card:focus-visible {
+  transform: translateY(-6px);
+  border-color: color-mix(in srgb, var(--card-accent) 55%, transparent);
+  box-shadow: 0 26px 54px -30px rgba(0, 0, 0, 0.9);
+}
+.gal__card:hover::before,
+.gal__card:focus-visible::before {
+  opacity: 0.52;
+  transform: scale(1.08);
+}
+
+.gal__num {
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  color: var(--card-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* شريط لوني رفيع بألوان النادي */
+.gal__art {
+  height: 3px;
+  width: 3.25rem;
+  border-radius: 999px;
+  margin: 0.55rem 0 0.75rem;
+  background: linear-gradient(to left, var(--card-accent), var(--card-accent-2));
+}
+
+.gal__name {
+  font-size: clamp(1rem, 3.6vw, 1.15rem);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.gal__concept {
+  font-size: 0.82rem;
+  color: color-mix(in srgb, var(--card-ink) 62%, transparent);
+  line-height: 1.65;
+}
+
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+  .gal__concept { opacity: 0.65; }
+  .gal__card:hover { border-color: rgba(255, 255, 255, 0.3); }
+}
+
+/* --- التذييل --- */
+.gal__foot {
+  max-width: 76rem;
+  margin: clamp(2.5rem, 7vw, 4rem) auto 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem;
+  color: var(--gal-muted);
+  text-align: center;
+}
+
+.gal__foot code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.92em;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 5px;
+  padding: 0.1rem 0.4rem;
+  direction: ltr;
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gal__card,
+  .gal__card::before { transition: none; }
+  .gal__card:hover,
+  .gal__card:focus-visible { transform: none; }
+}

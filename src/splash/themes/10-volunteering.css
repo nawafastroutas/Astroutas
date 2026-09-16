@@ -1,0 +1,187 @@
+/* ==========================================================================
+   ١٠ — نادي العمل التطوعي
+   المفهوم: «الأثر» — قلبٌ في المركز، وحلقةٌ تتّسع بمقدار العطاء، ونقاطٌ تتقارب.
+   ========================================================================== */
+
+:root {
+  --vol-ground: #15060f;
+  --vol-ground-2: #2c0c1d;
+  --vol-rose: #f0577a;
+  --vol-amber: #ffc75f;
+  --vol-ink: #fff0f4;
+  --vol-muted: rgba(255, 240, 244, 0.55);
+
+  --club-bg: var(--vol-ground);
+  --club-ink: var(--vol-ink);
+  --club-accent: var(--vol-rose);
+  --club-accent-2: var(--vol-amber);
+  --club-muted: var(--vol-muted);
+}
+
+.vol {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  background:
+    radial-gradient(50% 42% at 50% 38%, rgba(240, 87, 122, 0.24), transparent 72%),
+    radial-gradient(38% 32% at 84% 86%, rgba(255, 199, 95, 0.16), transparent 70%),
+    linear-gradient(168deg, var(--vol-ground-2) 0%, var(--vol-ground) 56%, #080205 100%);
+  color: var(--vol-ink);
+}
+
+.vol__core {
+  grid-row: 1;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.4rem, 4vw, 2rem);
+  padding: 2rem 1.25rem 0;
+  text-align: center;
+}
+
+/* --- الأثر: قلب وحلقات --- */
+.vol__impact {
+  position: relative;
+  width: clamp(9rem, 27vw, 12rem);
+  aspect-ratio: 1;
+  opacity: 0;
+  animation: vol-in 950ms var(--splash-ease) 60ms forwards;
+}
+.vol__impact svg { width: 100%; height: 100%; overflow: visible; }
+
+/* حلقات تتّسع باستمرار — إحساس الأثر الممتدّ */
+.vol__ripple {
+  fill: none;
+  stroke: var(--vol-rose);
+  stroke-width: 1.2;
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 50px 50px;
+  animation: vol-ripple 3.6s cubic-bezier(0.2, 0.6, 0.35, 1) infinite;
+}
+.vol__ripple--2 { animation-delay: 1.2s; }
+.vol__ripple--3 { animation-delay: 2.4s; }
+
+/* حلقة الأثر: نصف قطرها نفسه هو مقدار التقدّم */
+.vol__gauge {
+  fill: none;
+  stroke: var(--vol-amber);
+  stroke-width: 1.8;
+  stroke-dasharray: 3 5;
+  r: calc(12px + var(--splash-progress) * 34px);
+  opacity: calc(0.35 + var(--splash-progress) * 0.65);
+  transition: r 180ms cubic-bezier(0.33, 1, 0.68, 1), opacity 180ms linear;
+  filter: drop-shadow(0 0 6px rgba(255, 199, 95, 0.55));
+}
+
+/* نقاط تتقارب نحو المركز — أيادٍ تجتمع */
+.vol__seed {
+  fill: var(--vol-amber);
+  transform-box: view-box;
+  transform-origin: 50px 50px;
+  animation: vol-gather 3.2s ease-in-out infinite;
+}
+.vol__seed--2 { animation-delay: 0.4s; }
+.vol__seed--3 { animation-delay: 0.8s; }
+.vol__seed--4 { animation-delay: 1.2s; }
+.vol__seed--5 { animation-delay: 1.6s; }
+.vol__seed--6 { animation-delay: 2s; }
+
+.vol__heart {
+  fill: var(--vol-rose);
+  transform-box: view-box;
+  transform-origin: 50px 50px;
+  filter: drop-shadow(0 0 18px rgba(240, 87, 122, 0.55));
+  animation: vol-beat 2.4s ease-in-out infinite;
+}
+
+/* --- النصوص --- */
+.vol__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 5.6vw, 2.05rem);
+  font-weight: 700;
+  line-height: 1.35;
+  opacity: 0;
+  animation: vol-up 780ms var(--splash-ease) 400ms forwards;
+}
+
+.vol__tagline {
+  margin: 0.55rem 0 0;
+  font-size: clamp(0.85rem, 3.4vw, 1rem);
+  letter-spacing: 0.16em;
+  color: var(--vol-muted);
+  opacity: 0;
+  animation: vol-up 780ms var(--splash-ease) 520ms forwards;
+}
+
+/* --- التذييل --- */
+.vol__foot {
+  grid-row: 2;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding-block-end: clamp(2rem, 7vh, 3.5rem);
+  opacity: 0;
+  animation: vol-up 760ms var(--splash-ease) 640ms forwards;
+}
+
+.vol__pct {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.12rem;
+  font-size: clamp(1.5rem, 5.5vw, 2rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--vol-amber);
+}
+.vol__pct i { font-style: normal; font-size: 0.45em; opacity: 0.7; }
+
+.vol__status {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--vol-muted);
+}
+
+/* --- الحركات --- */
+@keyframes vol-ripple {
+  0%   { transform: scale(0.35); opacity: 0.65; }
+  100% { transform: scale(1.5);  opacity: 0; }
+}
+
+@keyframes vol-gather {
+  0%, 100% { transform: scale(1);    opacity: 0.25; }
+  50%      { transform: scale(0.42); opacity: 1; }
+}
+
+@keyframes vol-beat {
+  0%, 62%, 100% { transform: scale(1); }
+  16%           { transform: scale(1.09); }
+  32%           { transform: scale(1.02); }
+}
+
+@keyframes vol-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes vol-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-height: 560px) {
+  .vol__impact { width: clamp(5.5rem, 16vh, 7rem); }
+  .vol__tagline { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vol__impact, .vol__title, .vol__tagline, .vol__foot {
+    animation-duration: 1ms; animation-delay: 0ms; opacity: 1;
+  }
+  .vol__ripple, .vol__seed, .vol__heart { animation: none; }
+  .vol__ripple { opacity: 0.22; }
+  .vol__seed { opacity: 0.6; }
+}

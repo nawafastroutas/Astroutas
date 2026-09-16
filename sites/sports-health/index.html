@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نادي الرياضة والصحة — قسم الأنشطة الطلابية</title>
+<meta name="description" content="طاقة تُصنع كل يوم">
+<meta name="theme-color" content="#04140d">
+
+<!-- ======================================================================
+     ترتيب <head> مقصود — لا تغيّره:
+     ١) نواة الشاشة + ثيم النادي: ملفّا التنسيق الوحيدان اللذان يحجبان الرسم،
+        وهما صغيران، فتظهر شاشة التحميل فورًا.
+     ٢) السكربت التمهيدي بعدهما مباشرة.
+     ٣) تنسيق الموقع يُحمَّل بشكل غير حاجب حتى لا يؤخّر ظهور الشاشة —
+        المحتوى مخفي خلفها على أي حال.
+     ====================================================================== -->
+<link rel="stylesheet" href="../../src/splash/core.css">
+<link rel="stylesheet" href="../../src/splash/themes/02-sports-health.css">
+
+<script>
+  (function () {
+    var r = document.documentElement;
+    r.classList.add('js');
+    setTimeout(function () {
+      if (r.classList.contains('app-ready')) return;
+      r.classList.remove('splash-lock');
+      r.classList.add('app-ready');
+      var s = document.querySelector('[data-splash]');
+      if (s) s.remove();
+      if (document.body) document.body.removeAttribute('aria-busy');
+    }, 10000);
+  })();
+</script>
+
+<link rel="stylesheet" href="../../assets/club-site.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="../../assets/club-site.css"></noscript>
+</head>
+
+<body>
+
+<!-- ====== شاشة التحميل (أول عنصر في الصفحة) ====== -->
+<div class="splash spo" id="splash" role="status" aria-live="polite"
+     aria-label="جارٍ تحميل موقع نادي الرياضة والصحة" data-splash>
+
+  <div class="spo__bands" aria-hidden="true"></div>
+
+  <svg class="spo__ecg" viewBox="0 0 400 80" preserveAspectRatio="none" aria-hidden="true">
+    <path class="spo__line"  d="M0 40h74l6-4 5 7 5-24 6 42 5-23 4 5 5-3h80l6-4 5 7 5-24 6 42 5-23 4 5 5-3h80l6-4 5 7 5-24 6 42 5-23 4 5 5-3h48" pathLength="100"/>
+    <path class="spo__sweep" d="M0 40h74l6-4 5 7 5-24 6 42 5-23 4 5 5-3h80l6-4 5 7 5-24 6 42 5-23 4 5 5-3h80l6-4 5 7 5-24 6 42 5-23 4 5 5-3h48" pathLength="100"/>
+  </svg>
+
+  <div class="spo__core">
+    <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+    <div class="spo__dial">
+      <span class="spo__pulse" aria-hidden="true"></span>
+      <span class="spo__pulse spo__pulse--b" aria-hidden="true"></span>
+      <svg class="spo__mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M32 54S10 41.6 10 26.4A12.4 12.4 0 0 1 32 18a12.4 12.4 0 0 1 22 8.4C54 41.6 32 54 32 54Z"
+              stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M15 32h9l4-7 5 14 4-7h12" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="spo__title">نادي الرياضة والصحة</h1>
+      <p class="spo__tagline">طاقة تُصنع كل يوم</p>
+    </div>
+  </div>
+
+  <div class="spo__readout" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+       aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+    <span class="spo__pct"><b data-splash-percent>0</b><i>٪</i></span>
+    <span class="spo__sep" aria-hidden="true"></span>
+    <span class="spo__status" data-splash-status>نقيس النبض…</span>
+  </div>
+</div>
+
+<!-- ====== موقع النادي (معاينة — استبدلها بموقعكم الحقيقي) ====== -->
+<div class="club" data-app-root>
+  <header class="club__header" data-splash-enter>
+    <span class="club__brand"><i class="club__dot" aria-hidden="true"></i>نادي الرياضة والصحة</span>
+    <a class="club__back" href="../index.html">كل الشاشات</a>
+  </header>
+
+  <main class="club__main">
+    <p class="club__eyebrow" data-splash-enter>الأنشطة الطلابية</p>
+    <h1 class="club__title" data-splash-enter>جسد نشيط… ذهن صافٍ</h1>
+    <p class="club__lede" data-splash-enter>بطولات داخلية، تدريبات أسبوعية، وبرامج لياقة وتغذية.</p>
+    <ul class="club__chips" data-splash-enter>
+      <li>دوري الكليات</li>
+      <li>تحدّي ١٠ آلاف خطوة</li>
+      <li>ورشة التغذية الرياضية</li>
+    </ul>
+  </main>
+
+  <footer class="club__footer" data-splash-enter>
+    <p>© نادي الرياضة والصحة — قسم الأنشطة الطلابية.</p>
+    <p class="club__note">هذه معاينة توضيحية لما يظهر بعد اختفاء شاشة التحميل.</p>
+  </footer>
+</div>
+
+<script type="module">
+  import { createSplash, indexEnterTargets } from '../../src/splash/splash.js';
+
+  indexEnterTargets();          // ترقيم عناصر الدخول للحصول على تتابُع
+  createSplash({
+    appRoot: '[data-app-root]',
+    loadingText: "نقيس النبض…",
+    readyText: "جاهز للانطلاق",
+    sessionKey: 'astroutas:splash:sports-health',
+  });
+</script>
+
+</body>
+</html>

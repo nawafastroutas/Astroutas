@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نادي الطلبة الدوليين — قسم الأنشطة الطلابية</title>
+<meta name="description" content="وجوهٌ من كل الأرض… حرمٌ واحد">
+<meta name="theme-color" content="#04182b">
+
+<!-- ======================================================================
+     ترتيب <head> مقصود — لا تغيّره:
+     ١) نواة الشاشة + ثيم النادي: ملفّا التنسيق الوحيدان اللذان يحجبان الرسم،
+        وهما صغيران، فتظهر شاشة التحميل فورًا.
+     ٢) السكربت التمهيدي بعدهما مباشرة.
+     ٣) تنسيق الموقع يُحمَّل بشكل غير حاجب حتى لا يؤخّر ظهور الشاشة —
+        المحتوى مخفي خلفها على أي حال.
+     ====================================================================== -->
+<link rel="stylesheet" href="../../src/splash/core.css">
+<link rel="stylesheet" href="../../src/splash/themes/04-international.css">
+
+<script>
+  (function () {
+    var r = document.documentElement;
+    r.classList.add('js');
+    setTimeout(function () {
+      if (r.classList.contains('app-ready')) return;
+      r.classList.remove('splash-lock');
+      r.classList.add('app-ready');
+      var s = document.querySelector('[data-splash]');
+      if (s) s.remove();
+      if (document.body) document.body.removeAttribute('aria-busy');
+    }, 10000);
+  })();
+</script>
+
+<link rel="stylesheet" href="../../assets/club-site.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="../../assets/club-site.css"></noscript>
+</head>
+
+<body>
+
+<!-- ====== شاشة التحميل (أول عنصر في الصفحة) ====== -->
+<div class="splash int" id="splash" role="status" aria-live="polite"
+     aria-label="جارٍ تحميل موقع نادي الطلبة الدوليين" data-splash>
+
+  <div class="int__grid" aria-hidden="true"></div>
+
+  <div class="int__core">
+    <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+    <div class="int__globe">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <path class="int__route" d="M12 64Q50 2 88 38"/>
+        <path class="int__route int__route--2" d="M16 36Q52 98 86 60"/>
+
+        <circle class="int__sphere" cx="50" cy="50" r="40"/>
+
+        <ellipse class="int__lat" cx="50" cy="32" rx="32" ry="6"/>
+        <ellipse class="int__lat" cx="50" cy="50" rx="40" ry="8"/>
+        <ellipse class="int__lat" cx="50" cy="68" rx="32" ry="6"/>
+
+        <ellipse class="int__lon int__lon--1" cx="50" cy="50" rx="40" ry="40"/>
+        <ellipse class="int__lon int__lon--2" cx="50" cy="50" rx="26" ry="40"/>
+        <ellipse class="int__lon int__lon--3" cx="50" cy="50" rx="13" ry="40"/>
+        <ellipse class="int__lon int__lon--4" cx="50" cy="50" rx="34" ry="40"/>
+
+        <circle class="int__city" cx="38" cy="40" r="2"/>
+        <circle class="int__city int__city--2" cx="62" cy="58" r="2"/>
+        <circle class="int__city int__city--3" cx="56" cy="34" r="2"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="int__title">نادي الطلبة الدوليين</h1>
+      <p class="int__tagline">وجوهٌ من كل الأرض… حرمٌ واحد</p>
+      <div class="int__hello" aria-hidden="true">
+        <ul>
+          <li>أهلًا وسهلًا</li>
+          <li>Welcome</li>
+          <li>Bienvenue</li>
+          <li>Bienvenido</li>
+          <li>أهلًا وسهلًا</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="int__journey">
+    <div class="int__track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+         aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+      <span class="int__flown"></span>
+      <svg class="int__plane" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path d="M18 3 2 9.6l6.6 1.9L18 3Z"/>
+        <path d="M8.6 11.5 18 3l-7.4 14-2-5.5Z" opacity=".7"/>
+      </svg>
+    </div>
+    <div class="int__meta">
+      <span data-splash-status>نجمع العالم…</span>
+      <span class="int__pct"><b data-splash-percent>0</b>٪</span>
+    </div>
+  </div>
+</div>
+
+<!-- ====== موقع النادي (معاينة — استبدلها بموقعكم الحقيقي) ====== -->
+<div class="club" data-app-root>
+  <header class="club__header" data-splash-enter>
+    <span class="club__brand"><i class="club__dot" aria-hidden="true"></i>نادي الطلبة الدوليين</span>
+    <a class="club__back" href="../index.html">كل الشاشات</a>
+  </header>
+
+  <main class="club__main">
+    <p class="club__eyebrow" data-splash-enter>الأنشطة الطلابية</p>
+    <h1 class="club__title" data-splash-enter>بيتك بعيدًا عن البيت</h1>
+    <p class="club__lede" data-splash-enter>استقبال الطلبة الجدد، ليالي ثقافية، ودعم لغوي وإداري.</p>
+    <ul class="club__chips" data-splash-enter>
+      <li>الليلة الثقافية</li>
+      <li>برنامج الصديق المرافق</li>
+      <li>إرشاد الطلبة الجدد</li>
+    </ul>
+  </main>
+
+  <footer class="club__footer" data-splash-enter>
+    <p>© نادي الطلبة الدوليين — قسم الأنشطة الطلابية.</p>
+    <p class="club__note">هذه معاينة توضيحية لما يظهر بعد اختفاء شاشة التحميل.</p>
+  </footer>
+</div>
+
+<script type="module">
+  import { createSplash, indexEnterTargets } from '../../src/splash/splash.js';
+
+  indexEnterTargets();          // ترقيم عناصر الدخول للحصول على تتابُع
+  createSplash({
+    appRoot: '[data-app-root]',
+    loadingText: "نجمع العالم…",
+    readyText: "أهلًا بك",
+    sessionKey: 'astroutas:splash:international',
+  });
+</script>
+
+</body>
+</html>

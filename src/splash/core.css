@@ -1,0 +1,146 @@
+/* ==========================================================================
+   Astroutas — Splash Core
+   النواة المشتركة لكل شاشات التحميل الـ١٢.
+   لا تحتوي أي هوية بصرية: فقط المسرح، وقفل التمرير، والخروج، وشبكات الأمان.
+   الهوية كاملةً تأتي من ملف الثيم (src/splash/themes/*.css).
+   Zero dependencies.
+   ========================================================================== */
+
+:root {
+  /* عقد التوقيت — يمكن للثيم تجاوزه */
+  --splash-exit-duration: 620ms;
+  --splash-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --splash-z: 2147483000;
+
+  /* يُحدَّث من JavaScript: 0 → 1 (وكذلك النسبة المئوية كعدد) */
+  --splash-progress: 0;
+  --splash-progress-pct: 0;
+
+  /* خطوط النظام العربية — بلا طلبات شبكة وبلا وميض خطوط.
+     عند اعتماد Noto Kufi / Almarai مستضافَين ذاتيًا، غيّر هذا المتغيّر فقط. */
+  --splash-font: "SF Arabic", "Geeza Pro", "Noto Kufi Arabic", "Noto Naskh Arabic",
+    "Dubai", "Tajawal", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+/* --------------------------------------------------------------------------
+   1. المسرح
+   -------------------------------------------------------------------------- */
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: var(--splash-z);
+  overflow: hidden;
+  isolation: isolate;
+  font-family: var(--splash-font);
+  /* يمنع سحب/تكبير الشاشة أثناء التحميل على الجوال */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  will-change: opacity, transform, filter;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* الشاشة تملأ المنفذ فعليًا على iOS (شريط العناوين المتحرّك) */
+@supports (height: 100dvh) {
+  .splash { height: 100dvh; }
+}
+
+/* --------------------------------------------------------------------------
+   2. الخروج
+   -------------------------------------------------------------------------- */
+
+.splash.is-leaving {
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(1.045);
+  filter: blur(10px);
+  transition:
+    opacity var(--splash-exit-duration) cubic-bezier(0.4, 0, 0.2, 1),
+    transform var(--splash-exit-duration) var(--splash-ease),
+    filter var(--splash-exit-duration) ease-out;
+}
+
+/* قفل التمرير أثناء ظهور الشاشة فقط */
+.splash-lock,
+.splash-lock body {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+/* --------------------------------------------------------------------------
+   3. دخول محتوى الموقع بعد الاختفاء
+   مشروط بالصنف `.js`: لو كان JavaScript معطّلًا يظهر المحتوى طبيعيًا ولا يُحجب.
+   -------------------------------------------------------------------------- */
+
+.js [data-splash-enter] {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+.js.app-ready [data-splash-enter] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 760ms var(--splash-ease),
+    transform 760ms var(--splash-ease);
+  transition-delay: calc(var(--splash-enter-index, 0) * 90ms);
+}
+
+/* --------------------------------------------------------------------------
+   4. أدوات مشتركة
+   -------------------------------------------------------------------------- */
+
+/* نص للقارئ الشاشي فقط */
+.splash__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* عدّاد النسبة: أرقام بعرض ثابت حتى لا يرتجف النص */
+[data-splash-percent] {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* --------------------------------------------------------------------------
+   5. إمكانية الوصول — تقليل الحركة
+   الثيمات تُلغي حركاتها الخاصة؛ هنا السلوك البنيوي فقط.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .splash.is-leaving {
+    transform: none;
+    filter: none;
+    transition: opacity 220ms linear;
+  }
+  .js [data-splash-enter] {
+    transform: none;
+  }
+  .js.app-ready [data-splash-enter] {
+    transition-duration: 1ms;
+    transition-delay: 0ms;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   6. شبكة الأمان الأولى: بدون JavaScript لا تُعرض الشاشة إطلاقًا.
+   الصنف `.js` يُضاف من <head> قبل الرسم، فلا يحدث أي وميض.
+   -------------------------------------------------------------------------- */
+
+html:not(.js) .splash {
+  display: none !important;
+}
+
+@media (scripting: none) {
+  .splash {
+    display: none !important;
+  }
+}

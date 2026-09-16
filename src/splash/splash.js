@@ -20,6 +20,9 @@
  *  @property {number}   [holdAfterComplete] وقفة قصيرة بعد وصول المؤشر 100%.
  *  @property {Promise[]}[waitFor]      وعود إضافية تُنتظر قبل الإخفاء.
  *  @property {string}   [appRoot]      مُحدِّد عنصر التطبيق (لتعطيله أثناء التحميل).
+ *  @property {string}   [loadingText]  نص الحالة أثناء التحميل.
+ *  @property {string}   [readyText]    نص الحالة عند الاكتمال.
+ *  @property {string}   [sessionKey]   مفتاح الجلسة (افصله لكل موقع عند once:'session').
  *  @property {'always'|'session'} [once] تكرار الظهور.
  *  @property {Element}  [mount]        عنصر الإدراج (افتراضيًا <body>).
  *  @property {Document} [document]
@@ -36,9 +39,11 @@ export const SPLASH_DEFAULTS = {
   holdAfterComplete: 240,
   appRoot: '[data-app-root]',
   once: 'always',
+  loadingText: 'جارٍ التحميل…',
+  readyText: 'جاهز',
+  sessionKey: 'astroutas:splash-seen',
 };
 
-const SESSION_KEY = 'astroutas:splash-seen';
 const PROGRESS_CEILING = 0.92;
 
 const escapeHtml = (value) =>
@@ -118,6 +123,8 @@ export function createSplash(options = {}) {
   const fill = el.querySelector('[data-splash-fill]');
   const bar = el.querySelector('[data-splash-progress]');
   const status = el.querySelector('[data-splash-status]');
+  const percents = el.querySelectorAll('[data-splash-percent]');
+  if (status && config.loadingText) status.textContent = config.loadingText;
   const appRoot = config.appRoot ? doc.querySelector(config.appRoot) : null;
 
   const startedAt = performance.now();
@@ -154,8 +161,20 @@ export function createSplash(options = {}) {
 
   function paint(value) {
     const clamped = Math.min(1, Math.max(0, value));
+    const pct = Math.round(clamped * 100);
+
+    // القناة الأساسية: متغيّرات CSS. كل ثيم يترجمها كما يشاء —
+    // شريط، حلقة، فتحة عدسة، سائل يرتفع… دون أي كود إضافي هنا.
+    if (el) {
+      el.style.setProperty('--splash-progress', clamped.toFixed(4));
+      el.style.setProperty('--splash-progress-pct', String(pct));
+    }
+
+    // توافقية: الثيمات ذات الشريط الأفقي الكلاسيكي
     if (fill) fill.style.transform = `scaleX(${clamped.toFixed(4)})`;
-    bar?.setAttribute('aria-valuenow', String(Math.round(clamped * 100)));
+
+    for (const node of percents) node.textContent = String(pct);
+    bar?.setAttribute('aria-valuenow', String(pct));
   }
 
   /** إشارات الجاهزية الحقيقية للتطبيق */
@@ -184,7 +203,7 @@ export function createSplash(options = {}) {
     window.clearTimeout(hardStop);
 
     paint(1);
-    if (status) status.textContent = 'جاهز';
+    if (status) status.textContent = config.readyText;
 
     window.setTimeout(() => {
       el?.classList.add('is-leaving');
@@ -247,7 +266,7 @@ export function createSplash(options = {}) {
 
   function readSessionFlag() {
     try {
-      return sessionStorage.getItem(SESSION_KEY) === '1';
+      return sessionStorage.getItem(config.sessionKey) === '1';
     } catch {
       return false; // وضع التصفح الخاص
     }
@@ -255,7 +274,7 @@ export function createSplash(options = {}) {
 
   function writeSessionFlag() {
     try {
-      sessionStorage.setItem(SESSION_KEY, '1');
+      sessionStorage.setItem(config.sessionKey, '1');
     } catch {
       /* تجاهُل */
     }

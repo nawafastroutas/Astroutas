@@ -1,0 +1,36 @@
+<div class="splash spo" id="splash" role="status" aria-live="polite"
+     aria-label="{{aria}}" data-splash>
+
+  <div class="spo__bands" aria-hidden="true"></div>
+
+  <svg class="spo__ecg" viewBox="0 0 400 80" preserveAspectRatio="none" aria-hidden="true">
+    <path class="spo__line"  d="M0 40h74l6-4 5 7 5-24 6 42 5-23 4 5 5-3h80l6-4 5 7 5-24 6 42 5-23 4 5 5-3h80l6-4 5 7 5-24 6 42 5-23 4 5 5-3h48" pathLength="100"/>
+    <path class="spo__sweep" d="M0 40h74l6-4 5 7 5-24 6 42 5-23 4 5 5-3h80l6-4 5 7 5-24 6 42 5-23 4 5 5-3h80l6-4 5 7 5-24 6 42 5-23 4 5 5-3h48" pathLength="100"/>
+  </svg>
+
+  <div class="spo__core">
+    <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+    <div class="spo__dial">
+      <span class="spo__pulse" aria-hidden="true"></span>
+      <span class="spo__pulse spo__pulse--b" aria-hidden="true"></span>
+      <svg class="spo__mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M32 54S10 41.6 10 26.4A12.4 12.4 0 0 1 32 18a12.4 12.4 0 0 1 22 8.4C54 41.6 32 54 32 54Z"
+              stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M15 32h9l4-7 5 14 4-7h12" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="spo__title">{{name}}</h1>
+      <p class="spo__tagline">{{tagline}}</p>
+    </div>
+  </div>
+
+  <div class="spo__readout" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+       aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+    <span class="spo__pct"><b data-splash-percent>0</b><i>٪</i></span>
+    <span class="spo__sep" aria-hidden="true"></span>
+    <span class="spo__status" data-splash-status>{{loading}}</span>
+  </div>
+</div>

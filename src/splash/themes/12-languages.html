@@ -1,0 +1,43 @@
+<div class="splash lan" id="splash" role="status" aria-live="polite"
+     aria-label="{{aria}}" data-splash>
+
+  <div class="lan__core">
+    <div class="lan__orbit">
+      <div class="lan__ring" aria-hidden="true">
+        <span class="lan__slot" style="--a:0deg"><b class="lan__glyph">أ</b></span>
+        <span class="lan__slot" style="--a:45deg"><b class="lan__glyph">A</b></span>
+        <span class="lan__slot" style="--a:90deg"><b class="lan__glyph">É</b></span>
+        <span class="lan__slot" style="--a:135deg"><b class="lan__glyph">Ñ</b></span>
+        <span class="lan__slot" style="--a:180deg"><b class="lan__glyph">あ</b></span>
+        <span class="lan__slot" style="--a:225deg"><b class="lan__glyph">文</b></span>
+        <span class="lan__slot" style="--a:270deg"><b class="lan__glyph">Я</b></span>
+        <span class="lan__slot" style="--a:315deg"><b class="lan__glyph">Ö</b></span>
+      </div>
+
+      <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+      <svg class="lan__bubbles" viewBox="0 0 64 56" aria-hidden="true">
+        <path class="lan__bubble--a" d="M6 8a5 5 0 0 1 5-5h26a5 5 0 0 1 5 5v14a5 5 0 0 1-5 5H20l-9 7v-7a5 5 0 0 1-5-5V8Z"/>
+        <text x="24" y="15">أ</text>
+        <path class="lan__bubble--b" d="M58 26a5 5 0 0 0-5-5H33a5 5 0 0 0-5 5v12a5 5 0 0 0 5 5h13l8 6v-6a5 5 0 0 0 4-5V26Z"/>
+        <text x="43" y="32">A</text>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="lan__title">{{name}}</h1>
+      <p class="lan__tagline">{{tagline}}</p>
+    </div>
+  </div>
+
+  <div class="lan__typer">
+    <div class="lan__line" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+         aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+      <span class="lan__typed">{{typed}}</span>
+      <span class="lan__caret" aria-hidden="true"></span>
+    </div>
+    <div class="lan__meta">
+      <span data-splash-status>{{loading}}</span>
+      <span class="lan__pct"><b data-splash-percent>0</b>٪</span>
+    </div>
+  </div>
+</div>

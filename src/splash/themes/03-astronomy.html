@@ -1,0 +1,47 @@
+<div class="splash ast" id="splash" role="status" aria-live="polite"
+     aria-label="{{aria}}" data-splash>
+
+  <div class="ast__stars" aria-hidden="true"></div>
+
+  <div class="ast__core">
+    <div class="ast__system">
+      <svg class="ast__orbits" viewBox="0 0 200 200" aria-hidden="true">
+        <g class="ast__ring ast__ring--1">
+          <ellipse cx="100" cy="100" rx="78" ry="31"/>
+          <circle class="ast__planet--1" cx="178" cy="100" r="4.5"/>
+        </g>
+        <g class="ast__ring ast__ring--2">
+          <ellipse cx="100" cy="100" rx="64" ry="52"/>
+          <circle class="ast__planet--2" cx="164" cy="100" r="3.6"/>
+        </g>
+        <g class="ast__ring ast__ring--3">
+          <ellipse cx="100" cy="100" rx="50" ry="20"/>
+          <circle class="ast__planet--3" cx="150" cy="100" r="3"/>
+        </g>
+      </svg>
+
+      <svg class="ast__gauge" viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="ast__track" cx="50" cy="50" r="45"/>
+        <circle class="ast__arc" cx="50" cy="50" r="45"/>
+      </svg>
+
+      <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+      <svg class="ast__sun" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M41 10a23 23 0 1 0 13.2 41.6A26 26 0 0 1 41 10Z" fill="currentColor"/>
+        <path d="M46.5 14.5 48.8 20l5.7 2.3-5.7 2.3-2.3 5.6-2.3-5.6-5.7-2.3 5.7-2.3 2.3-5.5Z" fill="currentColor" opacity=".85"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="ast__title">{{name}}</h1>
+      <p class="ast__tagline">{{tagline}}</p>
+    </div>
+  </div>
+
+  <div class="ast__foot" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+       aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+    <span class="ast__dot" aria-hidden="true"></span>
+    <span data-splash-status>{{loading}}</span>
+    <span class="ast__pct"><b data-splash-percent>0</b>٪</span>
+  </div>
+</div>

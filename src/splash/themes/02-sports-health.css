@@ -1,0 +1,248 @@
+/* ==========================================================================
+   ٠٢ — نادي الرياضة والصحة
+   المفهوم: «النبض» — خط تخطيط القلب يُرسَم عبر الشاشة، وحلقةٌ تكتمل مع التقدّم.
+   ========================================================================== */
+
+:root {
+  --spo-ground: #04140d;
+  --spo-ground-2: #07281a;
+  --spo-green: #16d97a;
+  --spo-lime: #b6f24a;
+  --spo-ink: #eafff4;
+  --spo-muted: rgba(234, 255, 244, 0.5);
+
+  --club-bg: var(--spo-ground);
+  --club-ink: var(--spo-ink);
+  --club-accent: var(--spo-green);
+  --club-accent-2: var(--spo-lime);
+  --club-muted: var(--spo-muted);
+}
+
+.spo {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  background:
+    radial-gradient(52% 44% at 50% 34%, rgba(22, 217, 122, 0.18), transparent 70%),
+    radial-gradient(40% 40% at 12% 90%, rgba(182, 242, 74, 0.1), transparent 68%),
+    linear-gradient(158deg, var(--spo-ground-2) 0%, var(--spo-ground) 55%, #010805 100%);
+  color: var(--spo-ink);
+}
+
+/* أشرطة طاقة مائلة — إحساس حركة */
+.spo__bands {
+  position: absolute;
+  inset: -30%;
+  z-index: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    115deg,
+    rgba(22, 217, 122, 0.055) 0 2px,
+    transparent 2px 26px
+  );
+  animation: spo-bands 9s linear infinite;
+}
+
+/* خط النبض يعبر الشاشة خلف المحتوى */
+.spo__ecg {
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  z-index: 0;
+  width: 100%;
+  height: clamp(90px, 22vh, 170px);
+  translate: 0 -50%;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.spo__ecg path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* الخط الكامل: حاضر دائمًا بخفوت */
+.spo__ecg .spo__line {
+  stroke: rgba(22, 217, 122, 0.28);
+  stroke-width: 1.4;
+}
+
+/* النبضة المضيئة تجري فوقه */
+.spo__ecg .spo__sweep {
+  stroke: var(--spo-green);
+  stroke-width: 2;
+  stroke-dasharray: 22 78;
+  filter: drop-shadow(0 0 7px rgba(22, 217, 122, 0.95));
+  animation: spo-trace 2.8s linear infinite;
+}
+
+.spo__core {
+  grid-row: 1;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.25rem, 3.6vw, 1.75rem);
+  padding: 2rem 1.25rem 0;
+  text-align: center;
+}
+
+/* --- الحلقة: نسبتها = نسبة التحميل (conic + قناع) --- */
+.spo__dial {
+  position: relative;
+  width: clamp(8rem, 24vw, 11rem);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  animation: spo-pop 900ms var(--splash-ease) 60ms forwards;
+}
+
+.spo__dial::before,
+.spo__dial::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+/* المسار الخافت */
+.spo__dial::before {
+  border: 3px solid rgba(234, 255, 244, 0.09);
+}
+
+/* القوس الممتلئ — يتبع --splash-progress القادم من JavaScript */
+.spo__dial::after {
+  background: conic-gradient(
+    from -90deg,
+    var(--spo-lime) 0deg,
+    var(--spo-green) calc(var(--splash-progress) * 360deg),
+    transparent calc(var(--splash-progress) * 360deg)
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  filter: drop-shadow(0 0 12px rgba(22, 217, 122, 0.55));
+}
+
+/* هالة تنبض خلف الحلقة — إيقاع القلب */
+.spo__pulse {
+  position: absolute;
+  inset: -6%;
+  border-radius: 50%;
+  border: 1px solid rgba(22, 217, 122, 0.4);
+  animation: spo-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.spo__pulse--b { animation-delay: 0.75s; }
+
+.spo__mark {
+  position: relative;
+  z-index: 2;
+  width: 46%;
+  height: auto;
+  color: var(--spo-green);
+  animation: spo-beat 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.spo__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 5.6vw, 2.05rem);
+  font-weight: 700;
+  line-height: 1.35;
+  opacity: 0;
+  animation: spo-up 760ms var(--splash-ease) 380ms forwards;
+  text-wrap: balance;
+}
+
+.spo__tagline {
+  margin: 0.55rem 0 0;
+  font-size: clamp(0.82rem, 3.2vw, 0.95rem);
+  letter-spacing: 0.14em;
+  color: var(--spo-muted);
+  opacity: 0;
+  animation: spo-up 760ms var(--splash-ease) 500ms forwards;
+}
+
+/* --- قراءة رقمية كعدّاد لياقة --- */
+.spo__readout {
+  grid-row: 2;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-block-end: clamp(2rem, 7vh, 3.5rem);
+  opacity: 0;
+  animation: spo-up 760ms var(--splash-ease) 620ms forwards;
+}
+
+.spo__pct {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.15rem;
+  font-size: clamp(1.6rem, 6vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--spo-lime);
+}
+.spo__pct i { font-style: normal; font-size: 0.45em; opacity: 0.7; }
+
+.spo__sep {
+  width: 1px;
+  height: 1.6rem;
+  background: rgba(234, 255, 244, 0.18);
+}
+
+.spo__status {
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  color: var(--spo-muted);
+}
+
+/* --- الحركات --- */
+@keyframes spo-trace {
+  from { stroke-dashoffset: 100; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes spo-bands {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-52px); }
+}
+
+@keyframes spo-pulse {
+  0%   { transform: scale(0.94); opacity: 0.75; }
+  70%  { transform: scale(1.22); opacity: 0; }
+  100% { transform: scale(1.22); opacity: 0; }
+}
+
+@keyframes spo-beat {
+  0%, 70%, 100% { transform: scale(1); }
+  12%           { transform: scale(1.11); }
+  26%           { transform: scale(1.02); }
+  38%           { transform: scale(1.07); }
+}
+
+@keyframes spo-pop {
+  from { opacity: 0; transform: scale(0.82); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes spo-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-height: 560px) {
+  .spo__dial { width: clamp(5.5rem, 16vh, 7rem); }
+  .spo__tagline { display: none; }
+  .spo__ecg { height: 70px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spo__dial, .spo__title, .spo__tagline, .spo__readout {
+    animation-duration: 1ms; animation-delay: 0ms; opacity: 1;
+  }
+  .spo__bands, .spo__pulse, .spo__mark { animation: none; }
+  .spo__pulse { opacity: 0.35; transform: none; }
+  .spo__ecg .spo__sweep { animation: none; stroke-dasharray: none; opacity: 0.6; }
+}

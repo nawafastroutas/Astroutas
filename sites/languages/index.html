@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نادي اللغات — قسم الأنشطة الطلابية</title>
+<meta name="description" content="لغةٌ جديدة… حياةٌ جديدة">
+<meta name="theme-color" content="#0a0d18">
+
+<!-- ======================================================================
+     ترتيب <head> مقصود — لا تغيّره:
+     ١) نواة الشاشة + ثيم النادي: ملفّا التنسيق الوحيدان اللذان يحجبان الرسم،
+        وهما صغيران، فتظهر شاشة التحميل فورًا.
+     ٢) السكربت التمهيدي بعدهما مباشرة.
+     ٣) تنسيق الموقع يُحمَّل بشكل غير حاجب حتى لا يؤخّر ظهور الشاشة —
+        المحتوى مخفي خلفها على أي حال.
+     ====================================================================== -->
+<link rel="stylesheet" href="../../src/splash/core.css">
+<link rel="stylesheet" href="../../src/splash/themes/12-languages.css">
+
+<script>
+  (function () {
+    var r = document.documentElement;
+    r.classList.add('js');
+    setTimeout(function () {
+      if (r.classList.contains('app-ready')) return;
+      r.classList.remove('splash-lock');
+      r.classList.add('app-ready');
+      var s = document.querySelector('[data-splash]');
+      if (s) s.remove();
+      if (document.body) document.body.removeAttribute('aria-busy');
+    }, 10000);
+  })();
+</script>
+
+<link rel="stylesheet" href="../../assets/club-site.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="../../assets/club-site.css"></noscript>
+</head>
+
+<body>
+
+<!-- ====== شاشة التحميل (أول عنصر في الصفحة) ====== -->
+<div class="splash lan" id="splash" role="status" aria-live="polite"
+     aria-label="جارٍ تحميل موقع نادي اللغات" data-splash>
+
+  <div class="lan__core">
+    <div class="lan__orbit">
+      <div class="lan__ring" aria-hidden="true">
+        <span class="lan__slot" style="--a:0deg"><b class="lan__glyph">أ</b></span>
+        <span class="lan__slot" style="--a:45deg"><b class="lan__glyph">A</b></span>
+        <span class="lan__slot" style="--a:90deg"><b class="lan__glyph">É</b></span>
+        <span class="lan__slot" style="--a:135deg"><b class="lan__glyph">Ñ</b></span>
+        <span class="lan__slot" style="--a:180deg"><b class="lan__glyph">あ</b></span>
+        <span class="lan__slot" style="--a:225deg"><b class="lan__glyph">文</b></span>
+        <span class="lan__slot" style="--a:270deg"><b class="lan__glyph">Я</b></span>
+        <span class="lan__slot" style="--a:315deg"><b class="lan__glyph">Ö</b></span>
+      </div>
+
+      <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+      <svg class="lan__bubbles" viewBox="0 0 64 56" aria-hidden="true">
+        <path class="lan__bubble--a" d="M6 8a5 5 0 0 1 5-5h26a5 5 0 0 1 5 5v14a5 5 0 0 1-5 5H20l-9 7v-7a5 5 0 0 1-5-5V8Z"/>
+        <text x="24" y="15">أ</text>
+        <path class="lan__bubble--b" d="M58 26a5 5 0 0 0-5-5H33a5 5 0 0 0-5 5v12a5 5 0 0 0 5 5h13l8 6v-6a5 5 0 0 0 4-5V26Z"/>
+        <text x="43" y="32">A</text>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="lan__title">نادي اللغات</h1>
+      <p class="lan__tagline">لغةٌ جديدة… حياةٌ جديدة</p>
+    </div>
+  </div>
+
+  <div class="lan__typer">
+    <div class="lan__line" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+         aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+      <span class="lan__typed">مرحبًا… لنبدأ الحديث بلغةٍ جديدة</span>
+      <span class="lan__caret" aria-hidden="true"></span>
+    </div>
+    <div class="lan__meta">
+      <span data-splash-status>نترجم الترحيب…</span>
+      <span class="lan__pct"><b data-splash-percent>0</b>٪</span>
+    </div>
+  </div>
+</div>
+
+<!-- ====== موقع النادي (معاينة — استبدلها بموقعكم الحقيقي) ====== -->
+<div class="club" data-app-root>
+  <header class="club__header" data-splash-enter>
+    <span class="club__brand"><i class="club__dot" aria-hidden="true"></i>نادي اللغات</span>
+    <a class="club__back" href="../index.html">كل الشاشات</a>
+  </header>
+
+  <main class="club__main">
+    <p class="club__eyebrow" data-splash-enter>الأنشطة الطلابية</p>
+    <h1 class="club__title" data-splash-enter>تكلّم بثقة</h1>
+    <p class="club__lede" data-splash-enter>طاولات محادثة، تبادل لغوي، ودورات مكثّفة بست لغات.</p>
+    <ul class="club__chips" data-splash-enter>
+      <li>طاولة المحادثة</li>
+      <li>التبادل اللغوي</li>
+      <li>نادي الأفلام المترجمة</li>
+    </ul>
+  </main>
+
+  <footer class="club__footer" data-splash-enter>
+    <p>© نادي اللغات — قسم الأنشطة الطلابية.</p>
+    <p class="club__note">هذه معاينة توضيحية لما يظهر بعد اختفاء شاشة التحميل.</p>
+  </footer>
+</div>
+
+<script type="module">
+  import { createSplash, indexEnterTargets } from '../../src/splash/splash.js';
+
+  indexEnterTargets();          // ترقيم عناصر الدخول للحصول على تتابُع
+  createSplash({
+    appRoot: '[data-app-root]',
+    loadingText: "نترجم الترحيب…",
+    readyText: "أهلًا • Welcome",
+    sessionKey: 'astroutas:splash:languages',
+  });
+</script>
+
+</body>
+</html>

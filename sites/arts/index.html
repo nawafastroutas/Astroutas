@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نادي الفنون — قسم الأنشطة الطلابية</title>
+<meta name="description" content="الفكرة تبدأ بلون">
+<meta name="theme-color" content="#14100c">
+
+<!-- ======================================================================
+     ترتيب <head> مقصود — لا تغيّره:
+     ١) نواة الشاشة + ثيم النادي: ملفّا التنسيق الوحيدان اللذان يحجبان الرسم،
+        وهما صغيران، فتظهر شاشة التحميل فورًا.
+     ٢) السكربت التمهيدي بعدهما مباشرة.
+     ٣) تنسيق الموقع يُحمَّل بشكل غير حاجب حتى لا يؤخّر ظهور الشاشة —
+        المحتوى مخفي خلفها على أي حال.
+     ====================================================================== -->
+<link rel="stylesheet" href="../../src/splash/core.css">
+<link rel="stylesheet" href="../../src/splash/themes/11-arts.css">
+
+<script>
+  (function () {
+    var r = document.documentElement;
+    r.classList.add('js');
+    setTimeout(function () {
+      if (r.classList.contains('app-ready')) return;
+      r.classList.remove('splash-lock');
+      r.classList.add('app-ready');
+      var s = document.querySelector('[data-splash]');
+      if (s) s.remove();
+      if (document.body) document.body.removeAttribute('aria-busy');
+    }, 10000);
+  })();
+</script>
+
+<link rel="stylesheet" href="../../assets/club-site.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="../../assets/club-site.css"></noscript>
+</head>
+
+<body>
+
+<!-- ====== شاشة التحميل (أول عنصر في الصفحة) ====== -->
+<div class="splash art" id="splash" role="status" aria-live="polite"
+     aria-label="جارٍ تحميل موقع نادي الفنون" data-splash>
+
+  <div class="art__canvas" aria-hidden="true"></div>
+
+  <div class="art__core">
+    <!-- شعار النادي — استبدل هذا الـ SVG بشعاركم الرسمي -->
+    <div class="art__palette">
+      <svg viewBox="0 0 110 80" aria-hidden="true">
+        <path class="art__board"
+              d="M55 6c26 0 47 14 47 31 0 10-8 13-15 13h-7c-6 0-10 3-10 8 0 4 3 6 3 10 0 4-4 6-10 6C32 74 8 58 8 37 8 20 29 6 55 6Z"/>
+        <circle class="art__thumb" cx="62" cy="62" r="7"/>
+        <circle class="art__blob art__blob--1" cx="30" cy="34" r="7"/>
+        <circle class="art__blob art__blob--2" cx="54" cy="26" r="7"/>
+        <circle class="art__blob art__blob--3" cx="76" cy="38" r="7"/>
+        <circle class="art__blob art__blob--4" cx="44" cy="54" r="7"/>
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="art__title">نادي الفنون</h1>
+      <p class="art__tagline">الفكرة تبدأ بلون</p>
+    </div>
+  </div>
+
+  <div class="art__stroke-wrap">
+    <div class="art__stroke" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+         aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
+      <span class="art__wet"></span>
+      <span class="art__paint"></span>
+      <svg class="art__brush" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M14.5 3.5 20.5 9.5 11 19a4 4 0 0 1-2.2 1.1l-4.3.7.7-4.3A4 4 0 0 1 6.3 14l8.2-10.5Z"
+              stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M13 6 18 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="art__meta">
+      <span data-splash-status>نمزج الألوان…</span>
+      <span class="art__pct"><b data-splash-percent>0</b>٪</span>
+    </div>
+  </div>
+</div>
+
+<!-- ====== موقع النادي (معاينة — استبدلها بموقعكم الحقيقي) ====== -->
+<div class="club" data-app-root>
+  <header class="club__header" data-splash-enter>
+    <span class="club__brand"><i class="club__dot" aria-hidden="true"></i>نادي الفنون</span>
+    <a class="club__back" href="../index.html">كل الشاشات</a>
+  </header>
+
+  <main class="club__main">
+    <p class="club__eyebrow" data-splash-enter>الأنشطة الطلابية</p>
+    <h1 class="club__title" data-splash-enter>اترك أثرك على القماش</h1>
+    <p class="club__lede" data-splash-enter>معارض فنية، ورش رسم وخط عربي، وجداريات داخل الحرم.</p>
+    <ul class="club__chips" data-splash-enter>
+      <li>معرض الربيع</li>
+      <li>ورشة الخط العربي</li>
+      <li>جدارية الحرم</li>
+    </ul>
+  </main>
+
+  <footer class="club__footer" data-splash-enter>
+    <p>© نادي الفنون — قسم الأنشطة الطلابية.</p>
+    <p class="club__note">هذه معاينة توضيحية لما يظهر بعد اختفاء شاشة التحميل.</p>
+  </footer>
+</div>
+
+<script type="module">
+  import { createSplash, indexEnterTargets } from '../../src/splash/splash.js';
+
+  indexEnterTargets();          // ترقيم عناصر الدخول للحصول على تتابُع
+  createSplash({
+    appRoot: '[data-app-root]',
+    loadingText: "نمزج الألوان…",
+    readyText: "اللوحة جاهزة",
+    sessionKey: 'astroutas:splash:arts',
+  });
+</script>
+
+</body>
+</html>
