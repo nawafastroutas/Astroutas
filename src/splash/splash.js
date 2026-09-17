@@ -28,8 +28,8 @@
 /** @type {Required<Pick<SplashOptions,'logoSrc'|'title'|'tagline'|'minDuration'|'maxDuration'|'exitDuration'|'holdAfterComplete'|'appRoot'|'once'>>} */
 export const SPLASH_DEFAULTS = {
   logoSrc: 'assets/logo.svg',
-  title: 'قسم الأنشطة الطلابية',
-  tagline: 'نصنع تجربة طلابية استثنائية',
+  title: 'نادي الثقافة والأدب',
+  tagline: 'كلمةٌ تُقال، وأثرٌ يبقى',
   minDuration: 950,
   maxDuration: 7000,
   exitDuration: 620,

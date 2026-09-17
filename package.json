@@ -1,0 +1,15 @@
+{
+  "name": "astroutas-club",
+  "version": "1.0.0",
+  "private": true,
+  "description": "موقع نادي الثقافة والأدب — كلية التربية بالرستاق، جامعة التقنية والعلوم التطبيقية",
+  "type": "module",
+  "engines": { "node": ">=22.5.0" },
+  "scripts": {
+    "start": "node --no-warnings=ExperimentalWarning server.js",
+    "dev": "node --no-warnings=ExperimentalWarning --watch server.js",
+    "seed": "node --no-warnings=ExperimentalWarning scripts/seed.js",
+    "admin": "node --no-warnings=ExperimentalWarning scripts/make-admin.js",
+    "test": "node --no-warnings=ExperimentalWarning --test tests/*.test.js"
+  }
+}

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img"
+     aria-label="شعار نادي الثقافة والأدب">
+  <title>نادي الثقافة والأدب</title>
+  <!-- علامة النادي: قوسان متقاطعان يصنعان محرابًا في الوسط، يحفّهما قوسان فيروزيّان. -->
+  <g fill="none" stroke-linecap="round" stroke-width="7.5">
+    <path d="M26 104 C 6 76, 10 34, 38 14" stroke="#7fb3b0"/>
+    <path d="M94 104 C 114 76, 110 34, 82 14" stroke="#7fb3b0"/>
+    <path d="M38 106 C 74 80, 74 40, 38 14" stroke="#6e2a72"/>
+    <path d="M82 106 C 46 80, 46 40, 82 14" stroke="#6e2a72"/>
+  </g>
+  <path d="M60 48 L69 60 L60 72 L51 60 Z" fill="#6e2a72"/>
+</svg>

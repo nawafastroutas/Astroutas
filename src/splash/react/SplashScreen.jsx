@@ -18,8 +18,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 const DEFAULTS = {
   logoSrc: '/assets/logo.svg',
-  title: 'قسم الأنشطة الطلابية',
-  tagline: 'نصنع تجربة طلابية استثنائية',
+  title: 'نادي الثقافة والأدب',
+  tagline: 'كلمةٌ تُقال، وأثرٌ يبقى',
   minDuration: 950,
   maxDuration: 7000,
   exitDuration: 620,
