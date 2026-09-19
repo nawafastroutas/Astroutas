@@ -27,8 +27,14 @@
   --text-soft: #6b5c70;
   --danger: #a32036;
   --danger-bg: #fdeced;
+  --danger-border: rgba(163, 32, 54, .28);
   --success: #1f7a52;
   --success-bg: #e7f6ee;
+  --success-border: rgba(31, 122, 82, .28);
+  --info-border: rgba(78, 143, 140, .3);
+  --header-bg: rgba(255, 255, 255, .86);
+  --row-hover: #f9f3fa;
+  --placeholder: #9a8b9e;
 
   --radius: 14px;
   --radius-sm: 9px;
@@ -56,7 +62,13 @@
     --teal-100: #12302f;
     --gold-100: #33270f;
     --danger-bg: #3a121c;
+    --danger-border: rgba(230, 120, 140, .32);
     --success-bg: #102e20;
+    --success-border: rgba(110, 200, 160, .32);
+    --info-border: rgba(127, 179, 176, .34);
+    --header-bg: rgba(33, 15, 37, .88);
+    --row-hover: #2a1230;
+    --placeholder: #8d7791;
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
     --shadow: 0 6px 18px rgba(0, 0, 0, .45);
     --shadow-lg: 0 20px 60px rgba(0, 0, 0, .6);
@@ -137,7 +149,8 @@ main { display: block; min-height: 60vh; padding-block: clamp(1.5rem, 1rem + 2vw
 /* -------------------------------- الترويسة --------------------------------- */
 .site-header {
   position: sticky; top: 0; z-index: 50;
-  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  background: var(--header-bg);
+  -webkit-backdrop-filter: blur(14px);      /* سفاري يحتاج البادئة */
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
 }
@@ -277,9 +290,9 @@ main { display: block; min-height: 60vh; padding-block: clamp(1.5rem, 1rem + 2vw
   padding: .85rem 1.1rem; border-radius: var(--radius-sm);
   border: 1px solid transparent; margin-bottom: 1.2rem; font-weight: 600;
 }
-.alert--error { background: var(--danger-bg); color: var(--danger); border-color: color-mix(in srgb, var(--danger) 25%, transparent); }
-.alert--success { background: var(--success-bg); color: var(--success); border-color: color-mix(in srgb, var(--success) 25%, transparent); }
-.alert--info { background: var(--teal-100); color: var(--teal-600); border-color: color-mix(in srgb, var(--teal-600) 25%, transparent); }
+.alert--error { background: var(--danger-bg); color: var(--danger); border-color: var(--danger-border); }
+.alert--success { background: var(--success-bg); color: var(--success); border-color: var(--success-border); }
+.alert--info { background: var(--teal-100); color: var(--teal-600); border-color: var(--info-border); }
 .alert__icon { font-size: 1.1rem; line-height: 1.5; }
 
 /* -------------------------------- النماذج -------------------------------- */
@@ -301,7 +314,7 @@ input:focus, select:focus, textarea:focus {
 }
 input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--danger); }
 textarea { min-height: 8rem; resize: vertical; }
-input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--text-soft) 75%, transparent); }
+input::placeholder, textarea::placeholder { color: var(--placeholder); }
 .field--inline { display: flex; align-items: center; gap: .55rem; }
 .field--inline input[type="checkbox"] { width: 1.1rem; height: 1.1rem; accent-color: var(--plum-600); }
 .form__row { display: grid; gap: 1.1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
@@ -319,7 +332,7 @@ table { width: 100%; border-collapse: collapse; font-size: .9rem; }
 th, td { padding: .7rem .8rem; text-align: start; border-bottom: 1px solid var(--border); vertical-align: middle; }
 thead th { background: var(--surface-2); font-size: .82rem; color: var(--text-soft); white-space: nowrap; position: sticky; top: 0; }
 tbody tr:last-child td { border-bottom: 0; }
-tbody tr:hover { background: color-mix(in srgb, var(--plum-100) 45%, transparent); }
+tbody tr:hover { background: var(--row-hover); }
 
 /* -------------------------------- الأعضاء ------------------------------- */
 .person { display: flex; gap: .9rem; align-items: center; }
