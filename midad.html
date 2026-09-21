@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مِداد — دخولية نادي الثقافة والأدب</title>
+<meta name="description" content="نادي الثقافة والأدب بكلية التربية بالرستاق — أمسياتٌ شعرية، ورشُ كتابة، ومجالسُ قراءة.">
+<meta name="theme-color" content="#120617">
+<link rel="icon" href="assets/club-logo.svg" type="image/svg+xml">
+
+<!-- ======================================================================
+     ترتيب <head> مقصود:
+     1) entrance.css هو ملف التنسيق الوحيد الحاجب للرسم — الدخولية تظهر فورًا.
+     2) السكربت التمهيدي بعده مباشرة، فلا ينتظر إلا هذا الملف.
+     3) تنسيق الموقع يُحمَّل بشكل غير حاجب حتى لا يؤخّر ظهور الدخولية.
+     ====================================================================== -->
+<link rel="stylesheet" href="src/entrance/entrance.css">
+
+<script>
+  /* سكربت تمهيدي inline — لا يمكن أن يفشل تحميله:
+     1) الصنف `js`: بدونه لا تظهر الدخولية ولا يُخفى المحتوى، فالموقع يبقى
+        صالحًا للاستخدام إن كان JavaScript معطّلًا.
+     2) شبكة أمان زمنية: لو فشل تحميل entrance.js لأي سبب، يُحرَّر الموقع
+        بعد 12 ثانية بدل بقائه محجوبًا خلف الشاشة إلى الأبد. */
+  (function () {
+    var r = document.documentElement;
+    r.classList.add('js');
+    setTimeout(function () {
+      if (r.classList.contains('app-ready')) return;
+      r.classList.remove('entrance-lock');
+      r.classList.add('app-ready');
+      var s = document.querySelector('[data-entrance]');
+      if (s) s.remove();
+      if (document.body) document.body.removeAttribute('aria-busy');
+    }, 12000);
+  })();
+</script>
+
+<link rel="stylesheet" href="assets/club.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="assets/club.css"></noscript>
+</head>
+
+<body>
+
+<!-- ====== الدخولية — أول عنصر في الصفحة كي تُرسم قبل أي شيء ====== -->
+<div class="entrance" data-entrance data-entrance-theme="ink"
+     aria-label="شاشة الدخول — جارٍ فتح الموقع">
+  <div class="entrance__bg" aria-hidden="true">
+    <span class="entrance__glow"></span>
+    <span class="entrance__grain"></span>
+    <span class="entrance__letters" data-entrance-letters></span>
+  </div>
+
+  <div class="entrance__stage">
+    <div class="entrance__mark">
+      <span class="entrance__drop" aria-hidden="true"></span>
+      <span class="entrance__blot" aria-hidden="true"></span>
+
+      <!-- الزخرفة الثمانية: تُرسم بالقلم ثم تدور ببطء في اتجاهين متعاكسين -->
+      <svg class="entrance__ornament" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <circle class="ent-ring-outer" cx="50" cy="50" r="46" pathLength="100"
+                data-draw style="--draw-delay:620ms"></circle>
+        <path class="ent-sq-a" d="M20 20H80V80H20Z" pathLength="100"
+              data-draw style="--draw-delay:760ms"></path>
+        <path class="ent-sq-b" d="M50 7.6 92.4 50 50 92.4 7.6 50Z" pathLength="100"
+              data-draw style="--draw-delay:900ms"></path>
+      </svg>
+
+      <!-- الشعار: أقواسه ترسم نفسها قوسًا بعد قوس، ثم تتفتّح البذرة الوسطى -->
+      <svg class="entrance__logo" viewBox="0 0 120 120" role="img"
+           aria-label="شعار نادي الثقافة والأدب" focusable="false">
+        <g fill="none" stroke-linecap="round">
+          <path class="ent-logo-arc" d="M48 24C4 40 4 80 48 96" stroke="var(--logo-plum)"
+                stroke-width="6.5" pathLength="100" style="--draw-delay:840ms"></path>
+          <path class="ent-logo-arc" d="M72 24C116 40 116 80 72 96" stroke="var(--logo-plum)"
+                stroke-width="6.5" pathLength="100" style="--draw-delay:920ms"></path>
+          <path class="ent-logo-arc" d="M58 32C30 44 30 76 58 88" stroke="var(--logo-teal)"
+                stroke-width="5.5" pathLength="100" style="--draw-delay:1000ms"></path>
+          <path class="ent-logo-arc" d="M62 32C90 44 90 76 62 88" stroke="var(--logo-teal)"
+                stroke-width="5.5" pathLength="100" style="--draw-delay:1080ms"></path>
+        </g>
+        <path class="ent-logo-seed" d="M60 46C66.5 52 66.5 68 60 74C53.5 68 53.5 52 60 46Z"
+              fill="var(--logo-plum)"></path>
+      </svg>
+    </div>
+
+    <p class="entrance__title">
+      <span class="entrance__title-text">نادي الثقافة والأدب</span>
+      <span class="entrance__nib-track" aria-hidden="true"><span class="entrance__nib"></span></span>
+    </p>
+
+    <span class="entrance__rule" aria-hidden="true"><i class="entrance__lozenge"></i></span>
+
+    <figure class="entrance__verse" data-entrance-verse aria-hidden="true">
+      <blockquote class="entrance__verse-text" data-entrance-verse-text>وخيرُ جليسٍ في الزمانِ كتابُ</blockquote>
+      <figcaption class="entrance__verse-by" data-entrance-verse-by>المتنبّي</figcaption>
+    </figure>
+  </div>
+
+  <div class="entrance__footer">
+    <div class="entrance__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+         aria-valuenow="0" aria-label="نسبة التحميل" data-entrance-progress>
+      <span class="entrance__progress-fill" data-entrance-fill></span>
+      <span class="entrance__progress-dot" data-entrance-dot aria-hidden="true"></span>
+    </div>
+    <span class="entrance__status" role="status" aria-live="polite"
+          data-entrance-status>كلية التربية بالرستاق</span>
+    <button class="entrance__skip" type="button" data-entrance-skip>تخطّي المقدّمة</button>
+  </div>
+</div>
+
+<!-- ====== الموقع ====== -->
+<div class="site" data-app-root>
+  <header class="site__header" data-entrance-enter>
+    <a class="lockup" href="#">
+      <img class="lockup__mark" src="assets/club-logo.svg" alt="" width="120" height="120">
+      <span class="lockup__text">
+        <span class="lockup__ar">نادي الثقافة والأدب</span>
+        <span class="lockup__en">Literature &amp; Culture Club</span>
+        <span class="lockup__sub">كلية التربية بالرستاق — Rustaq College of Education</span>
+      </span>
+    </a>
+    <nav class="nav" aria-label="التنقل الرئيسي">
+      <a href="#">الرئيسية</a>
+      <a href="#">الأمسيات</a>
+      <a href="#">الورش</a>
+      <a href="#">الإصدارات</a>
+      <a href="#">انضم إلينا</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="hero__eyebrow" data-entrance-enter>نادي الثقافة والأدب</p>
+      <h1 class="hero__title" data-entrance-enter>
+        حيثُ تلتقي الكلمةُ <span>بأهلها</span>
+      </h1>
+      <p class="hero__lede" data-entrance-enter>
+        أمسياتٌ شعرية، ومجالسُ قراءة، وورشُ كتابةٍ إبداعية — مساحةٌ للطلبة
+        الذين يؤمنون بأن اللغة أجملُ ما يُورَث.
+      </p>
+      <div class="hero__actions" data-entrance-enter>
+        <a class="btn btn--primary" href="#">تصفّح الأمسيات</a>
+        <a class="btn btn--ghost" href="#">انضم إلى النادي</a>
+      </div>
+    </section>
+
+    <section class="cards" aria-label="أنشطة النادي" data-entrance-enter>
+      <article class="card">
+        <span class="card__icon" aria-hidden="true">✦</span>
+        <h2>الأمسيات الشعرية</h2>
+        <p>منبرٌ شهريٌّ يقرأ فيه الطلبة نصوصهم، ويستضيف شعراءَ من داخل السلطنة وخارجها.</p>
+      </article>
+      <article class="card">
+        <span class="card__icon" aria-hidden="true">✎</span>
+        <h2>ورش الكتابة</h2>
+        <p>ورشٌ في القصة القصيرة والمقالة والنقد، يقودها أساتذةٌ ومختصّون.</p>
+      </article>
+      <article class="card">
+        <span class="card__icon" aria-hidden="true">❖</span>
+        <h2>مجلس القراءة</h2>
+        <p>كتابٌ كلَّ شهر، ونقاشٌ مفتوحٌ يجمع القرّاء على طاولةٍ واحدة.</p>
+      </article>
+    </section>
+
+    <figure class="pullquote" data-entrance-enter>
+      <blockquote>أنا البحرُ في أحشائِهِ الدُّرُّ كامنٌ — فهل سألوا الغوّاصَ عن صَدَفاتي</blockquote>
+      <figcaption>حافظ إبراهيم</figcaption>
+    </figure>
+  </main>
+
+  <footer class="site__footer" data-entrance-enter>
+    <p>© نادي الثقافة والأدب — كلية التربية بالرستاق.</p>
+    <p class="themes">
+      جرّب السمات:
+      <a href="midad.html?theme=ink">حِبر</a>
+      <a href="midad.html?theme=paper">ورق</a>
+      <a href="midad.html?theme=night">ليل</a>
+    </p>
+  </footer>
+</div>
+
+<script type="module">
+  import { createEntrance, indexEnterTargets } from './src/entrance/entrance.js';
+
+  // صفحة العرض فقط: ?theme=ink|paper|night لتجربة السمات الثلاث.
+  const themes = ['ink', 'paper', 'night'];
+  const asked = new URLSearchParams(location.search).get('theme');
+  const theme = themes.includes(asked) ? asked : 'ink';
+
+  indexEnterTargets();
+  createEntrance({
+    theme,
+    title: 'نادي الثقافة والأدب',
+    tagline: 'كلية التربية بالرستاق',
+    appRoot: '[data-app-root]',
+  });
+</script>
+
+</body>
+</html>

@@ -100,13 +100,13 @@ const LOGO = `
     <svg class="entrance__logo" viewBox="0 0 120 120" role="img"
          aria-label="شعار نادي الثقافة والأدب" focusable="false">
       <g fill="none" stroke-linecap="round">
-        <path class="ent-logo-arc" d="M72 20C4 42 4 78 72 100" stroke="var(--logo-plum)"
+        <path class="ent-logo-arc" d="M48 24C4 40 4 80 48 96" stroke="var(--logo-plum)"
               stroke-width="6.5" pathLength="100" style="--draw-delay:840ms"></path>
-        <path class="ent-logo-arc" d="M48 20C116 42 116 78 48 100" stroke="var(--logo-plum)"
+        <path class="ent-logo-arc" d="M72 24C116 40 116 80 72 96" stroke="var(--logo-plum)"
               stroke-width="6.5" pathLength="100" style="--draw-delay:920ms"></path>
-        <path class="ent-logo-arc" d="M66 26C24 46 24 74 66 94" stroke="var(--logo-teal)"
+        <path class="ent-logo-arc" d="M58 32C30 44 30 76 58 88" stroke="var(--logo-teal)"
               stroke-width="5.5" pathLength="100" style="--draw-delay:1000ms"></path>
-        <path class="ent-logo-arc" d="M54 26C96 46 96 74 54 94" stroke="var(--logo-teal)"
+        <path class="ent-logo-arc" d="M62 32C90 44 90 76 62 88" stroke="var(--logo-teal)"
               stroke-width="5.5" pathLength="100" style="--draw-delay:1080ms"></path>
       </g>
       <path class="ent-logo-seed" d="M60 46C66.5 52 66.5 68 60 74C53.5 68 53.5 52 60 46Z"
