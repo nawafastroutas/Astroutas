@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img"
+     aria-labelledby="clubLogoTitle">
+  <title id="clubLogoTitle">شعار نادي الثقافة والأدب</title>
+  <!-- أربعة أقواس متداخلة + بذرة وسطى، بلونَي الهوية: بنفسجي وفيروزي.
+       إعادة بناء متجهيّة — استبدلها بالملف الرسمي عند توفّره. -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M72 20C4 42 4 78 72 100" stroke="#7A2D76" stroke-width="6.5"/>
+    <path d="M48 20C116 42 116 78 48 100" stroke="#7A2D76" stroke-width="6.5"/>
+    <path d="M66 26C24 46 24 74 66 94" stroke="#8CBFC0" stroke-width="5.5"/>
+    <path d="M54 26C96 46 96 74 54 94" stroke="#8CBFC0" stroke-width="5.5"/>
+  </g>
+  <path d="M60 46C66.5 52 66.5 68 60 74C53.5 68 53.5 52 60 46Z" fill="#7A2D76"/>
+</svg>

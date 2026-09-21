@@ -1,0 +1,880 @@
+/* ==========================================================================
+   نادي الثقافة والأدب — الدخولية (Entrance Screen)
+   --------------------------------------------------------------------------
+   الفكرة: «مِداد» — قطرةُ حبرٍ تسقط، تتفتّح، تُرسم منها زخرفةٌ ثمانية،
+   ثم يُكتب اسم النادي بالقلم من اليمين إلى اليسار، ويتبدّل بيتُ الشعر.
+   الخروج: طيُّ صفحةٍ حول كعب الكتاب (يمينًا) كما في الكتاب العربي.
+
+   • صفر اعتماديات — لا مكتبات ولا خطوط من الإنترنت.
+   • RTL بالكامل، من 320px حتى الشاشات الكبيرة.
+   • ثلاث سمات بصرية: ink | paper | night
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. الهوية البصرية — غيّر هنا فقط
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* هوية النادي — مأخوذة من الشعار الرسمي: بنفسجي + فيروزي */
+  --club-plum-900: #2a0d29;
+  --club-plum-800: #3d1439;
+  --club-plum-700: #5c1f58;
+  --club-plum-600: #7a2d76;   /* البنفسجي الأساسي في الشعار */
+  --club-plum-400: #a862a2;
+  --club-plum-300: #c99ac5;
+
+  --club-teal-700: #4d8386;
+  --club-teal-600: #63a0a2;
+  --club-teal-500: #8cbfc0;   /* الفيروزي في الشعار */
+  --club-teal-300: #b9dadb;
+
+  /* حِبر وورق */
+  --club-ink-950: #120617;
+  --club-ink-900: #1b0a20;
+  --club-paper-050: #fdfbfd;
+  --club-paper-100: #f6eff5;
+  --club-paper-200: #e6d8e4;
+
+  /* رموز الدخولية (تشتقّها السمات أدناه) */
+  --ent-bg: var(--club-ink-950);
+  --ent-fg: var(--club-paper-050);
+  --ent-muted: rgba(246, 239, 245, 0.62);
+  --ent-faint: rgba(246, 239, 245, 0.14);
+  --ent-accent: var(--club-teal-500);      /* الفيروزي — يتوهّج على الداكن */
+  --ent-accent-2: var(--club-plum-300);    /* البنفسجي الفاتح */
+  --ent-accent-soft: var(--club-teal-300);
+  --ent-ink: #0a0410;
+
+  /* ألوان الشعار داخل الـ SVG (تتبدّل مع السمة) */
+  --logo-plum: var(--club-plum-300);
+  --logo-teal: var(--club-teal-500);
+
+  /* ضبط */
+  --ent-mark: clamp(8.5rem, 26vw, 13rem);
+  --ent-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ent-ease-ink: cubic-bezier(0.34, 1.32, 0.42, 1);
+  --ent-exit: 620ms;
+  --ent-z: 2147483000;
+
+  /* خطوط النظام العربية — بلا طلب شبكة وبلا وميض خطوط */
+  --ent-serif: "SF Arabic", "Amiri", "Noto Naskh Arabic", "Traditional Arabic",
+    "Geeza Pro", "Times New Roman", serif;
+  --ent-sans: "SF Arabic", "Noto Kufi Arabic", "Dubai", "Tajawal",
+    "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+/* ---- السمة: ورق (فاتحة — أقرب شيء لهوية الشعار على الأبيض) ---- */
+.entrance[data-entrance-theme="paper"] {
+  --ent-bg: #f7f2f6;
+  --ent-fg: #2a0d29;
+  --ent-muted: rgba(42, 13, 41, 0.66);
+  --ent-faint: rgba(42, 13, 41, 0.14);
+  --ent-accent: var(--club-plum-600);
+  --ent-accent-2: var(--club-teal-600);
+  --ent-accent-soft: var(--club-teal-500);
+  --ent-ink: #2a0d29;
+  --logo-plum: var(--club-plum-600);
+  --logo-teal: var(--club-teal-500);
+}
+
+/* ---- السمة: ليلُ الشعراء (بنفسجي عميق + نجوم) ---- */
+.entrance[data-entrance-theme="night"] {
+  --ent-bg: #0b0413;
+  --ent-fg: #f3ecf6;
+  --ent-muted: rgba(243, 236, 246, 0.6);
+  --ent-faint: rgba(243, 236, 246, 0.12);
+  --ent-accent: var(--club-teal-300);
+  --ent-accent-2: var(--club-plum-400);
+  --ent-accent-soft: #dff0f0;
+  --ent-ink: #050210;
+  --logo-plum: var(--club-plum-300);
+  --logo-teal: var(--club-teal-300);
+}
+
+/* --------------------------------------------------------------------------
+   1. المسرح
+   -------------------------------------------------------------------------- */
+
+.entrance {
+  position: fixed;
+  inset: 0;
+  z-index: var(--ent-z);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  justify-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--ent-bg);
+  color: var(--ent-fg);
+  font-family: var(--ent-sans);
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  transform-origin: 100% 50%; /* كعب الكتاب على اليمين */
+  will-change: opacity, transform, filter;
+}
+
+/* طبقات الخلفية — منفصلة حتى لا تتصارع الحركات على عنصر واحد */
+.entrance__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* هالات ضوء دافئة تتنفّس ببطء */
+.entrance__glow {
+  position: absolute;
+  inset: -25%;
+  background:
+    radial-gradient(38% 32% at 72% 18%, rgba(122, 45, 118, 0.30), transparent 70%),
+    radial-gradient(42% 36% at 22% 78%, rgba(140, 191, 192, 0.16), transparent 72%),
+    radial-gradient(60% 52% at 50% 46%, rgba(61, 20, 57, 0.62), transparent 78%);
+  animation: ent-breathe 16s var(--ent-ease) infinite alternate;
+}
+
+.entrance[data-entrance-theme="paper"] .entrance__glow {
+  background:
+    radial-gradient(40% 34% at 74% 16%, rgba(122, 45, 118, 0.16), transparent 70%),
+    radial-gradient(44% 38% at 20% 80%, rgba(140, 191, 192, 0.20), transparent 72%),
+    radial-gradient(64% 54% at 50% 48%, rgba(255, 255, 255, 0.85), transparent 76%);
+}
+
+.entrance[data-entrance-theme="night"] .entrance__glow {
+  background:
+    radial-gradient(34% 28% at 78% 14%, rgba(185, 218, 219, 0.18), transparent 70%),
+    radial-gradient(40% 34% at 18% 82%, rgba(168, 98, 162, 0.20), transparent 72%),
+    radial-gradient(70% 60% at 50% 50%, rgba(16, 6, 28, 0.85), transparent 80%);
+}
+
+/* حبيبات الورق — نسيج خفيف جدًا يمنع «مسطّحية» التدرّج */
+.entrance__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    radial-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-size: 3px 3px, 4px 4px;
+  background-position: 0 0, 1px 2px;
+  mix-blend-mode: overlay;
+}
+
+/* مسطرة المخطوطة — أسطر كرّاسٍ باهتة (للسمة الفاتحة فقط) */
+.entrance[data-entrance-theme="paper"] .entrance__grain {
+  mix-blend-mode: multiply;
+  opacity: 0.35;
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 2.35rem,
+      rgba(42, 13, 41, 0.10) 2.35rem calc(2.35rem + 1px)
+    );
+  background-size: auto;
+}
+
+/* --------------------------------------------------------------------------
+   2. الحروف العائمة — «أبجد هوّز» تتهادى كغبار مكتبة في شعاع ضوء
+   -------------------------------------------------------------------------- */
+
+.entrance__letters {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.entrance__letter {
+  position: absolute;
+  inset-inline-start: var(--x, 50%);
+  top: 110%;
+  font-family: var(--ent-serif);
+  font-size: var(--size, 1.5rem);
+  line-height: 1;
+  color: var(--ent-accent);
+  opacity: 0;
+  filter: blur(0.4px);
+  animation: ent-drift var(--dur, 15s) linear var(--delay, 0s) infinite;
+}
+
+/* في سمة الليل: الحروف نجومٌ لا غبار */
+.entrance[data-entrance-theme="night"] .entrance__letter {
+  color: var(--club-teal-300);
+  text-shadow: 0 0 10px rgba(185, 218, 219, 0.7);
+}
+
+/* --------------------------------------------------------------------------
+   3. قطرة الحبر واللطخة
+   -------------------------------------------------------------------------- */
+
+.entrance__stage {
+  grid-row: 1;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.1rem, 3.4vw, 1.75rem);
+  padding: 2rem 1.25rem 0;
+  text-align: center;
+  max-width: min(40rem, 92vw);
+}
+
+.entrance__mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--ent-mark);
+  aspect-ratio: 1;
+}
+
+/* القطرة: تسقط من الأعلى، تستطيل أثناء السقوط، ثم تنبطح عند الاصطدام */
+.entrance__drop {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-inline-start: -0.275rem;
+  border-radius: 50%;
+  background: var(--ent-accent);
+  box-shadow: 0 0 14px rgba(140, 191, 192, 0.65);
+  opacity: 0;
+  animation: ent-drop 680ms cubic-bezier(0.55, 0, 0.85, 0.35) 140ms forwards;
+}
+
+/* اللطخة: دائرة غير منتظمة الحواف تتفتّح مكان الاصطدام */
+.entrance__blot {
+  position: absolute;
+  inset: 12%;
+  border-radius: 47% 53% 44% 56% / 52% 46% 54% 48%;
+  background: radial-gradient(
+    circle at 50% 42%,
+    color-mix(in srgb, var(--ent-accent) 26%, transparent),
+    color-mix(in srgb, var(--ent-accent) 8%, transparent) 55%,
+    transparent 72%
+  );
+  transform: scale(0);
+  opacity: 0;
+  animation: ent-blot 1000ms var(--ent-ease-ink) 700ms forwards;
+}
+
+/* متصفّحات بلا color-mix: تدرّج ثابت بديل */
+@supports not (background: color-mix(in srgb, red 50%, blue)) {
+  .entrance__blot {
+    background: radial-gradient(
+      circle at 50% 42%,
+      rgba(140, 191, 192, 0.26),
+      rgba(140, 191, 192, 0.08) 55%,
+      transparent 72%
+    );
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. الزخرفة الثمانية — تُرسم بالقلم (stroke-dashoffset)
+   -------------------------------------------------------------------------- */
+
+.entrance__ornament {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: var(--ent-accent);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.entrance__ornament [data-draw] {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  opacity: 0;
+  animation:
+    ent-draw 1400ms var(--ent-ease) var(--draw-delay, 0ms) forwards,
+    ent-fade-in 380ms linear var(--draw-delay, 0ms) forwards;
+}
+
+/* المربّعان يدوران ببطء في اتجاهين متعاكسين بعد اكتمال الرسم */
+.entrance__ornament .ent-sq-a {
+  transform-origin: 50% 50%;
+  animation:
+    ent-draw 1400ms var(--ent-ease) var(--draw-delay, 0ms) forwards,
+    ent-fade-in 380ms linear var(--draw-delay, 0ms) forwards,
+    ent-spin 34s linear 2100ms infinite;
+}
+
+.entrance__ornament .ent-sq-b {
+  transform-origin: 50% 50%;
+  animation:
+    ent-draw 1400ms var(--ent-ease) var(--draw-delay, 0ms) forwards,
+    ent-fade-in 380ms linear var(--draw-delay, 0ms) forwards,
+    ent-spin 48s linear 2100ms infinite reverse;
+}
+
+.entrance__ornament .ent-ring-outer {
+  stroke: var(--ent-accent);
+  opacity: 0;
+}
+
+/* --------------------------------------------------------------------------
+   5. الشعار
+   -------------------------------------------------------------------------- */
+
+.entrance__logo {
+  position: relative;
+  width: 54%;
+  height: auto;
+  display: block;
+  overflow: visible;
+  opacity: 0;
+  filter: drop-shadow(0 10px 26px rgba(0, 0, 0, 0.45));
+  animation: ent-fade-in 300ms linear 820ms forwards;
+}
+
+.entrance[data-entrance-theme="paper"] .entrance__logo {
+  filter: drop-shadow(0 8px 18px rgba(42, 13, 41, 0.16));
+}
+
+/* أقواس الشعار ترسم نفسها بالقلم، قوسًا بعد قوس */
+.entrance__logo .ent-logo-arc {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: ent-draw 950ms var(--ent-ease) var(--draw-delay, 0ms) forwards;
+}
+
+/* بذرة الشعار (المعيّن الأوسط) تتفتّح بعد اكتمال الأقواس */
+.entrance__logo .ent-logo-seed {
+  opacity: 0;
+  transform: scale(0);
+  transform-origin: 60px 60px;
+  transform-box: view-box;
+  animation: ent-seed-in 620ms var(--ent-ease-ink) 1520ms forwards;
+}
+
+@keyframes ent-seed-in {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   6. الاسم — يُكتب بالقلم من اليمين إلى اليسار
+   -------------------------------------------------------------------------- */
+
+.entrance__title {
+  position: relative;
+  display: inline-block; /* العرض = عرض النص تمامًا، وعليه يتحرّك القلم */
+  margin: 0;
+  font-family: var(--ent-serif);
+  font-size: clamp(1.5rem, 6.4vw, 2.65rem);
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.005em;
+  color: var(--ent-fg);
+  text-wrap: nowrap;
+}
+
+/* الكشف: من الحافة اليمنى يسارًا — اتجاه الكتابة العربية */
+.entrance__title-text {
+  display: inline-block;
+  clip-path: inset(0 0 0 100%);
+  animation: ent-write 1000ms cubic-bezier(0.62, 0.02, 0.28, 1) 1350ms forwards;
+  text-shadow: 0 0 22px color-mix(in srgb, var(--ent-accent) 22%, transparent);
+}
+
+/* مسار القلم: يزحف بنفس توقيت الكشف تمامًا فيبقى على حدّ الحبر */
+.entrance__nib-track {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: ent-nib 1000ms cubic-bezier(0.62, 0.02, 0.28, 1) 1350ms forwards;
+}
+
+.entrance__nib {
+  position: absolute;
+  right: -0.1em; /* فيزيائي عمدًا: الكشف بـ clip-path فيزيائي كذلك */
+  top: 50%;
+  width: 0.09em;
+  height: 1.15em;
+  margin-top: -0.575em;
+  border-radius: 0.05em;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--ent-accent-soft) 22%,
+    var(--ent-accent) 78%,
+    transparent
+  );
+  box-shadow: 0 0 12px 1px color-mix(in srgb, var(--ent-accent) 55%, transparent);
+  opacity: 0;
+  animation:
+    ent-fade-in 220ms linear 1350ms forwards,
+    ent-fade-out 260ms linear 2270ms forwards;
+}
+
+/* فاصل مزخرف: خطّان ذهبيان ومعيّن في الوسط */
+[dir="ltr"] .entrance__nib {
+  right: auto;
+  left: -0.1em;
+}
+
+.entrance__rule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: min(18rem, 66vw);
+  opacity: 0;
+  animation: ent-fade-in 620ms var(--ent-ease) 2150ms forwards;
+}
+
+.entrance__rule::before,
+.entrance__rule::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to left, transparent, var(--ent-accent));
+}
+
+.entrance__rule::after {
+  background: linear-gradient(to right, transparent, var(--ent-accent-2));
+}
+
+.entrance__lozenge {
+  width: 0.42rem;
+  height: 0.42rem;
+  flex: none;
+  rotate: 45deg;
+  background: linear-gradient(135deg, var(--ent-accent), var(--ent-accent-2));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--ent-accent) 60%, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   7. بيت الشعر المتبدّل
+   -------------------------------------------------------------------------- */
+
+.entrance__verse {
+  margin: 0;
+  min-height: 5.2em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  opacity: 0;
+  animation: ent-fade-in 760ms var(--ent-ease) 2250ms forwards;
+}
+
+.entrance__verse-text {
+  margin: 0;
+  font-family: var(--ent-serif);
+  font-size: clamp(0.95rem, 3.7vw, 1.2rem);
+  font-weight: 400;
+  line-height: 2;
+  color: var(--ent-muted);
+  text-wrap: balance;
+  transition: opacity 460ms ease, transform 460ms var(--ent-ease);
+}
+
+.entrance__verse-by {
+  font-size: clamp(0.68rem, 2.6vw, 0.78rem);
+  letter-spacing: 0.1em;
+  color: var(--ent-accent);
+  opacity: 0.85;
+  transition: opacity 460ms ease, transform 460ms var(--ent-ease);
+}
+
+/* أثناء التبديل */
+.entrance__verse.is-swapping .entrance__verse-text,
+.entrance__verse.is-swapping .entrance__verse-by {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* الفاصلة الشعرية ﴿ ﴾ حول البيت */
+.entrance__verse-text::before,
+.entrance__verse-text::after {
+  content: "\FD3E";
+  color: var(--ent-accent);
+  opacity: 0.5;
+  font-size: 0.85em;
+  margin-inline-end: 0.4em;
+}
+
+.entrance__verse-text::after {
+  content: "\FD3F";
+  margin-inline-end: 0;
+  margin-inline-start: 0.4em;
+}
+
+/* --------------------------------------------------------------------------
+   8. التذييل: التقدّم + الحالة + التخطّي
+   -------------------------------------------------------------------------- */
+
+.entrance__footer {
+  grid-row: 2;
+  width: min(21rem, 70vw);
+  padding-block-end: clamp(2rem, 7vh, 3.5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  opacity: 0;
+  animation: ent-fade-in 700ms var(--ent-ease) 1300ms forwards;
+}
+
+.entrance__progress {
+  position: relative;
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--ent-faint);
+}
+
+.entrance__progress-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    to left,
+    var(--ent-accent-soft),
+    var(--ent-accent) 55%,
+    var(--ent-accent-2)
+  );
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 300ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+[dir="ltr"] .entrance__progress-fill {
+  transform-origin: left center;
+  background: linear-gradient(
+    to right,
+    var(--ent-accent-soft),
+    var(--ent-accent) 55%,
+    var(--ent-accent-2)
+  );
+}
+
+/* نقطة حبرٍ صغيرة تركب رأس الخط */
+.entrance__progress-dot {
+  position: absolute;
+  top: 50%;
+  left: 100%; /* RTL: تبدأ من أقصى اليمين وتزحف يسارًا مع الامتلاء */
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%;
+  background: var(--ent-accent-soft);
+  box-shadow: 0 0 10px 1px color-mix(in srgb, var(--ent-accent) 70%, transparent);
+  transition: left 300ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+[dir="ltr"] .entrance__progress-dot {
+  left: 0;
+}
+
+.entrance__status {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: var(--ent-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.entrance__skip {
+  appearance: none;
+  border: 1px solid var(--ent-faint);
+  background: transparent;
+  color: var(--ent-muted);
+  font: inherit;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms ease, color 200ms ease, border-color 200ms ease;
+}
+
+.entrance__skip.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.entrance__skip:hover,
+.entrance__skip:focus-visible {
+  color: var(--ent-fg);
+  border-color: var(--ent-accent);
+}
+
+.entrance__skip:focus-visible {
+  outline: 2px solid var(--ent-accent);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   9. الخروج — طيُّ صفحةٍ حول الكعب الأيمن
+   -------------------------------------------------------------------------- */
+
+.entrance.is-leaving {
+  pointer-events: none;
+  opacity: 0;
+  transform: perspective(1500px) rotateY(16deg) translateX(-3%) scale(1.03);
+  filter: blur(8px);
+  transition:
+    opacity var(--ent-exit) cubic-bezier(0.4, 0, 0.2, 1),
+    transform var(--ent-exit) var(--ent-ease),
+    filter var(--ent-exit) ease-out;
+}
+
+[dir="ltr"] .entrance.is-leaving {
+  transform-origin: 0 50%;
+  transform: perspective(1500px) rotateY(-16deg) translateX(3%) scale(1.03);
+}
+
+/* قفل التمرير أثناء العرض فقط */
+.entrance-lock,
+.entrance-lock body {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+/* دخول محتوى الموقع بعد الطيّ — مشروط بـ .js فلا يُحجب أبدًا بدون JavaScript */
+.js [data-entrance-enter] {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.js.app-ready [data-entrance-enter] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 820ms var(--ent-ease),
+    transform 820ms var(--ent-ease);
+  transition-delay: calc(var(--entrance-enter-index, 0) * 95ms);
+}
+
+/* --------------------------------------------------------------------------
+   10. الحركات
+   -------------------------------------------------------------------------- */
+
+@keyframes ent-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-46vh) scaleY(1);
+  }
+  18% {
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(calc(var(--ent-mark) * 0.42)) scaleY(1.85);
+  }
+  92% {
+    opacity: 1;
+    transform: translateY(calc(var(--ent-mark) * 0.5)) scale(1.5, 0.35);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(calc(var(--ent-mark) * 0.5)) scale(2.4, 0.2);
+  }
+}
+
+@keyframes ent-blot {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-12deg);
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes ent-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes ent-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ent-logo-in {
+  from {
+    opacity: 0;
+    transform: scale(0.72);
+    filter: blur(6px) drop-shadow(0 10px 26px rgba(0, 0, 0, 0.45));
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0) drop-shadow(0 10px 26px rgba(0, 0, 0, 0.45));
+  }
+}
+
+@keyframes ent-write {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes ent-nib {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+[dir="ltr"] .entrance__title-text {
+  clip-path: inset(0 100% 0 0);
+}
+
+[dir="ltr"] .entrance__nib-track {
+  animation-name: ent-nib-ltr;
+}
+
+@keyframes ent-nib-ltr {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes ent-fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ent-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes ent-breathe {
+  from {
+    transform: translate3d(-1.5%, -1%, 0) scale(1.02);
+  }
+  to {
+    transform: translate3d(1.5%, 1.5%, 0) scale(1.08);
+  }
+}
+
+/* الحرف يصعد من الأسفل، يتمايل قليلًا، ويتلاشى */
+@keyframes ent-drift {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  12% {
+    opacity: var(--peak, 0.14);
+  }
+  82% {
+    opacity: var(--peak, 0.14);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--sway, 3vw), -128vh, 0) rotate(var(--turn, 18deg));
+  }
+}
+
+/* --------------------------------------------------------------------------
+   11. التجاوب وإمكانية الوصول
+   -------------------------------------------------------------------------- */
+
+/* شاشات قصيرة (جوال أفقي) — نُخفي ما يمكن الاستغناء عنه */
+@media (max-height: 600px) {
+  :root {
+    --ent-mark: clamp(5rem, 16vh, 7.5rem);
+  }
+  .entrance__stage {
+    gap: 0.75rem;
+  }
+  .entrance__verse {
+    display: none;
+  }
+  .entrance__footer {
+    padding-block-end: 1.25rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .entrance__title {
+    font-size: clamp(1.25rem, 7.4vw, 1.6rem);
+  }
+  .entrance__footer {
+    width: min(17rem, 82vw);
+  }
+}
+
+/* احترام تقليل الحركة: بلا سقوط ولا دوران ولا طيران — تلاشٍ فقط */
+@media (prefers-reduced-motion: reduce) {
+  .entrance__drop,
+  .entrance__letters {
+    display: none;
+  }
+
+  .entrance__glow,
+  .entrance__ornament .ent-sq-a,
+  .entrance__ornament .ent-sq-b {
+    animation: none;
+  }
+
+  .entrance__blot,
+  .entrance__logo,
+  .entrance__logo .ent-logo-arc,
+  .entrance__logo .ent-logo-seed,
+  .entrance__rule,
+  .entrance__verse,
+  .entrance__footer,
+  .entrance__ornament [data-draw] {
+    animation: ent-fade-in 200ms linear forwards;
+    transform: none;
+    stroke-dashoffset: 0;
+    filter: none;
+  }
+
+  .entrance__title-text {
+    animation: none;
+    clip-path: none;
+  }
+
+  .entrance__nib {
+    display: none;
+  }
+
+  .entrance.is-leaving {
+    transform: none;
+    filter: none;
+    transition: opacity 240ms linear;
+  }
+
+  .js [data-entrance-enter] {
+    transform: none;
+  }
+
+  .js.app-ready [data-entrance-enter] {
+    transition-duration: 1ms;
+    transition-delay: 0ms;
+  }
+}
+
+/* شبكة الأمان الأولى: بدون JavaScript لا تظهر الدخولية إطلاقًا */
+html:not(.js) .entrance {
+  display: none !important;
+}
+
+@media (scripting: none) {
+  .entrance {
+    display: none !important;
+  }
+}
