@@ -50,41 +50,51 @@
 }
 
 /*
- * الشعار مرآةٌ حول محوره، فنصفاه يتقاربان كيدين تلتقيان، ثم تتفتّح البذرة
- * بينهما. الإزاحة بوحدات الـ viewBox (عرضه 120) فتتناسب مع أي مقاس.
+ * الشعار نفسه يوحي بالحركة: قوساه البنفسجيان ينزلان من الأعلى، والفيروزيان
+ * يصعدان من الأسفل، فيتشابكان — ثم يتفتّح المعيّن بينهما.
+ *
+ * الإزاحة بوحدات الـ viewBox فتتناسب مع أي مقاس. والشفافية تكتمل باكرًا
+ * (عند 45%) عمدًا: المجموعتان متشابكتان، فلو ظهرتا مصمتتين وهما متباعدتان
+ * لبان تشابكهما مقطوعًا. باكتمالها باكرًا تكونان قد تقاربتا أصلًا.
  */
-.club-splash-mark .club-mark-right {
-  animation: club-mark-right 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+.club-splash-mark .club-mark-plum {
+  animation: club-mark-plum 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.club-splash-mark .club-mark-left {
-  animation: club-mark-left 720ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+.club-splash-mark .club-mark-teal {
+  animation: club-mark-teal 720ms cubic-bezier(0.22, 1, 0.36, 1) 140ms both;
 }
 
 .club-splash-mark .club-mark-seed {
   transform-box: view-box;
-  transform-origin: 60px 60px;
+  transform-origin: 171px 110px;
   animation: club-mark-seed 520ms cubic-bezier(0.22, 1, 0.36, 1) 560ms both;
 }
 
-@keyframes club-mark-right {
+@keyframes club-mark-plum {
   from {
-    transform: translateX(86px);
+    transform: translateY(-72px);
     opacity: 0;
   }
+  45% {
+    opacity: 1;
+  }
   to {
-    transform: translateX(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
 
-@keyframes club-mark-left {
+@keyframes club-mark-teal {
   from {
-    transform: translateX(-86px);
+    transform: translateY(72px);
     opacity: 0;
   }
+  45% {
+    opacity: 1;
+  }
   to {
-    transform: translateX(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
@@ -139,14 +149,14 @@
 
 .club-splash-title {
   margin: 0;
-  color: var(--club-plum, #7a2d76);
+  color: var(--club-plum, #612775);
   font-size: 1.05rem;
   font-weight: 700;
 }
 
 .club-splash-sub {
   margin: 4px 0 0;
-  color: var(--club-muted, #7b6b7a);
+  color: var(--club-muted, #6f6675);
   font-size: 0.8rem;
 }
 
