@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="سبحة">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6b3f23"/>
+      <stop offset="0.55" stop-color="#40260f"/>
+      <stop offset="1" stop-color="#1c1109"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="30%" cy="22%" r="62%">
+      <stop offset="0" stop-color="#e0bd79" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#e0bd79" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bead" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbecc9"/>
+      <stop offset="1" stop-color="#c99a4a"/>
+    </linearGradient>
+    <linearGradient id="beadAlt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff8ea"/>
+      <stop offset="1" stop-color="#e7cd97"/>
+    </linearGradient>
+    <linearGradient id="head" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f3ddab"/>
+      <stop offset="1" stop-color="#a06e2c"/>
+    </linearGradient>
+    <linearGradient id="tassel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e0bd79"/>
+      <stop offset="1" stop-color="#8a5a24"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <rect width="512" height="512" fill="url(#glow)"/>
+
+  <g>
+    <circle cx="256" cy="242" r="150" fill="none" stroke="#e0bd79" stroke-opacity="0.55" stroke-width="4.5"/>
+
+    <!-- 20 small beads around the loop -->
+    <g id="beads">
+      <!-- generated below -->
+    </g>
+
+    <circle cx="256" cy="242" r="12"  fill="url(#bead)"    transform="rotate(0 256 242)   translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#beadAlt)" transform="rotate(18 256 242)  translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#bead)"    transform="rotate(36 256 242)  translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#beadAlt)" transform="rotate(54 256 242)  translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#bead)"    transform="rotate(72 256 242)  translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#beadAlt)" transform="rotate(90 256 242)  translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#bead)"    transform="rotate(108 256 242) translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#beadAlt)" transform="rotate(126 256 242) translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#bead)"    transform="rotate(144 256 242) translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#beadAlt)" transform="rotate(162 256 242) translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#bead)"    transform="rotate(198 256 242) translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#beadAlt)" transform="rotate(216 256 242) translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#bead)"    transform="rotate(234 256 242) translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#beadAlt)" transform="rotate(252 256 242) translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#bead)"    transform="rotate(270 256 242) translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#beadAlt)" transform="rotate(288 256 242) translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#bead)"    transform="rotate(306 256 242) translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#beadAlt)" transform="rotate(324 256 242) translate(0 -150)"/>
+    <circle cx="256" cy="242" r="12"  fill="url(#bead)"    transform="rotate(342 256 242) translate(0 -150)"/>
+
+    <!-- head / imam bead at bottom -->
+    <circle cx="256" cy="392" r="27" fill="url(#head)" stroke="#3a2410" stroke-width="2"/>
+    <circle cx="248" cy="384" r="7" fill="#fff" fill-opacity="0.55"/>
+
+    <!-- tassel -->
+    <path d="M256 419 C 250 434, 250 448, 256 462" stroke="url(#tassel)" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M244 424 C 240 438, 241 452, 246 464" stroke="url(#tassel)" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.85"/>
+    <path d="M268 424 C 272 438, 271 452, 266 464" stroke="url(#tassel)" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.85"/>
+  </g>
+</svg>
