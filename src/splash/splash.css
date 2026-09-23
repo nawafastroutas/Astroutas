@@ -1,6 +1,6 @@
 /* ==========================================================================
    Subbha — Splash / Loading Screen
-   هوية بصرية: بني دافئ + ذهبي + كريمي (تطابق هوية سبحة)
+   هوية بصرية: بني دافئ + كريمي (تطابق هوية سبحة، بلا لمسات ذهبية)
    لا يعتمد على أي مكتبة خارجية. Zero dependencies.
    ========================================================================== */
 
@@ -9,10 +9,10 @@
   --astro-blue-900: #1c1109;
   --astro-blue-800: #2b1b13;
   --astro-blue-700: #40260f;
-  --astro-blue-500: #b9822b;
-  --astro-blue-400: #e0bd79;
-  --astro-orange-500: #caa059;
-  --astro-orange-400: #e7cd97;
+  --astro-blue-500: #eadbc8;
+  --astro-blue-400: #f8f1e6;
+  --astro-orange-500: #7a4b2a;
+  --astro-orange-400: #a9764a;
   --astro-white: #f8f1e6;
 
   /* --- Splash tuning --- */
@@ -60,9 +60,9 @@
 
 .splash::before {
   background:
-    radial-gradient(46% 38% at 24% 22%, rgba(185, 130, 43, 0.4), transparent 70%),
-    radial-gradient(32% 28% at 82% 84%, rgba(202, 160, 89, 0.15), transparent 68%),
-    radial-gradient(30% 26% at 88% 12%, rgba(224, 189, 121, 0.16), transparent 70%),
+    radial-gradient(46% 38% at 24% 22%, rgba(234, 219, 200, 0.35), transparent 70%),
+    radial-gradient(32% 28% at 82% 84%, rgba(122, 75, 42, 0.18), transparent 68%),
+    radial-gradient(30% 26% at 88% 12%, rgba(248, 241, 230, 0.14), transparent 70%),
     radial-gradient(58% 50% at 50% 46%, rgba(43, 27, 19, 0.75), transparent 78%),
     linear-gradient(165deg, var(--astro-blue-800) 0%, var(--astro-blue-900) 58%, #140c07 100%);
   animation: splash-aurora 14s var(--splash-ease) infinite alternate;
@@ -113,7 +113,7 @@
   display: block;
   /* توهج ناعم خلف الشعار يمنحه عمقًا دون مبالغة */
   filter: drop-shadow(0 14px 34px rgba(26, 16, 10, 0.6))
-    drop-shadow(0 0 22px rgba(224, 189, 121, 0.28));
+    drop-shadow(0 0 22px rgba(248, 241, 230, 0.22));
 }
 
 /* حلقتان دائريتان حول الشعار: برتقالية سريعة + زرقاء أبطأ بالاتجاه المعاكس */
@@ -131,15 +131,15 @@
 .splash__ring--arc {
   border: 2px solid transparent;
   border-top-color: var(--astro-orange-500);
-  border-inline-end-color: rgba(202, 160, 89, 0.35);
+  border-inline-end-color: rgba(122, 75, 42, 0.35);
   animation: splash-spin 3.1s linear infinite;
 }
 
 .splash__ring--arc-alt {
   inset: clamp(-0.75rem, -2.2vw, -0.5rem);
   border: 1px solid transparent;
-  border-bottom-color: rgba(224, 189, 121, 0.75);
-  border-inline-start-color: rgba(224, 189, 121, 0.2);
+  border-bottom-color: rgba(248, 241, 230, 0.65);
+  border-inline-start-color: rgba(248, 241, 230, 0.18);
   animation: splash-spin 6.4s linear infinite reverse;
 }
 
@@ -434,7 +434,7 @@
     animation: none;
   }
   .splash__ring--arc {
-    border-color: rgba(202, 160, 89, 0.5);
+    border-color: rgba(122, 75, 42, 0.5);
   }
   .splash.is-leaving {
     transform: none;
