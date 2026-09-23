@@ -16,7 +16,7 @@
   --astro-white: #f8f1e6;
 
   /* --- Splash tuning --- */
-  --splash-logo-size: clamp(6.5rem, 17vw, 9.5rem);
+  --splash-logo-size: clamp(8.5rem, 24vw, 13rem);
   --splash-ring-gap: clamp(1.4rem, 4vw, 2.1rem);
   --splash-exit-duration: 620ms;
   --splash-ease: cubic-bezier(0.16, 1, 0.3, 1);
