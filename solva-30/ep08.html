@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 08 · تعريفي أم متجر؟</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  #div{left:538px;top:600px;width:4px;height:900px;background:var(--ink-2);transform-origin:top}
+  .side{position:absolute;top:610px;width:540px;text-align:center}
+  .side .h{font-weight:700;font-size:56px}
+  .side .s{font-size:24px;color:var(--muted);font-family:var(--mono);direction:ltr}
+  .browser{top:760px;width:440px;height:470px}
+  .b{position:absolute;border-radius:5px}
+  .fit{position:absolute;top:1270px;width:540px;display:flex;flex-direction:column;align-items:center;gap:12px}
+  .fit .l{font-size:26px;color:var(--muted)}
+  .fit .chip{font-size:26px;padding:8px 20px;color:var(--paper);border-color:var(--ink-2)}
+  .badge{position:absolute;left:42px;top:4px;min-width:22px;height:22px;border-radius:11px;background:var(--red);color:#fff;font:600 13px var(--mono);display:flex;align-items:center;justify-content:center}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:370px">موقع <span class="gl">تعريفي</span>… أم <span class="gl">متجر</span>؟</div>
+  <div class="abs" id="div"></div>
+  <div class="side" id="hr" style="right:0"><div class="h">تعريفي</div><div class="s">COMPANY SITE</div></div>
+  <div class="side" id="hl" style="left:0"><div class="h">متجر</div><div class="s">E-COMMERCE</div></div>
+  <div class="browser" id="br" style="right:50px"><div class="top"><i></i><i></i><i></i></div></div>
+  <div class="browser" id="bl" style="left:50px"><div class="top"><i></i><i></i><i></i></div></div>
+  <div class="fit" id="fr" style="right:0"><div class="l">يناسب</div><span class="chip">شركات الخدمات</span><span class="chip">العيادات والمكاتب</span></div>
+  <div class="fit" id="fl" style="left:0"><div class="l">يناسب</div><span class="chip">من يبيع منتجات</span><span class="chip">الطلب والدفع أونلاين</span></div>
+  <div class="abs cx h-m" id="fin" style="top:880px">مو متأكد أيهما؟<br><span class="gl">نساعدك تختار.</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, count, cue, icon, MARK, $, $$, E} = S;
+S.setup({day: 8, dur: 15.6, mood: 'warm'});
+
+// block helper: [left, top, w, h, color, inner]
+const add = (host, blocks) => blocks.map(([x, y, w, h, c, inner = ''], i) => {
+  const d = document.createElement('div'); d.className = 'b'; d.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${h}px;background:${c};${inner ? 'display:flex;align-items:center;justify-content:center;gap:6px;' : ''}`;
+  d.innerHTML = inner; $(host).appendChild(d); return d;
+});
+const R = add('#br', [
+  [340, 48, 70, 18, '#C9C7BD'], [30, 48, 60, 18, '#C9C7BD'], [100, 48, 60, 18, '#C9C7BD'],
+  [20, 90, 400, 150, '#14201B', `<span style="color:#F1F0EA;font-weight:700;font-size:26px">خبرة تبني الثقة</span>`],
+  [220, 260, 200, 16, '#3A423E'], [260, 286, 160, 12, '#C9C7BD'], [20, 260, 180, 100, '#E6E5DD', icon('users', 44, '#3F7A62')],
+  [20, 378, 125, 70, '#FBFAF6', icon('shield', 30, '#3F7A62')], [157, 378, 125, 70, '#FBFAF6', icon('star', 30, '#3F7A62')], [295, 378, 125, 70, '#3F7A62', `<span style="color:#fff;font-weight:700;font-size:20px">تواصل</span>`],
+]);
+const L = add('#bl', [
+  [340, 48, 70, 18, '#C9C7BD'], [30, 44, 40, 26, 'transparent', icon('cart', 26, '#14201B') + '<span class="badge" id="bd">0</span>'],
+  ...[0, 1, 2, 3].map(i => [i % 2 ? 20 : 230, 90 + Math.floor(i / 2) * 180, 190, 165, '#FBFAF6',
+    `<div style="position:absolute;inset:10px 10px 64px;border-radius:4px;background:${['#E6D6C0', '#CFDDD4', '#E3D3CF', '#D8D6CC'][i]}"></div><div style="position:absolute;right:12px;bottom:34px;font:600 16px var(--mono);color:#3F7A62">${[12, 8, 15, 22][i]} OMR</div><div style="position:absolute;left:10px;right:10px;bottom:8px;height:22px;border-radius:4px;background:#3F7A62"></div>`]),
+]);
+
+say('#q', .25, 12.2, {st: .12}); cue(.25, 'swish');
+K('#div', [[.8, {transform: 'scaleY(0)'}, E.INOUT], [1.4, {transform: 'scaleY(1)'}], [9.4, {transform: 'scaleY(1)', opacity: 1}], [9.7, {transform: 'scaleY(1)', opacity: 0}]]);
+cue(.8, 'zip');
+inOut('#hr', 1.1, 9.4); inOut('#hl', 1.3, 9.4);
+inOut('#br', 1.6, 9.4, {dy: 60}); inOut('#bl', 1.8, 9.4, {dy: 60});
+cue(1.6, 'whoosh');
+// both sites build themselves block by block
+const n = Math.max(R.length, L.length);
+for (let i = 0; i < n; i++){
+  const t = 2.3 + i * .32;
+  if (R[i]) pop(R[i], t, null, {s: .5});
+  if (L[i]) pop(L[i], t + .12, null, {s: .5});
+  cue(t, 'pop2', {f: 420 + (i % 5) * 60, v: .6});
+}
+// the store takes a few orders
+[5.9, 6.5, 7.1].forEach((t, i) => { cue(t, 'cash', {v: .6}); K(L[2 + i].lastElementChild, [[t - .1, {transform: 'scale(1)'}], [t, {transform: 'scale(.9)'}, E.BACK], [t + .25, {transform: 'scale(1)'}]]); });
+S.count('#bd', 5.9, 7.2, 0, 3);
+K('#bd', [[5.8, {transform: 'scale(1)'}], [5.95, {transform: 'scale(1.4)'}, E.BACK], [6.2, {transform: 'scale(1)'}], [7.1, {transform: 'scale(1)'}], [7.25, {transform: 'scale(1.4)'}, E.BACK], [7.5, {transform: 'scale(1)'}]]);
+// who each one suits
+$$('#fr > *').forEach((e, i) => inOut(e, 7.8 + i * .25, 9.4, {dy: 30}));
+$$('#fl > *').forEach((e, i) => inOut(e, 8.0 + i * .25, 9.4, {dy: 30}));
+cue(7.8, 'tick', {v: 1.4}); cue(8.3, 'tick', {v: 1.4});
+say('#fin', 9.9, 12.3, {st: .12}); cue(9.9, 'chime');
+S.start();
+</script></body></html>

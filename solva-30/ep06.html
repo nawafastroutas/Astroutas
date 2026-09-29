@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 06 · عرض مشروع</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  /* EDIT: swap this concept store for a real project (name, colours, products) */
+  #scene{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0}
+  .laptop{left:60px;top:660px;width:780px;height:510px}
+  .phone{left:760px;top:840px;width:270px;height:560px;border-width:10px;border-radius:40px}
+  .pg{position:absolute;left:0;right:0;top:0;background:#F6F3EE;color:#1E1A16}
+  .pg .nav{height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:15px;font-weight:600}
+  .pg .nav .br{font-family:var(--lat);font-weight:600;font-size:18px;letter-spacing:.06em;direction:ltr}
+  .pg .hero{position:relative;background:#1E1A16;color:#F6F3EE;overflow:hidden}
+  .pg .hero h4{font-weight:700;line-height:1.3}
+  .pg .hero .b{display:inline-block;background:#C9A45C;color:#1E1A16;font-weight:700;border-radius:4px}
+  .btl{position:absolute;display:flex;flex-direction:column;align-items:center}
+  .btl i{display:block;background:#2A2520;border-radius:3px}
+  .btl u{display:block;border-radius:6px 6px 14px 14px;text-decoration:none}
+  .pg .sec{font-weight:700;padding:0 22px}
+  .grid{display:grid;padding:0 22px}
+  .pc{background:#fff;border:1px solid #E7E1D8;border-radius:6px;position:relative;overflow:hidden}
+  .pc .im{position:absolute;left:0;right:0;top:0;background:#EFE9E0}
+  .pc .nm{position:absolute;right:10px;font-weight:600}
+  .pc .pr{position:absolute;right:10px;color:#9A7B3F;font-family:var(--mono)}
+  .feat{display:flex;justify-content:space-around;background:#EFE9E0;font-weight:600}
+  .sheet{position:absolute;left:0;right:0;bottom:0;height:300px;background:#fff;color:#1E1A16;border-radius:20px 20px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.2);padding:20px 16px;transform:translateY(100%)}
+  .sheet .h{font-weight:700;font-size:17px;margin-bottom:12px}
+  .sheet .o{height:44px;border:1.5px solid #E7E1D8;border-radius:8px;margin-bottom:8px;display:flex;align-items:center;padding:0 12px;font-size:14px;gap:8px}
+  .sheet .o.on{border-color:#3F7A62;background:#EEF5F1}
+  .sheet .pay{height:48px;border-radius:8px;background:#3F7A62;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:16px;margin-top:10px}
+  .call{position:absolute;left:0;right:0;top:1470px;display:flex;justify-content:center;opacity:0}
+  .call div{background:var(--green-l);color:var(--ink);font-weight:700;font-size:40px;padding:18px 34px;border-radius:6px}
+  .arw{position:absolute;left:537px;top:1180px;width:6px;height:270px;background:var(--green-l);transform-origin:bottom;border-radius:3px;opacity:0}
+  .arw:before{content:"";position:absolute;left:-15px;top:-8px;border:18px solid transparent;border-bottom:26px solid var(--green-l);border-top:0}
+  #ring{position:absolute;left:390px;top:810px;width:300px;height:300px;border-radius:50%;border:5px solid var(--green-l);opacity:0}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:380px">من <span class="gl">أعمالنا</span></div>
+  <div class="abs cx lab" id="cn" style="top:520px">CONCEPT · متجر عطور</div>
+  <div id="scene">
+    <div class="laptop" id="lap"><div class="lid"><div class="scr" id="ls"></div></div><div class="base"></div></div>
+    <div class="phone" id="ph"><div class="scr" id="ps"></div><div class="notch"></div></div>
+  </div>
+  <div id="ring"></div>
+  <div class="arw" id="arw"></div>
+  <div class="call" id="k1"><div>منتجات واضحة وسهلة التصفح</div></div>
+  <div class="call" id="k2"><div>دفع إلكتروني بخطوتين</div></div>
+  <div class="call" id="k3"><div>متجاوب مع كل الشاشات</div></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, icon, $, $$, E} = S;
+S.setup({day: 6, dur: 14.8, mood: 'warm'});
+
+const cols = ['#C9A45C', '#7E9B86', '#B5876B', '#8E8A84', '#C47F5A', '#5F6F7E'];
+const names = ['عنبر الليل', 'مسك أبيض', 'ورد طائفي', 'عود كمبودي', 'زعفران', 'بحر هادئ'];
+const bottle = (x, y, w, c) => `<div class="btl" style="left:${x}px;top:${y}px"><i style="width:${w * .32}px;height:${w * .22}px"></i><i style="width:${w * .18}px;height:${w * .14}px;background:#8a7a60"></i><u style="width:${w}px;height:${w * 1.15}px;background:${c}"></u></div>`;
+function page(m){ // m = mobile
+  const W = m ? 250 : 728, cw = m ? (W - 44 - 10) / 2 : (W - 44 - 28) / 3, ch = m ? 150 : 200, n = m ? 4 : 6;
+  return `<div class="pg" style="width:${W}px">
+    <div class="nav" style="${m ? 'height:40px;padding:0 14px;font-size:12px' : ''}"><span class="br">NOOR</span><span>${m ? '☰' : 'العطور · المجموعات · من نحن · السلة'}</span></div>
+    <div class="hero" style="height:${m ? 260 : 290}px;padding:${m ? '26px 16px' : '52px 34px'}">
+      <h4 style="font-size:${m ? 24 : 38}px">عطور تُصنع<br>لتبقى.</h4>
+      <p style="font-size:${m ? 12 : 16}px;opacity:.7;margin:10px 0 16px">مكوّنات مختارة وتوصيل لكل عُمان.</p>
+      <span class="b" style="font-size:${m ? 13 : 16}px;padding:${m ? '8px 14px' : '10px 22px'}">تسوّق الآن</span>
+      ${m ? bottle(24, 150, 50, '#C9A45C') + bottle(90, 170, 36, '#7E9B86') : bottle(90, 60, 110, '#C9A45C') + bottle(230, 110, 70, '#7E9B86')}
+    </div>
+    <div class="sec" style="font-size:${m ? 16 : 22}px;margin:${m ? '18px 0 10px' : '28px 0 16px'};${m ? 'padding:0 14px' : ''}">الأكثر مبيعًا</div>
+    <div class="grid" style="grid-template-columns:repeat(${m ? 2 : 3},1fr);gap:${m ? 10 : 14}px;${m ? 'padding:0 14px' : ''}">
+      ${cols.slice(0, n).map((c, i) => `<div class="pc" style="height:${ch}px"><div class="im" style="height:${ch * .62}px">${bottle(cw / 2 - (m ? 16 : 24), m ? 18 : 24, m ? 32 : 48, c)}</div>
+        <div class="nm" style="top:${ch * .66}px;font-size:${m ? 12 : 15}px">${names[i]}</div><div class="pr" style="top:${ch * .82}px;font-size:${m ? 11 : 13}px">${(i * 7 + 18)} OMR</div></div>`).join('')}
+    </div>
+    <div class="feat" style="margin-top:${m ? 18 : 28}px;height:${m ? 70 : 90}px;align-items:center;font-size:${m ? 11 : 15}px">
+      <span>🚚 توصيل سريع</span><span>🔒 دفع آمن</span>${m ? '' : '<span>↺ استرجاع سهل</span>'}</div>
+    <div style="height:${m ? 120 : 160}px;background:#1E1A16;margin-top:0"></div>
+  </div>`;
+}
+$('#ls').innerHTML = page(false);
+$('#ps').innerHTML = page(true) + `<div class="sheet" id="sh"><div class="h">إتمام الشراء</div>
+  <div class="o on">● بطاقة بنكية</div><div class="o">○ الدفع عند الاستلام</div><div class="pay">ادفع الآن · 25 OMR</div></div>`;
+
+say('#q', .25, 4.6);
+fade('#cn', .6, 4.6);
+cue(.25, 'swish');
+inOut('#lap', .6, null, {dy: 120, d: .8}); cue(.6, 'whoosh');
+inOut('#ph', .9, null, {dx: 120, dy: 0, d: .8});
+
+// both pages scroll through the site
+const lp = $('#ls .pg'), pp = $('#ps .pg');
+K(lp, [[1.4, {transform: 'translateY(0)'}, E.INOUT], [3.9, {transform: 'translateY(-560px)'}, E.INOUT], [4.6, {transform: 'translateY(-300px)'}]]);
+K(pp, [[1.6, {transform: 'translateY(0)'}, E.INOUT], [4.0, {transform: 'translateY(-420px)'}, E.INOUT], [4.6, {transform: 'translateY(-250px)'}]]);
+cue(1.4, 'slide', {d: 2.4, v: .7}); cue(3.9, 'slide', {d: .6, v: .5});
+
+// camera: zoom into the product grid, then over to the phone checkout, then back out
+const cam = (s, fx, fy) => ({transform: `translate(${540 - s * fx}px,${960 - s * fy}px) scale(${s})`});
+K('#scene', [[4.7, cam(1, 540, 960), E.INOUT], [5.5, cam(1.75, 440, 960)], [6.7, cam(1.75, 440, 960), E.INOUT], [7.5, cam(2.1, 895, 1180)],
+             [9.3, cam(2.1, 895, 1180), E.INOUT], [10.1, cam(1, 540, 960)]]);
+cue(4.7, 'whoosh'); cue(6.7, 'whoosh'); cue(9.3, 'swoop');
+K('#sh', [[7.6, {transform: 'translateY(100%)'}, E.OUT], [8.1, {transform: 'translateY(0)'}]]);
+cue(7.6, 'slide'); cue(8.6, 'click'); cue(8.8, 'success');
+K($('#sh .pay'), [[8.55, {transform: 'scale(1)'}], [8.65, {transform: 'scale(.94)'}, E.BACK], [8.9, {transform: 'scale(1)'}]]);
+
+const callout = (id, a, b) => { K(id, [[a, {opacity: 0, transform: 'translateY(30px)'}], [a + .4, {opacity: 1, transform: 'translateY(0)'}], [b, {opacity: 1, transform: 'translateY(0)'}, E.IN], [b + .25, {opacity: 0, transform: 'translateY(10px)'}]]); cue(a, 'pop'); };
+callout('#k1', 5.6, 6.6); callout('#k2', 8.0, 9.2); callout('#k3', 10.2, 11.6);
+K('#arw', [[5.6, {opacity: 0, transform: 'scaleY(0)'}], [6.0, {opacity: 1, transform: 'scaleY(1)'}], [6.6, {opacity: 1, transform: 'scaleY(1)'}], [6.8, {opacity: 0, transform: 'scaleY(1)'}],
+           [8.0, {opacity: 0, transform: 'scaleY(0)'}], [8.4, {opacity: 1, transform: 'scaleY(1)'}], [9.2, {opacity: 1, transform: 'scaleY(1)'}], [9.4, {opacity: 0, transform: 'scaleY(1)'}]]);
+S.start();
+// hide the series header while the camera is zoomed in
+K('#hdr', [[.1, {opacity: 0}], [.6, {opacity: 1}], [4.7, {opacity: 1}], [5.0, {opacity: 0}], [9.9, {opacity: 0}], [10.3, {opacity: 1}], [11.7, {opacity: 1}], [11.9, {opacity: 0}]]);
+</script></body></html>

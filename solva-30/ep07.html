@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 07 · وش يحدد السعر؟</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  .row{position:absolute;left:90px;right:90px;height:130px;display:flex;align-items:center;gap:26px;padding:0 34px}
+  .row .t{font-weight:700;font-size:44px;flex:1}
+  .row .v{width:300px;display:flex;justify-content:flex-start;align-items:center;gap:10px;direction:ltr}
+  .op{position:absolute;left:0;right:0;text-align:center;font-family:var(--mono);font-size:64px;font-weight:500;color:var(--green);line-height:1}
+  .big{font-family:var(--mono);font-size:64px;font-weight:500;color:var(--green)}
+  .tg{padding:8px 16px;border-radius:999px;border:2px solid var(--line);font-size:24px;font-weight:600;color:var(--muted);direction:rtl}
+  .trk{position:relative;width:280px;height:8px;border-radius:4px;background:var(--line)}
+  .trk .f{position:absolute;right:0;top:0;bottom:0;border-radius:4px;background:var(--green)}
+  .trk .k{position:absolute;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:var(--green);border:5px solid var(--card)}
+  .trk span{position:absolute;top:22px;font-size:20px;color:var(--muted);font-family:var(--ar)}
+  #res{position:absolute;left:90px;right:90px;top:1240px;height:150px;background:var(--ink);color:var(--paper);border-radius:6px;display:flex;align-items:center;justify-content:center;gap:24px}
+  #res .t{font-weight:700;font-size:50px}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:370px">وش يحدد<br><span class="g">سعر الموقع؟</span></div>
+  <div class="card row" id="r1" style="top:630px"><div class="ic"></div><div class="t">عدد الصفحات</div><div class="v"><span class="big" id="n">1</span><span class="mu" style="font-size:24px">pages</span></div></div>
+  <div class="op" id="p1" style="top:768px">+</div>
+  <div class="card row" id="r2" style="top:830px"><div class="ic"></div><div class="t">المزايا</div><div class="v" style="flex-wrap:wrap;width:320px"><span class="tg" id="g1">دفع</span><span class="tg" id="g2">حجز</span><span class="tg" id="g3">لغتين</span></div></div>
+  <div class="op" id="p2" style="top:968px">+</div>
+  <div class="card row" id="r3" style="top:1030px"><div class="ic"></div><div class="t">مستوى التصميم</div><div class="v"><div class="trk"><div class="f" id="tf"></div><div class="k" id="tk"></div><span style="right:0">قالب</span><span style="left:0">مخصص</span></div></div></div>
+  <div class="op" id="eq" style="top:1168px">=</div>
+  <div id="res"><div class="ic"></div><div class="t">السعر <span class="gl">المناسب لمشروعك</span></div></div>
+  <div class="abs cx h-s" id="fin" style="top:1430px">حدّد احتياجك… <span class="g">والسعر يتضح.</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, count, cue, icon, $, $$, E} = S;
+S.setup({day: 7, dur: 14.2, mood: 'playful', bg: 'paper', end: {cta: 'اطلب عرض سعر'}});
+[['layers', 1], ['sliders', 2], ['palette', 3]].forEach(([n, i]) => $(`#r${i} .ic`).innerHTML = icon(n, 64, '#3F7A62', 1.8));
+$('#res .ic').innerHTML = icon('tag', 70, '#5FA88A', 1.8);
+
+say('#q', .25, 11.0, {st: .12}); cue(.25, 'swish');
+inOut('#r1', .9, 11.0, {dx: 200, dy: 0}); cue(.9, 'whoosh');
+count('#n', 1.3, 2.6, 1, 8);
+cue(1.3, 'type', {n: 12, gap: .1});
+pop('#p1', 2.7, 11.0); cue(2.7, 'pop');
+inOut('#r2', 3.0, 11.0, {dx: -200, dy: 0}); cue(3.0, 'whoosh');
+[3.5, 3.9, 4.3].forEach((t, i) => { K(`#g${i + 1}`, [[t, {backgroundColor: 'rgba(0,0,0,0)', color: '#7C837E', borderColor: '#DFDED6', transform: 'scale(1)'}, E.BACK],
+  [t + .25, {backgroundColor: '#3F7A62', color: '#F1F0EA', borderColor: '#3F7A62', transform: 'scale(1.08)'}], [t + .5, {backgroundColor: '#3F7A62', color: '#F1F0EA', borderColor: '#3F7A62', transform: 'scale(1)'}]]);
+  cue(t, 'pop2', {f: 500 + i * 120}); });
+pop('#p2', 4.7, 11.0); cue(4.7, 'pop');
+inOut('#r3', 5.0, 11.0, {dx: 200, dy: 0}); cue(5.0, 'whoosh');
+K('#tk', [[5.4, {left: '100%'}, E.INOUT], [6.4, {left: '15%'}]]);
+K('#tf', [[5.4, {width: '0%'}, E.INOUT], [6.4, {width: '85%'}]]);
+cue(5.4, 'zip');
+pop('#eq', 6.7, 11.0); cue(6.6, 'riser', {d: .5});
+inOut('#res', 7.1, 11.0, {dy: 60, s: .9}); cue(7.1, 'impact', {v: .5}); cue(7.2, 'cash');
+say('#fin', 8.4, 10.9, {st: .12});
+S.start();
+</script></body></html>

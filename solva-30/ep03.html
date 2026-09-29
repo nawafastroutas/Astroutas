@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 03 · رحلة بناء الموقع</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  #line{left:538px;top:700px;width:4px;height:720px;background:var(--ink-2);transform-origin:top;border-radius:2px}
+  #lineG{left:538px;top:700px;width:4px;height:720px;background:var(--green-l);transform-origin:top;border-radius:2px}
+  .st{position:absolute;left:470px;width:140px;height:140px;border-radius:50%;background:var(--ink);border:3px solid var(--green-l);display:flex;align-items:center;justify-content:center}
+  .tx{position:absolute;width:350px}
+  .tx .n{font-family:var(--mono);font-size:22px;color:var(--green-l)}
+  .tx .t{font-weight:700;font-size:50px;line-height:1.25}
+  .tx .d{font-size:28px;color:var(--muted);margin-top:4px}
+  .r{right:70px;text-align:right} .l{left:70px;text-align:left}
+  #trail{left:525px;width:30px;top:1400px;height:0;background:linear-gradient(to bottom,rgba(95,168,138,.8),rgba(95,168,138,0));border-radius:15px;opacity:0}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:380px">كيف يُبنى <span class="gl">موقعك</span>؟</div>
+  <div class="abs" id="line"></div><div class="abs" id="lineG"></div>
+  <div class="abs" id="trail"></div>
+  <div id="stations"></div>
+  <div class="abs cx h-m" id="fin" style="top:820px">من الفكرة للإطلاق،<br><span class="gl">بخطوات واضحة.</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, icon, $, $$, E} = S;
+S.setup({day: 3, dur: 14.8, mood: 'drive'});
+
+const ST = [
+  ['bulb', 'الفكرة', 'نفهم مشكلتك وهدفك'],
+  ['pencil', 'رسم مبدئي', 'هيكل الصفحات والمحتوى'],
+  ['palette', 'التصميم', 'الشكل، الألوان، الهوية'],
+  ['code', 'البرمجة', 'بناء سريع وآمن'],
+  ['rocket', 'الإطلاق', 'موقعك على الهواء'],
+];
+const box = $('#stations');
+ST.forEach(([ic, t, d], i) => {
+  const y = 630 + i * 180, side = i % 2 ? 'l' : 'r';
+  box.insertAdjacentHTML('beforeend', `<div class="st" id="s${i}" style="top:${y}px"><div class="ic">${icon(ic, 64, '#5FA88A', 1.8)}</div></div>
+    <div class="tx ${side}" id="x${i}" style="top:${y + 12}px"><div class="n">0${i + 1}</div><div class="t">${t}</div><div class="d">${d}</div></div>`);
+});
+
+say('#q', .25, 7.8);
+cue(.25, 'swish');
+fade('#line', .6, 7.8, .3);
+
+const T = i => 1.0 + i * 1.4;
+// green progress line grows station by station
+const gf = [[.6, {transform: 'scaleY(0)'}]];
+ST.forEach((_, i) => { if (i) gf.push([T(i) - .5, {transform: `scaleY(${(i - 1) / 4})`}, E.INOUT], [T(i), {transform: `scaleY(${i / 4})`}]); });
+K('#lineG', [...gf, [7.8, {transform: 'scaleY(1)', opacity: 1}], [8.1, {transform: 'scaleY(1)', opacity: 0}]]);
+
+ST.forEach((_, i) => {
+  const t = T(i), last = i === ST.length - 1;
+  if (!last) pop(`#s${i}`, t, 7.75 + i * .05);
+  inOut(`#x${i}`, t + .15, 7.75 + i * .05, {dx: i % 2 ? -60 : 60, dy: 0});
+  // active station fills green, then settles
+  K(`#s${i}`, [[t + .1, {backgroundColor: '#14201B'}], [t + .35, {backgroundColor: '#5FA88A'}], [T(i + 1) - .1, {backgroundColor: '#5FA88A'}], [T(i + 1) + .3, {backgroundColor: '#223029'}]]);
+  K($(`#s${i} .ic svg`), [[t + .1, {stroke: '#5FA88A'}], [t + .35, {stroke: '#14201B'}], [T(i + 1) - .1, {stroke: '#14201B'}], [T(i + 1) + .3, {stroke: '#5FA88A'}]]);
+  cue(t, 'pop', {f: 480 + i * 70});
+  cue(t + .15, 'swish', {v: .5});
+});
+
+// launch: rocket shakes, then takes off leaving a trail
+const R = $('#s4 .ic');
+K(R, [[7.7, {transform: 'rotate(-45deg) translate(0,0)'}, E.LIN], ...[...Array(8)].map((_, k) => [7.75 + k * .05, {transform: `rotate(-45deg) translate(${k % 2 ? 3 : -3}px,${k % 2 ? -3 : 3}px)`}, E.LIN]), [8.2, {transform: 'rotate(-45deg) translate(0,0)'}]]);
+K('#s4', [[T(4), {transform: 'translateY(0) scale(.3)', opacity: 0}, E.BACK], [T(4) + .5, {transform: 'translateY(0) scale(1)', opacity: 1}],
+           [8.25, {transform: 'translateY(0) scale(1)', opacity: 1}, 'cubic-bezier(.45,0,.75,.3)'], [9.0, {transform: 'translateY(-1500px) scale(.8)', opacity: 1}]]);
+K('#trail', [[8.25, {opacity: 0, height: '0px', top: '1400px'}, E.IN], [8.35, {opacity: 1, height: '60px', top: '1400px'}, E.IN],
+             [9.0, {opacity: 1, height: '700px', top: '-100px'}], [9.5, {opacity: 0, height: '700px', top: '-600px'}]]);
+cue(7.7, 'riser', {d: .6}); cue(8.2, 'rocket', {d: 1.6});
+say('#fin', 9.7, null, {st: .12});
+cue(9.7, 'chime');
+S.start();
+</script></body></html>

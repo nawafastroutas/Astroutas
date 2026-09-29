@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 05 · موظف ٢٤ ساعة</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  .star{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--paper)}
+  #moon{left:130px;top:520px}
+  #clock{left:430px;top:600px;width:220px;height:220px;border-radius:50%;border:6px solid var(--paper);background:var(--ink-4)}
+  #clock .hh,#clock .mh{position:absolute;left:50%;bottom:50%;transform-origin:50% 100%;border-radius:4px;background:var(--paper)}
+  #clock .hh{width:10px;height:56px;margin-left:-5px}
+  #clock .mh{width:6px;height:84px;margin-left:-3px;background:var(--green-l)}
+  #clock .c{position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px;border-radius:50%;background:var(--paper)}
+  #shop{left:220px;top:880px;width:640px;height:470px;transform-origin:50% 50%}
+  .awn{position:absolute;left:-20px;right:-20px;top:0;height:90px;border-radius:10px 10px 0 0;
+    background:repeating-linear-gradient(90deg,#3A423E 0 80px,#C9C7BD 80px 160px)}
+  .wall{position:absolute;left:0;right:0;top:90px;bottom:0;background:#223029;border:3px solid #3A423E;border-top:0}
+  .win{position:absolute;right:40px;top:150px;width:300px;height:220px;background:#0E1612;border:6px solid #3A423E}
+  .door{position:absolute;left:60px;top:150px;width:170px;height:320px;background:#0E1612;border:6px solid #3A423E;border-bottom:0}
+  .closed{position:absolute;left:78px;top:230px;width:134px;height:56px;border-radius:6px;background:var(--red);color:var(--paper);font-weight:700;font-size:30px;display:flex;align-items:center;justify-content:center;transform-origin:50% 0}
+  .phone{left:440px;top:600px;width:500px;height:840px}
+  .phone .scr{background:var(--paper);color:var(--ink);padding:70px 24px 24px}
+  .sbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;direction:ltr}
+  .sbar b{font:600 24px var(--mono);color:var(--ink)}
+  .it{position:absolute;left:24px;right:24px;display:flex;align-items:center;gap:16px;font-size:26px;font-weight:600;padding:18px 20px}
+  .it small{display:block;font-weight:400;font-size:21px;color:var(--muted)}
+  .bub{position:absolute;max-width:360px;padding:16px 22px;border-radius:22px;font-size:26px;line-height:1.5}
+  .bub.c{left:24px;background:#E6E5DD;border-bottom-left-radius:6px}
+  .bub.s{right:24px;background:var(--green);color:var(--paper);border-bottom-right-radius:6px}
+  #emp{left:70px;top:940px}
+  #badge{left:92px;top:1470px;font-size:26px}
+  #say{left:60px;top:800px;width:330px;padding:18px 24px;border-radius:22px;border-bottom-right-radius:6px;background:var(--paper);color:var(--ink);font-size:28px;font-weight:600;line-height:1.45}
+</style></head><body>
+<div id="stage">
+  <div id="stars"></div>
+  <div class="abs" id="moon"></div>
+  <div class="abs cx h-l" id="q" style="top:380px">الساعة <span class="mono lat">2:00</span> الفجر…</div>
+  <div class="abs" id="clock"><div class="hh" id="hh"></div><div class="mh" id="mh"></div><div class="c"></div></div>
+  <div class="abs" id="shop"><div class="awn"></div><div class="wall"><div class="win"></div><div class="door"></div></div><div class="closed" id="cl">مغلق</div></div>
+  <div class="abs cx h-m" id="c1" style="top:1420px">المحل <span class="rd">مسكّر.</span></div>
+
+  <div class="abs" id="emp"></div>
+  <div class="abs" id="say">أهلًا! كيف أقدر أساعدك؟</div>
+  <div class="phone" id="ph"><div class="scr">
+    <div class="sbar"><b>02:14</b><span id="lg"></span></div>
+    <div class="card it" id="i1" style="top:140px"></div>
+    <div class="bub c" id="i2" style="top:290px">التوصيل متاح لصحار؟</div>
+    <div class="bub s" id="i3" style="top:390px">نعم ✓ خلال ٢٤ ساعة</div>
+    <div class="card it" id="i4" style="top:500px"></div>
+    <div class="card it" id="i5" style="top:640px"></div>
+  </div><div class="notch"></div></div>
+  <div class="abs cx h-m" id="c2" style="top:1470px">موقعك يشتغل <span class="gl">٢٤ ساعة.</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, icon, person, mood, MARK, $, $$, E} = S;
+S.setup({day: 5, dur: 15.6, mood: 'calm'});
+$('#moon').innerHTML = icon('moon', 110, '#C9C7BD', 1.6);
+$('#lg').innerHTML = `<span style="display:inline-block;width:22px;height:33px">${MARK('#3F7A62', 14)}</span>`;
+$('#emp').innerHTML = person({w: 250, shirt: '#3F7A62'});
+$('#emp svg').insertAdjacentHTML('beforeend', `<rect x="108" y="150" width="24" height="30" rx="4" fill="#FBFAF6"/><g transform="translate(113,153) scale(.14)"><path d="M77.345 18.655A41.5 41.5 0 0 0 18.655 77.345M77.345 66.655A41.5 41.5 0 0 1 18.655 125.345" fill="none" stroke="#3F7A62" stroke-width="16"/></g>`);
+$('#i1').innerHTML = icon('cart', 44, '#3F7A62') + '<div>طلب جديد <span class="mono">#1043</span><small>٣ منتجات · تم الدفع</small></div>';
+$('#i4').innerHTML = icon('clock', 44, '#3F7A62') + '<div>حجز موعد جديد<small>الأحد · ١٠:٠٠ صباحًا</small></div>';
+$('#i5').innerHTML = icon('check', 44, '#3F7A62') + '<div>رسالة جديدة: استفسار سعر<small>تم الرد تلقائيًا</small></div>';
+
+// night
+const box = $('#stars');
+[[160,300],[320,250],[880,330],[760,520],[980,600],[90,760],[620,280],[470,470],[950,860],[260,640]].forEach(([x, y], i) => {
+  box.insertAdjacentHTML('beforeend', `<div class="star" id="st${i}" style="left:${x}px;top:${y}px"></div>`);
+  K(`#st${i}`, [...Array(8)].map((_, k) => [k * 1.9 + i * .23, {opacity: k % 2 ? .25 : .9}, E.INOUT]));
+});
+inOut('#moon', .2, null, {dy: 30});
+say('#q', .3, 4.4, {st: .12});
+pop('#clock', .5, 4.3);
+K('#hh', [[.8, {transform: 'rotate(40deg)'}, E.INOUT], [4.2, {transform: 'rotate(420deg)'}]]);
+K('#mh', [[.8, {transform: 'rotate(0deg)'}, E.INOUT], [4.2, {transform: 'rotate(4320deg)'}]]);
+cue(.8, 'clockTick', {n: 7, gap: .45});
+inOut('#shop', .8, null, {dy: 80});
+K('#cl', [[1.6, {transform: 'rotate(0deg)'}, E.INOUT], [1.9, {transform: 'rotate(10deg)'}], [2.2, {transform: 'rotate(-7deg)'}], [2.5, {transform: 'rotate(4deg)'}], [2.8, {transform: 'rotate(0deg)'}]]);
+cue(1.6, 'thud', {v: .6});
+inOut('#c1', 1.9, 4.2, {dy: 30});
+// shop steps back, the website clocks in
+K('#shop', [[4.4, {transform: 'translate(0,0) scale(1)', opacity: 1}, E.INOUT], [5.0, {transform: 'translate(0,-120px) scale(.8)', opacity: 0}]], {add: false});
+cue(4.4, 'whoosh');
+inOut('#ph', 4.9, null, {dy: 160, d: .8});
+inOut('#emp', 5.2, null, {dx: -120, dy: 0});
+pop('#say', 5.8, 7.6); cue(5.8, 'bubble');
+K($('#emp .arm-l'), [[5.6, {transform: 'rotate(8deg)'}, E.INOUT], [5.9, {transform: 'rotate(150deg)'}], [6.15, {transform: 'rotate(125deg)'}], [6.4, {transform: 'rotate(150deg)'}], [6.65, {transform: 'rotate(125deg)'}], [7.0, {transform: 'rotate(8deg)'}]]);
+
+const items = [[6.4, 'ding'], [7.3, 'bubble'], [8.0, 'send'], [8.9, 'ding'], [9.7, 'success']];
+items.forEach(([t, s], i) => { inOut(`#i${i + 1}`, t, null, {dy: 40, s: .9, d: .45}); cue(t, s); });
+K('#ph', [[10.2, {transform: 'scale(1)'}], [10.4, {transform: 'scale(1.03)'}, E.INOUT], [10.9, {transform: 'scale(1)'}]], {add: true});
+say('#c2', 10.3, null, {st: .14});
+mood('#emp', 9.8, 'smile');
+S.start();
+</script></body></html>

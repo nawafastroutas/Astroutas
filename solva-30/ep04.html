@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 04 · ٣ علامات</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  #who{left:110px;top:800px}
+  .phone{left:560px;top:720px;width:400px;height:760px}
+  .spin{position:absolute;left:50%;top:300px;width:120px;height:120px;margin-left:-60px;border-radius:50%;border:10px solid var(--line);border-top-color:var(--green)}
+  .ld{position:absolute;left:0;right:0;top:460px;text-align:center;font-size:30px;color:var(--muted)}
+  .sk{position:absolute;left:30px;right:30px;height:22px;border-radius:6px;background:#E6E5DD}
+  #tm{left:560px;width:400px;top:1250px;text-align:center;font-size:44px;color:var(--red)}
+  .sign{position:absolute;left:80px;right:80px;height:200px;display:flex;align-items:center;gap:34px;padding:0 40px}
+  .sign .ic{width:110px;height:110px;flex:none;border-radius:50%;background:#F4E4DF;display:flex;align-items:center;justify-content:center}
+  .sign .n{font-family:var(--mono);font-size:22px;color:var(--red)}
+  .sign .t{font-weight:700;font-size:46px;line-height:1.3}
+  .sign .d{font-size:28px;color:var(--ink-3)}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:380px">دخل موقعك…<br><span class="rd">وطلع.</span> ليش؟</div>
+  <div class="abs" id="who"></div>
+  <div class="phone" id="ph"><div class="scr">
+    <div class="sk" style="top:80px;width:120px"></div><div class="sk" style="top:80px;left:auto;width:60px"></div>
+    <div class="spin" id="spin"></div><div class="ld">جارِ التحميل…</div>
+    <div class="sk" style="top:560px"></div><div class="sk" style="top:600px;right:120px"></div>
+  </div><div class="notch"></div></div>
+  <div class="abs mono" id="tm">0.0s</div>
+  <div class="abs cx h-m" id="gone" style="top:1520px">راح <span class="rd">لمنافسك.</span></div>
+
+  <div class="abs cx h-l" id="q2" style="top:380px">٣ علامات إن موقعك<br><span class="rd">يطرد العملاء</span></div>
+  <div class="card sign" id="k1" style="top:720px"><div class="ic"></div><div><div class="n">01</div><div class="t">بطيء في التحميل</div><div class="d">كل ثانية انتظار = زوار أقل.</div></div></div>
+  <div class="card sign" id="k2" style="top:950px"><div class="ic"></div><div><div class="n">02</div><div class="t">متعب على الجوال</div><div class="d">نص صغير وأزرار ما تنضغط.</div></div></div>
+  <div class="card sign" id="k3" style="top:1180px"><div class="ic"></div><div><div class="n">03</div><div class="t">ما فيه تواصل واضح</div><div class="d">العميل ما يعرف وش الخطوة الجاية.</div></div></div>
+  <div class="abs cx h-s" id="fix" style="top:1440px">عندك وحدة منها؟ <span class="g">نصلّحها.</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, count, cue, icon, person, mood, $, $$, E} = S;
+S.setup({day: 4, dur: 17.2, mood: 'tense', bg: 'paper'});
+$('#who').innerHTML = person({w: 260, shirt: '#3F7A62'});
+['timer', 'phone', 'msg'].forEach((n, i) => $(`#k${i + 1} .ic`).innerHTML = icon(n, 56, '#C2654F', 2));
+
+// scene A — the wait
+say('#q', .25, 5.3, {st: .12});
+inOut('#who', .5, null, {dy: 60});
+inOut('#ph', .7, 5.4, {dy: 100});
+K('#spin', [[.7, {transform: 'rotate(0deg)'}, E.LIN], [5.6, {transform: 'rotate(2200deg)'}]]);
+fade('#tm', 1.0, 5.3);
+count('#tm', 1.0, 4.6, 0, 8, v => v.toFixed(1) + 's');
+cue(1.0, 'clockTick', {n: 8, gap: .45});
+// taps the phone, gets bored, leaves
+const arm = $('#who .arm-r');
+K(arm, [[1.1, {transform: 'rotate(-8deg)'}, E.INOUT], [1.3, {transform: 'rotate(-70deg)'}], [1.5, {transform: 'rotate(-55deg)'}], [1.65, {transform: 'rotate(-70deg)'}],
+        [1.8, {transform: 'rotate(-55deg)'}], [1.95, {transform: 'rotate(-70deg)'}], [2.3, {transform: 'rotate(-8deg)'}]]);
+cue(1.3, 'click'); cue(1.65, 'click'); cue(1.95, 'click');
+mood('#who', 2.2, 'flat'); mood('#who', 3.3, 'sad');
+K($('#who .hd'), [[2.8, {transform: 'rotate(0deg)'}, E.INOUT], [3.2, {transform: 'rotate(-10deg)'}], [3.9, {transform: 'rotate(-10deg)'}], [4.2, {transform: 'rotate(0deg)'}]]);
+cue(3.0, 'yawn');
+K('#who', [[4.2, {transform: 'translate(0,0)'}, 'cubic-bezier(.4,0,.9,.6)'], [5.3, {transform: 'translate(-760px,0)'}]], {add: true});
+K($('#who svg'), [...[...Array(9)].map((_, k) => [4.2 + k * .12, {transform: `translateY(${k % 2 ? -14 : 0}px)`}, E.INOUT])]);
+cue(4.2, 'swoop'); cue(4.6, 'wrong');
+inOut('#gone', 4.5, 5.3, {dy: 30});
+
+// scene B — the three signs
+say('#q2', 5.9, 14.0, {st: .1});
+cue(5.9, 'whoosh');
+[6.9, 8.4, 9.9].forEach((t, i) => {
+  inOut(`#k${i + 1}`, t, 14.0 + i * .05, {dx: 160, dy: 0, d: .6});
+  pop($(`#k${i + 1} .ic`), t + .3, null);
+  cue(t, 'swish'); cue(t + .3, 'error');
+});
+say('#fix', 11.6, 14.0, {st: .12});
+cue(11.6, 'right');
+S.start();
+</script></body></html>
