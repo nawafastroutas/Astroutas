@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 25 · قصة نجاح بالأرقام</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  #dash{left:70px;right:70px;top:650px;height:800px;padding:36px}
+  .kpis{display:flex;gap:18px}
+  .kpi{flex:1;background:var(--ink);border:1.5px solid var(--ink-2);border-radius:6px;padding:22px 20px;height:220px;position:relative}
+  .kpi .l{font-size:24px;color:var(--muted)}
+  .kpi .v{font:600 58px var(--mono);color:var(--paper);margin-top:14px;direction:ltr;text-align:right}
+  .kpi .b{position:absolute;right:20px;bottom:18px;font:500 20px var(--mono);color:var(--muted);direction:ltr}
+  .kpi .up{position:absolute;left:18px;bottom:16px;font:600 22px var(--mono);color:var(--green-l);direction:ltr}
+  .chart{position:relative;height:430px;margin-top:40px;border-bottom:2px solid var(--ink-2)}
+  .bar{position:absolute;bottom:0;width:78px;border-radius:6px 6px 0 0;transform-origin:bottom}
+  .mo{position:absolute;bottom:-40px;width:78px;text-align:center;font:500 20px var(--mono);color:var(--muted)}
+  #launch{position:absolute;top:10px;bottom:0;width:0;border-left:3px dashed var(--green-l)}
+  #lt{position:absolute;top:-10px;font-weight:700;font-size:24px;color:var(--green-l);white-space:nowrap;transform:translateX(50%)}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:360px">قصة نجاح… <span class="gl">بالأرقام</span></div>
+  <div class="abs cx lab" id="ex" style="top:560px">EXAMPLE DATA · مثال توضيحي</div>
+  <div class="abs card-d" id="dash">
+    <div class="kpis">
+      <div class="kpi" id="k1"><div class="l">الزيارات / شهر</div><div class="v" id="v1">0</div><div class="b" id="b1"></div><div class="up" id="u1"></div></div>
+      <div class="kpi" id="k2"><div class="l">الطلبات / شهر</div><div class="v" id="v2">0</div><div class="b" id="b2"></div><div class="up" id="u2"></div></div>
+      <div class="kpi" id="k3"><div class="l">وقت التحميل</div><div class="v" id="v3">0</div><div class="b" id="b3"></div><div class="up" id="u3"></div></div>
+    </div>
+    <div class="chart" id="ch"><div id="launch"><div id="lt">الإطلاق 🚀</div></div></div>
+  </div>
+  <div class="abs cx h-m" id="fin" style="top:1500px">موقع صحيح = <span class="gl">نتائج تنقاس.</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, count, cue, $, $$, E} = S;
+S.setup({day: 25, dur: 14.8, mood: 'drive'});
+
+// EDIT: replace with a real client's numbers (before → after) and monthly visits
+const DATA = {
+  kpi: [{from: 1200, to: 4800, fmt: v => Math.round(v).toLocaleString('en-US'), up: '+300%'},
+        {from: 30, to: 140, fmt: v => Math.round(v), up: '+367%'},
+        {from: 6.2, to: 1.4, fmt: v => v.toFixed(1) + 's', up: '−77%'}],
+  months: [['M1', 1100], ['M2', 1250], ['M3', 1200], ['M4', 2600], ['M5', 3900], ['M6', 4800]], launchAfter: 3,
+};
+DATA.kpi.forEach((k, i) => { $(`#b${i + 1}`).textContent = 'before ' + k.fmt(k.from); $(`#u${i + 1}`).textContent = k.up; $(`#v${i + 1}`).textContent = k.fmt(k.from); });
+const ch = $('#ch'), max = Math.max(...DATA.months.map(m => m[1])), W = 940 - 72, step = W / DATA.months.length;
+DATA.months.forEach(([m, v], i) => {
+  const x = 20 + i * step, after = i >= DATA.launchAfter;
+  ch.insertAdjacentHTML('beforeend', `<div class="bar" id="br${i}" style="left:${x}px;height:${v / max * 380}px;background:${after ? '#5FA88A' : '#3A423E'}"></div><div class="mo" style="left:${x}px">${m}</div>`);
+});
+$('#launch').style.left = (20 + DATA.launchAfter * step - (step - 78) / 2) + 'px';
+
+say('#q', .2, 11.8, {st: .14}); cue(.2, 'swish');
+fade('#ex', .6, 11.8);
+inOut('#dash', .8, 11.8, {dy: 100}); cue(.8, 'whoosh');
+DATA.kpi.forEach((k, i) => {
+  pop(`#k${i + 1}`, 1.2 + i * .25, null, {s: .8});
+  count(`#v${i + 1}`, 1.8 + i * .3, 4.0 + i * .3, k.from, k.to, k.fmt);
+  pop(`#u${i + 1}`, 4.1 + i * .3, null); cue(4.1 + i * .3, 'ding', {f: 1100 + i * 150, v: .6});
+});
+cue(1.8, 'riser', {d: 2.2, v: .7});
+$$('.bar').forEach((b, i) => { K(b, [[4.6 + i * .22, {transform: 'scaleY(0)'}, E.OUT], [5.2 + i * .22, {transform: 'scaleY(1)'}]]); cue(4.6 + i * .22, 'pop2', {f: 350 + i * 70, v: .5}); });
+K('#launch', [[5.2, {opacity: 0, transform: 'scaleY(0)'}, E.OUT], [5.6, {opacity: 1, transform: 'scaleY(1)'}]]);
+$('#launch').style.transformOrigin = 'bottom';
+cue(5.3, 'rocket', {d: 1, v: .6});
+say('#fin', 7.4, 11.8, {st: .12}); cue(7.4, 'cash');
+S.start();
+</script></body></html>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 27 · الأسئلة الشائعة</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  .m{position:absolute;max-width:640px;padding:22px 30px;border-radius:30px;font-size:34px;line-height:1.5}
+  .q{left:70px;background:#E6E5DD;color:var(--ink);border-bottom-left-radius:8px;font-weight:600}
+  .a{right:170px;background:var(--green);color:var(--paper);border-bottom-right-radius:8px}
+  .av{position:absolute;right:70px;width:80px;height:80px;border-radius:50%;background:var(--green-l);display:flex;align-items:center;justify-content:center}
+  .av div{width:26px;height:39px}
+  .ty{position:absolute;right:170px;padding:24px 30px;border-radius:30px;border-bottom-right-radius:8px;background:var(--ink-4);display:flex;gap:10px}
+  .ty i{width:14px;height:14px;border-radius:50%;background:var(--muted)}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:370px">أسئلة <span class="gl">تتكرر علينا</span> 💬</div>
+  <div id="chat"></div>
+  <div class="abs cx h-s" id="fin" style="top:1500px">عندك سؤال ثاني؟ <span class="gl">اكتبه في التعليقات 👇</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, MARK, $, $$, E} = S;
+S.setup({day: 27, dur: 15.8, mood: 'warm', end: {cta: 'راسلنا'}});
+
+// EDIT: questions and answers
+const QA = [
+  ['كم ياخذ بناء الموقع؟', 'حسب حجمه… ونعطيك جدول زمني واضح قبل ما نبدأ.'],
+  ['أقدر أعدّل المحتوى بنفسي؟', 'نعم، نسلّمك لوحة تحكم ونشرح لك طريقتها.'],
+  ['الموقع يشتغل على الجوال؟', 'أكيد، كل تصميم نختبره على الجوال أول.'],
+];
+const box = $('#chat');
+QA.forEach(([q, a], i) => {
+  const y = 590 + i * 300;
+  box.insertAdjacentHTML('beforeend', `<div class="m q" id="q${i}" style="top:${y}px">${q}</div>
+    <div class="ty" id="t${i}" style="top:${y + 104}px"><i></i><i></i><i></i></div>
+    <div class="m a" id="a${i}" style="top:${y + 104}px">${a}</div>
+    <div class="av" id="v${i}" style="top:${y + 114}px"><div>${MARK('#14201B', 16)}</div></div>`);
+  const t = .9 + i * 3.1;
+  pop(`#q${i}`, t, 12.7, {s: .6}); cue(t, 'bubble', {f: 380});
+  pop(`#v${i}`, t + .6, 12.7);
+  K(`#t${i}`, [[t + .6, {opacity: 0, transform: 'scale(.6)'}, E.BACK], [t + .9, {opacity: 1, transform: 'scale(1)'}], [t + 1.5, {opacity: 1, transform: 'scale(1)'}], [t + 1.55, {opacity: 0, transform: 'scale(1)'}]]);
+  $$(`#t${i} i`).forEach((d, k) => K(d, [...Array(5)].map((_, j) => [t + .6 + j * .2 + k * .07, {transform: `translateY(${j % 2 ? -8 : 0}px)`}, E.INOUT])));
+  cue(t + .7, 'type', {n: 6, gap: .12});
+  pop(`#a${i}`, t + 1.55, 12.7, {s: .6}); cue(t + 1.55, 'send');
+});
+say('#q', .2, 12.7, {st: .14});
+say('#fin', 10.5, 12.7, {st: .1}); cue(10.5, 'chime');
+S.start();
+</script></body></html>

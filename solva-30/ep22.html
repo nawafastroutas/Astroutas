@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 22 · رحلة العميل معنا</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  #road{left:0;top:0;width:1080px;height:1920px;overflow:visible}
+  .stn{position:absolute;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;background:var(--ink);border:4px solid var(--ink-2);display:flex;align-items:center;justify-content:center}
+  .sl{position:absolute;translate:-50% -100%;white-space:nowrap;font-weight:700;font-size:32px;padding:6px 16px;border-radius:6px;background:var(--ink)}
+  .sl small{font:500 20px var(--mono);color:var(--green-l);margin-left:8px}
+  #car{left:0;top:0;width:70px;height:70px;margin:-35px 0 0 -35px;border-radius:50%;background:var(--green-l);box-shadow:0 0 0 10px rgba(95,168,138,.25);display:flex;align-items:center;justify-content:center;z-index:5}
+  #car div{width:20px;height:30px}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:370px">رحلتك <span class="gl">معنا</span></div>
+  <svg class="abs" id="road" viewBox="0 0 1080 1920" fill="none">
+    <path id="rp" d="M 860 640 H 260 A 100 100 0 0 0 260 840 H 820 A 100 100 0 0 1 820 1040 H 260 A 100 100 0 0 0 260 1240 H 820 A 100 100 0 0 1 820 1440 H 220" stroke="#223029" stroke-width="44" stroke-linecap="round"/>
+    <path id="rl" d="M 860 640 H 260 A 100 100 0 0 0 260 840 H 820 A 100 100 0 0 1 820 1040 H 260 A 100 100 0 0 0 260 1240 H 820 A 100 100 0 0 1 820 1440 H 220" stroke="#3A423E" stroke-width="4" stroke-dasharray="18 22"/>
+    <path id="rg" d="M 860 640 H 260 A 100 100 0 0 0 260 840 H 820 A 100 100 0 0 1 820 1040 H 260 A 100 100 0 0 0 260 1240 H 820 A 100 100 0 0 1 820 1440 H 220" stroke="#5FA88A" stroke-width="8" stroke-linecap="round"/>
+  </svg>
+  <div id="stations"></div>
+  <div class="abs" id="car"><div></div></div>
+  <div class="abs cx h-m" id="fin" style="top:820px">من أول رسالة…<br><span class="gl">لما بعد الإطلاق.</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, hook, icon, MARK, $, $$, E} = S;
+S.setup({day: 22, dur: 16.4, mood: 'drive'});
+$('#car div').innerHTML = MARK('#14201B', 16);
+
+const ST = [['chat', 'أول رسالة'], ['users', 'نفهم احتياجك'], ['file', 'عرض سعر واضح'], ['palette', 'التصميم'], ['code', 'التطوير'], ['rocket', 'الإطلاق'], ['shield', 'دعم مستمر']];
+const rp = $('#rp'), L = rp.getTotalLength(), at = f => rp.getPointAtLength(L * f);
+const frac = ST.map((_, i) => i / (ST.length - 1) * .985 + .005);
+const box = $('#stations');
+ST.forEach(([ic, lb], i) => {
+  const p = at(frac[i]);
+  box.insertAdjacentHTML('beforeend', `<div class="stn" id="s${i}" style="left:${p.x}px;top:${p.y}px">${icon(ic, 40, '#5FA88A', 2)}</div>
+    <div class="sl" id="l${i}" style="left:${p.x}px;top:${p.y - 50}px">${lb}<small>0${i + 1}</small></div>`);
+});
+
+say('#q', .2, 10.9, {st: .14}); cue(.2, 'swish');
+fade('#rp', .6, 10.9); fade('#rl', .6, 10.9);
+ST.forEach((_, i) => { pop(`#s${i}`, .8 + i * .1, 10.9, {s: .4}); cue(.8 + i * .1, 'pop2', {f: 400 + i * 50, v: .5}); });
+
+// traveller: drive to each station, pause, light it up
+const t0 = 1.8, seg = 1.3, arrive = frac.map((_, i) => t0 + i * seg);
+const pos = t => {
+  if (t <= arrive[0]) return frac[0];
+  for (let i = 1; i < frac.length; i++){
+    const s = arrive[i] - .75;
+    if (t < s) return frac[i - 1];
+    if (t < arrive[i]){ const x = (t - s) / .75, e = x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; return frac[i - 1] + (frac[i] - frac[i - 1]) * e; }
+  }
+  return frac[frac.length - 1];
+};
+const rg = $('#rg'); rg.style.strokeDasharray = L;
+hook(t => { const f = pos(t), p = at(f); $('#car').style.translate = `${p.x}px ${p.y}px`; rg.style.strokeDashoffset = L * (1 - f); });
+K('#car', [[1.4, {opacity: 0, scale: '0'}, E.BACK], [1.8, {opacity: 1, scale: '1'}], [10.7, {opacity: 1, scale: '1'}], [10.9, {opacity: 0, scale: '0'}]]);
+K('#rg', [[10.7, {opacity: 1}], [10.95, {opacity: 0}]]);
+ST.forEach((_, i) => {
+  const t = arrive[i];
+  K(`#s${i}`, [[t - .05, {backgroundColor: '#14201B', borderColor: '#3A423E'}], [t + .15, {backgroundColor: '#1E3A2F', borderColor: '#5FA88A'}]], {});
+  inOut(`#l${i}`, t, 10.9, {dy: 20, d: .35});
+  cue(t, 'ding', {f: 880 + i * 110, v: .6});
+  if (i) cue(t - .75, 'slide', {d: .6, v: .6});
+});
+say('#fin', 11.1, 13.4, {st: .14}); cue(11.1, 'chime');
+S.start();
+</script></body></html>

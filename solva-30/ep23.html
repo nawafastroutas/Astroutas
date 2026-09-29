@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 23 · الباقات</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  .pk{position:absolute;top:660px;width:310px;height:760px;padding:40px 26px 30px;display:flex;flex-direction:column;gap:10px}
+  .pk .n{font-weight:700;font-size:44px}
+  .pk .s{font-size:22px;color:var(--muted);min-height:66px}
+  .pk ul{list-style:none;display:flex;flex-direction:column;gap:18px;margin-top:14px;flex:1}
+  .pk li{display:flex;gap:10px;align-items:flex-start;font-size:23px;font-weight:500;line-height:1.35}
+  .pk li svg{flex:none;margin-top:2px}
+  .pk .pr{font:600 30px var(--ar);margin-bottom:14px}
+  .pk .btn{height:62px;font-size:24px}
+  .pk.hot{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .pk.hot .s{color:#9AA39D}
+  .pk.hot .btn{background:var(--green-l);color:var(--ink)}
+  .badge{position:absolute;top:-24px;left:50%;transform:translateX(-50%);white-space:nowrap;padding:8px 20px;border-radius:999px;background:var(--green-l);color:var(--ink);font-weight:700;font-size:22px}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:380px">اختر <span class="g">باقتك</span></div>
+  <div id="pks"></div>
+  <div class="abs cx h-s" id="fin" style="top:1470px">ما لقيت اللي يناسبك؟ <span class="g">نفصّل لك باقة.</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, icon, $, $$, E} = S;
+S.setup({day: 23, dur: 15.2, mood: 'drive', bg: 'paper', end: {cta: 'اسألنا عن الباقات'}});
+
+// EDIT: package names, features and prices (leave price '' to show "اطلب السعر")
+const PK = [
+  {n: 'انطلاقة', s: 'صفحة هبوط واحدة لفكرة أو عرض', f: ['صفحة واحدة متجاوبة', 'نموذج تواصل', 'زر واتساب مباشر', 'تسليم سريع'], price: ''},
+  {n: 'أعمال', s: 'موقع تعريفي متكامل لشركتك', f: ['حتى ٦ صفحات', 'تصميم مخصص للهوية', 'تهيئة لمحركات البحث', 'لوحة تحكم بالمحتوى'], price: '', hot: 1},
+  {n: 'متجر', s: 'متجر إلكتروني جاهز للبيع', f: ['منتجات وسلة شراء', 'دفع إلكتروني', 'إدارة الطلبات', 'تقارير المبيعات'], price: ''},
+];
+const box = $('#pks');
+PK.forEach((p, i) => box.insertAdjacentHTML('beforeend', `<div class="card pk ${p.hot ? 'hot' : ''}" id="k${i}" style="right:${45 + i * 335}px">
+  ${p.hot ? '<div class="badge" id="bd">الأكثر طلبًا</div>' : ''}
+  <div class="n">${p.n}</div><div class="s">${p.s}</div>
+  <ul>${p.f.map(f => `<li>${icon('check', 26, p.hot ? '#5FA88A' : '#3F7A62', 2.6)}<span>${f}</span></li>`).join('')}</ul>
+  <div class="pr">${p.price || 'اطلب السعر'}</div><div class="btn ${p.hot ? '' : 'dk'}">اختر ${p.n}</div></div>`));
+
+say('#q', .2, 12.1, {st: .14}); cue(.2, 'swish');
+// cards fly in from scattered spots and line up
+const from = ['translate(260px,-500px) rotate(24deg)', 'translate(0,900px) rotate(-8deg)', 'translate(-260px,-500px) rotate(-24deg)'];
+PK.forEach((p, i) => {
+  const a = .7 + i * .25, el = $(`#k${i}`);
+  K(el, [[a, {transform: from[i] + ' scale(.8)', opacity: 0}, 'cubic-bezier(.2,.9,.25,1.08)'], [a + .8, {transform: 'none', opacity: 1}],
+         ...(p.hot ? [[2.6, {transform: 'none', opacity: 1}, E.BACK], [3.1, {transform: 'translateY(-26px) scale(1.06)', opacity: 1}]] : []),
+         [12.0, {transform: p.hot ? 'translateY(-26px) scale(1.06)' : 'none', opacity: 1}, E.IN], [12.3, {transform: 'translateY(60px)', opacity: 0}]]);
+  cue(a, 'whoosh', {v: .7}); cue(a + .75, 'thud', {v: .5});
+  $$('li', el).forEach((li, j) => { inOut(li, 3.4 + j * .45 + i * .12, null, {dx: 30, dy: 0, d: .4}); });
+  fade($('.pr', el), 5.6 + i * .1, null); inOut($('.btn', el), 5.9 + i * .1, null, {dy: 20});
+});
+[0, 1, 2, 3].forEach(j => cue(3.4 + j * .45, 'tick', {f: 1800 + j * 200, v: 1.3}));
+pop('#bd', 3.0, null); cue(2.6, 'riser', {d: .5}); cue(3.0, 'ding');
+say('#fin', 7.4, 12.0, {st: .12}); cue(7.4, 'chime');
+S.start();
+</script></body></html>

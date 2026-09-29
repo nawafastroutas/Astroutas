@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 12 · سباق السرعة</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  .lane{position:absolute;left:0;right:0;height:230px;background:#1B2923;border-top:3px solid var(--ink-2);border-bottom:3px solid var(--ink-2)}
+  .lane:after{content:"";position:absolute;left:0;right:0;top:50%;height:6px;margin-top:-3px;background:repeating-linear-gradient(90deg,#3A423E 0 60px,transparent 60px 110px)}
+  .lname{position:absolute;right:40px;font-weight:700;font-size:36px;display:flex;gap:14px;align-items:baseline}
+  .lname .mono{font-size:28px}
+  #finish{left:90px;top:760px;width:36px;height:620px;background:repeating-conic-gradient(#F1F0EA 0 25%,#14201B 0 50%) 0 0/36px 36px;opacity:0}
+  .car{position:absolute;left:0;width:240px;height:150px}
+  .car .bd{position:absolute;left:0;right:0;bottom:30px;height:66px;border-radius:34px 18px 14px 14px}
+  .car .cb{position:absolute;right:40px;width:120px;bottom:90px;height:46px;border-radius:24px 24px 0 0}
+  .car .wh{position:absolute;bottom:4px;width:56px;height:56px;border-radius:50%;background:#0B130F;border:8px solid #3A423E}
+  .car .wh:after{content:"";position:absolute;left:50%;top:0;width:4px;height:50%;margin-left:-2px;background:#7C837E}
+  .px{position:absolute;bottom:128px;width:34px;height:34px;border-radius:50%;background:#C89B7B;border:4px solid #14201B}
+  .cnt{position:absolute;right:40px;font-size:34px;color:var(--muted);display:flex;gap:14px;align-items:center}
+  .cnt b{font:600 52px var(--mono);color:var(--paper)}
+  .res{position:absolute;left:160px;font-weight:700;font-size:38px}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:370px">سباق: <span class="rd">بطيء</span> ضد <span class="gl">سريع</span></div>
+  <div class="abs cx mono" id="cd" style="top:560px;font-size:90px;color:var(--green-l)"></div>
+  <div class="lane" id="L1" style="top:760px"><div class="lname" style="top:-58px">موقع بطيء <span class="mono rd">8s</span></div></div>
+  <div class="lane" id="L2" style="top:1150px"><div class="lname" style="top:-58px">موقع سريع <span class="mono gl">1s</span></div></div>
+  <div class="abs" id="finish"></div>
+  <div class="car" id="slow" style="top:800px"><div class="cb" style="background:#9A8F86"></div><div class="bd" style="background:#B7A99C"></div><div class="wh" style="left:26px"></div><div class="wh" style="right:26px"></div>
+    <div class="px" style="left:40px"></div><div class="px" style="left:82px"></div><div class="px" style="left:124px"></div><div class="px" style="left:166px"></div></div>
+  <div class="car" id="fast" style="top:1190px"><div class="cb" style="background:#2E5E4B"></div><div class="bd" style="background:#5FA88A"></div><div class="wh" style="left:26px"></div><div class="wh" style="right:26px"></div>
+    <div class="px" style="left:40px"></div><div class="px" style="left:82px"></div><div class="px" style="left:124px"></div><div class="px" style="left:166px"></div></div>
+  <div class="cnt" id="k1" style="top:1004px">العملاء <b id="n1">4</b></div>
+  <div class="cnt" id="k2" style="top:1394px">العملاء <b id="n2">4</b></div>
+  <div class="res gl" id="w2" style="top:1400px">وصل بكل عملائه ✓</div>
+  <div class="abs cx h-m" id="fin" style="top:1480px">كل ثانية تأخير…<br><span class="rd">عميل ينزل في الطريق.</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, hook, $, $$, E} = S;
+S.setup({day: 12, dur: 15.6, mood: 'drive'});
+
+say('#q', .25, 12.6, {st: .12}); cue(.25, 'swish');
+fade('#L1', .5, 12.6); fade('#L2', .6, 12.6); fade('#finish', .8, 12.6);
+// cars roll in to the start line (right side)
+const X0 = 800, XF = 140;
+// countdown 3·2·1
+hook(t => { $('#cd').textContent = t < 1.2 || t > 2.6 ? '' : t < 1.65 ? '3' : t < 2.1 ? '2' : 'GO'; });
+[1.2, 1.65, 2.1].forEach((t, i) => cue(t, 'beep', {f: i < 2 ? 660 : 1320}));
+// fast car: straight to the finish
+K('#fast', [[.6, {transform: `translateX(1200px)`}, E.OUT], [1.1, {transform: `translateX(${X0}px)`}, 'cubic-bezier(.5,0,.3,1)'], [2.2, {transform: `translateX(${X0}px)`}, 'cubic-bezier(.55,0,.35,1)'], [3.9, {transform: `translateX(${XF}px)`}]]);
+cue(2.1, 'engine', {d: 1.8, f: 70, up: 3});
+// slow car: sputters along, losing passengers
+K('#slow', [[.6, {transform: `translateX(1200px)`}, E.OUT], [1.1, {transform: `translateX(${X0}px)`}, E.LIN], [2.2, {transform: `translateX(${X0}px)`}, E.INOUT],
+            [3.4, {transform: `translateX(700px)`}, E.INOUT], [4.4, {transform: `translateX(640px)`}, E.INOUT], [5.8, {transform: `translateX(500px)`}, E.INOUT],
+            [7.0, {transform: `translateX(420px)`}, E.INOUT], [8.8, {transform: `translateX(${XF}px)`}]]);
+cue(2.2, 'engine', {d: 6.5, f: 45, up: 1.3, v: .8});
+$$('#fast .wh, #slow .wh').forEach(w => K(w, [[1, {transform: 'rotate(0deg)'}, E.LIN], [9, {transform: 'rotate(-3600deg)'}]]));
+// passengers bail out of the slow car one by one
+const drops = [3.4, 4.9, 6.4];
+drops.forEach((t, i) => {
+  const p = $$('#slow .px')[3 - i];
+  K(p, [[t, {transform: 'translate(0,0) rotate(0deg)', opacity: 1}, 'cubic-bezier(.3,-.6,.7,1)'], [t + .7, {transform: `translate(${120 + i * 20}px,160px) rotate(200deg)`, opacity: 0}]]);
+  cue(t, 'boing'); cue(t + .15, 'wrong', {v: .6});
+});
+hook(t => { $('#n1').textContent = 4 - drops.filter(d => t >= d + .2).length; });
+fade('#k1', 2.2, 9.4); fade('#k2', 2.2, 4.1);
+pop('#w2', 4.1, 9.4); cue(3.9, 'success');
+K('#n1', [[9.0, {color: '#F1F0EA'}], [9.2, {color: '#C2654F'}]]);
+say('#fin', 9.6, 12.6, {st: .12}); cue(9.6, 'thud');
+S.start();
+</script></body></html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 09 · إنستقرام وحده ما يكفي</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  .house{position:absolute;top:760px;width:380px;height:400px;transform-origin:50% 100%}
+  .house .roof{position:absolute;left:-20px;right:-20px;top:0;height:150px;clip-path:polygon(50% 0,100% 100%,0 100%)}
+  .house .body{position:absolute;left:20px;right:20px;top:150px;bottom:0}
+  .house .door{position:absolute;left:50%;bottom:0;width:90px;height:150px;margin-left:-45px;border-radius:45px 45px 0 0}
+  .house .wn{position:absolute;top:50px;width:80px;height:70px;border-radius:6px}
+  .sign{position:absolute;top:-70px;padding:8px 18px;border-radius:6px;font-weight:700;font-size:28px;white-space:nowrap}
+  .lb{position:absolute;top:1200px;width:540px;text-align:center}
+  .lb .a{font-size:30px;color:var(--muted)}
+  .lb .b{font-weight:700;font-size:44px}
+  .hit{position:absolute;right:60px;width:420px;display:flex;justify-content:center}
+  .hit .chip{background:var(--card);color:var(--red);border-color:var(--red);font-size:36px;padding:12px 28px}
+  .bolt{position:absolute;right:200px;top:600px}
+  .bolt svg{fill:#D9A441}
+  #ok{position:absolute;left:420px;top:700px;width:100px;height:100px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:370px">ليش الإنستقرام<br><span class="g">وحده ما يكفي؟</span></div>
+  <div class="house" id="hR" style="right:80px"><div class="roof" style="background:#C9C7BD"></div><div class="body" style="background:#E6E5DD"><div class="wn" style="right:30px;background:#FBFAF6"></div><div class="wn" style="left:30px;background:#FBFAF6"></div><div class="door" style="background:#C9C7BD"></div></div>
+    <div class="sign" style="right:40px;background:var(--card);border:2px solid var(--line);color:var(--muted)">للإيجار</div></div>
+  <div class="house" id="hL" style="left:80px"><div class="roof" style="background:#14201B"></div><div class="body" style="background:#3F7A62"><div class="wn" style="right:30px;background:#F1F0EA"></div><div class="wn" style="left:30px;background:#F1F0EA"></div><div class="door" style="background:#14201B"></div></div>
+    <div class="sign" style="left:40px;background:var(--ink);color:var(--paper)">ملكك</div></div>
+  <div class="lb" id="lR" style="right:0"><div class="a">حسابك على المنصة</div><div class="b">بيت مستأجر</div></div>
+  <div class="lb" id="lL" style="left:0"><div class="a">موقعك</div><div class="b g">بيت ملك</div></div>
+  <div class="bolt" id="bo"></div>
+  <div class="hit" id="e1" style="top:1350px"><span class="chip">تغيّرت الخوارزمية</span></div>
+  <div class="hit" id="e2" style="top:1350px"><span class="chip">قلّ الوصول فجأة</span></div>
+  <div class="hit" id="e3" style="top:1350px"><span class="chip">الحساب توقّف؟</span></div>
+  <div id="ok"></div>
+  <div class="abs cx h-m" id="f1" style="top:1330px">المنصة ممتازة للوصول…</div>
+  <div class="abs cx h-m" id="f2" style="top:1430px">لكن <span class="g">الموقع</span> هو اللي تملكه.</div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, icon, $, $$, E} = S;
+S.setup({day: 9, dur: 15.8, mood: 'tense', bg: 'paper'});
+$('#bo').innerHTML = icon('zap', 190, '#B8862E', 1.5);
+$('#ok').innerHTML = icon('check', 60, '#F1F0EA', 3);
+
+say('#q', .25, 12.8, {st: .12}); cue(.25, 'swish');
+inOut('#hR', .9, 12.8, {dy: 0, s: .2, ez: E.BACK, d: .6}); cue(.9, 'pop');
+inOut('#hL', 1.2, 12.8, {dy: 0, s: .2, ez: E.BACK, d: .6}); cue(1.2, 'pop');
+inOut('#lR', 1.7, 8.2, {dy: 30}); inOut('#lL', 1.9, 8.2, {dy: 30});
+
+// three strikes on the rented house
+const shake = (t, amp) => [...Array(7)].map((_, k) => [t + k * .05, {transform: `rotate(${k % 2 ? amp : -amp}deg)`}, E.LIN]).concat([[t + .4, {transform: 'rotate(0deg)'}]]);
+const strikes = [3.2, 4.7, 6.2];
+K('#hR', strikes.flatMap((t, i) => shake(t, 2 + i * 1.5)), {add: true});
+K('#bo', strikes.flatMap(t => [[t - .15, {opacity: 0, transform: 'translateY(-60px) scale(.6)'}, 'steps(1,end)'], [t - .1, {opacity: 1, transform: 'translateY(-60px) scale(.6)'}, E.OUT],
+  [t + .05, {opacity: 1, transform: 'translateY(0) scale(1)'}], [t + .45, {opacity: 0, transform: 'translateY(0) scale(1)'}]]));
+strikes.forEach((t, i) => { cue(t, 'impact', {v: .7}); cue(t + .05, 'glitch'); inOut(`#e${i + 1}`, t + .1, t + 1.25, {dy: 30, d: .35, od: .2}); });
+K($('#hR .body'), [[6.4, {opacity: 1, filter: 'grayscale(0)'}], [7.0, {opacity: .45, filter: 'grayscale(1)'}]]);
+K($('#hR .roof'), [[6.4, {transform: 'rotate(0deg) translateY(0)'}, E.BACK], [7.0, {transform: 'rotate(-7deg) translateY(12px)'}]]);
+cue(6.6, 'thud');
+// the owned one stands
+pop('#ok', 7.5, 12.8); cue(7.5, 'success');
+K('#hL', [[7.5, {transform: 'scale(1)'}], [7.7, {transform: 'scale(1.05)'}, E.INOUT], [8.1, {transform: 'scale(1)'}]], {add: true});
+say('#f1', 8.5, 12.8, {st: .12});
+say('#f2', 9.6, 12.8, {st: .14}); cue(9.6, 'chime');
+S.start();
+</script></body></html>

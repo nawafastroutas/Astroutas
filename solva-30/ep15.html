@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 15 · بس تعديل بسيط</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  .bb{position:absolute;padding:18px 28px;border-radius:26px;font-size:36px;font-weight:600;white-space:nowrap;background:#E6E5DD;color:var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+  .bb.me{background:var(--green-l)}
+  #ball{left:440px;top:900px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFFFFF,#F1F0EA 55%,#D6D5CC);transform:scale(0)}
+  #ball i{position:absolute;width:18px;height:18px;border-radius:50%;background:#C9C7BD}
+  #dev{left:720px;top:1180px}
+  #drop{left:840px;top:1170px;opacity:0}
+  #end{inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--ink);gap:26px;text-align:center}
+  #end .h-l{font-size:96px}
+  #end .chip{font-size:34px;border-color:var(--green);color:var(--green)}
+</style></head><body>
+<div id="stage">
+  <div class="abs" id="ball"><i style="left:40px;top:60px"></i><i style="left:130px;top:40px"></i><i style="left:90px;top:140px"></i><i style="left:150px;top:120px"></i></div>
+  <div class="abs cx h-l" id="q" style="top:370px">"بس تعديل <span class="gl">بسيط</span>" 😅</div>
+  <div id="bubbles"></div>
+  <div class="abs" id="dev"></div>
+  <div class="abs" id="drop"></div>
+  <div class="abs" id="end"><div class="h-l">نحب التعديلات 😄</div><div class="h-m">بس <span class="g">نتفق عليها</span><br>من البداية.</div><span class="chip" id="ch">نطاق عمل واضح = مشروع مريح</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, icon, person, mood, $, $$, E} = S;
+S.setup({day: 15, dur: 15.0, mood: 'playful'});
+$('#dev').innerHTML = person({w: 220, shirt: '#5FA88A'});
+$('#drop').innerHTML = icon('drop', 46, '#8FC1E3', 2);
+$('#drop svg').style.fill = '#8FC1E3';
+
+// [text, x, y, time, mine]
+const B = [
+  ['بس تعديل بسيط 🙏', 90, 620, .7], ['أكيد!', 700, 760, 1.4, 1],
+  ['غيّر اللون للأزرق', 380, 880, 2.2], ['لا، رجّعه أخضر', 120, 990, 2.7], ['وأضف صفحة جديدة', 420, 1100, 3.1],
+  ['والشعار أكبر شوي', 80, 700, 3.45], ['ونبي تطبيق بعد', 460, 640, 3.75], ['مثل أمازون بالضبط', 150, 1220, 4.0],
+  ['ونفس الميزانية 😅', 400, 800, 4.25], ['وبكرة جاهز؟', 90, 1330, 4.45], ['وحدة أخيرة بس!', 520, 1000, 4.62],
+];
+const box = $('#bubbles');
+B.forEach(([t, x, y, a, me], i) => {
+  box.insertAdjacentHTML('beforeend', `<div class="bb ${me ? 'me' : ''}" id="b${i}" style="left:${x}px;top:${y}px">${t}</div>`);
+  const el = $(`#b${i}`), gone = 5.0 + i * .11;
+  // bubbles get swallowed by the growing snowball
+  const dx = 540 - (x + 150), dy = 1000 - (y + 40);
+  K(el, [[a, {opacity: 0, transform: 'translate(0,0) scale(.4)'}, E.BACK], [a + .35, {opacity: 1, transform: 'translate(0,0) scale(1)'}],
+         [gone, {opacity: 1, transform: 'translate(0,0) scale(1) rotate(0deg)'}, E.IN], [gone + .4, {opacity: 0, transform: `translate(${dx}px,${dy}px) scale(.2) rotate(40deg)`}]]);
+  cue(a, me ? 'send' : 'bubble', {f: 380 + (i % 4) * 60});
+});
+say('#q', .2, 4.9, {st: .14});
+inOut('#dev', .8, 6.4, {dy: 60});
+mood('#dev', 2.8, 'flat'); mood('#dev', 3.9, 'sad');
+K('#drop', [[4.0, {opacity: 0, transform: 'translateY(0)'}], [4.2, {opacity: 1, transform: 'translateY(0)'}, E.IN], [5.2, {opacity: 1, transform: 'translateY(60px)'}], [5.4, {opacity: 0, transform: 'translateY(70px)'}]]);
+cue(4.0, 'zipdown', {v: .6});
+K($('#dev .hd'), [...Array(10)].map((_, k) => [4.2 + k * .08, {transform: `rotate(${k % 2 ? 4 : -4}deg)`}, E.LIN]).concat([[5.1, {transform: 'rotate(0deg)'}]]));
+// snowball grows and rolls until it fills the screen
+const steps = [[4.9, .4], [5.4, 1.2], [5.9, 2.4], [6.3, 5], [6.8, 14]];
+K('#ball', [[4.6, {transform: 'scale(0) rotate(0deg)'}, E.OUT], ...steps.map(([t, s], i) => [t, {transform: `scale(${s}) rotate(${i * 160}deg)`}, i === steps.length - 1 ? E.OUT : E.INOUT])]);
+cue(4.8, 'grow', {d: 2.2, v: 1.1}); cue(6.8, 'impact', {v: .8});
+// punchline on the snow
+const kids = $$('#end > *');
+kids.forEach((k, i) => inOut(k, 7.2 + i * .45, null, {dy: 40}));
+cue(7.2, 'boing'); cue(8.1, 'chime');
+S.start();
+</script></body></html>

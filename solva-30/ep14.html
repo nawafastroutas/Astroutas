@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 14 · التصميم المتجاوب</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  #dev{position:absolute;border:14px solid #0B130F;background:var(--paper);overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+  #dev > div{position:absolute;border-radius:6px}
+  #menu{display:flex;gap:12px;overflow:hidden}
+  #menu i{flex:none;display:block;width:80px;height:16px;border-radius:8px;background:var(--stone)}
+  #title{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+  #title i{display:block;height:30px;border-radius:8px;background:var(--ink)}
+  .lbl{position:absolute;left:0;right:0;top:1470px;display:flex;justify-content:center}
+  .lbl .chip{font-size:32px;color:var(--paper);border-color:var(--ink-2);gap:16px}
+  .lbl .mono{color:var(--green-l);font-size:28px}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:370px">موقع واحد.<br><span class="gl">كل الشاشات.</span></div>
+  <div id="dev">
+    <div id="logo" style="background:var(--green)"></div>
+    <div id="menu"><i></i><i></i><i></i></div>
+    <div id="title"><i style="width:100%"></i><i style="width:70%"></i></div>
+    <div id="btn" style="background:var(--green)"></div>
+    <div id="img" style="background:var(--ink)"></div>
+    <div id="c1" class="card"></div><div id="c2" class="card"></div><div id="c3" class="card"></div>
+  </div>
+  <div class="lbl" id="l1"><span class="chip"><span class="ic"></span>لابتوب <span class="mono">1440px</span></span></div>
+  <div class="lbl" id="l2"><span class="chip"><span class="ic"></span>تابلت <span class="mono">768px</span></span></div>
+  <div class="lbl" id="l3"><span class="chip"><span class="ic"></span>جوال <span class="mono">390px</span></span></div>
+  <div class="abs cx h-m" id="fin" style="top:1460px">العناصر <span class="gl">ترتّب نفسها</span> تلقائيًا.</div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, icon, $, $$, E} = S;
+S.setup({day: 14, dur: 14.4, mood: 'warm'});
+['monitor', 'tablet', 'phone'].forEach((n, i) => $(`#l${i + 1} .ic`).innerHTML = icon(n, 36, '#5FA88A'));
+
+// [left, top, width, height] for laptop / tablet / phone
+const F = {dev: [[90, 720, 900, 560, 22], [240, 610, 600, 820, 30], [350, 620, 380, 800, 48]]};
+const L = {
+  logo:  [[800, 24, 40, 40], [500, 24, 40, 40], [276, 40, 40, 40]],
+  menu:  [[40, 36, 264, 16], [40, 36, 176, 16], [26, 48, 50, 16]],
+  title: [[452, 100, 380, 76], [40, 100, 492, 76], [26, 110, 300, 76]],
+  btn:   [[652, 206, 180, 54], [352, 200, 180, 54], [146, 210, 180, 54]],
+  img:   [[40, 100, 380, 200], [40, 280, 492, 210], [26, 290, 300, 170]],
+  c1:    [[584, 330, 248, 170], [296, 510, 236, 130], [26, 480, 300, 80]],
+  c2:    [[312, 330, 248, 170], [40, 510, 236, 130], [26, 574, 300, 80]],
+  c3:    [[40, 330, 248, 170], [40, 656, 492, 110], [26, 668, 300, 80]],
+};
+const box = ([l, t, w, h, r]) => ({left: l + 'px', top: t + 'px', width: w + 'px', height: h + 'px', ...(r ? {borderRadius: r + 'px'} : {})});
+const T = [[3.6, 4.3], [6.8, 7.5]];
+const morph = (el, S3) => K(el, [[0, box(S3[0])], [T[0][0], box(S3[0]), E.INOUT], [T[0][1], box(S3[1])], [T[1][0], box(S3[1]), E.INOUT], [T[1][1], box(S3[2])]]);
+morph('#dev', F.dev);
+Object.entries(L).forEach(([id, S3]) => morph('#' + id, S3));
+// the menu collapses into a hamburger on mobile
+K('#menu', [[T[1][0], {flexDirection: 'row'}, 'steps(1,end)'], [T[1][1], {flexDirection: 'column'}]], {});
+$$('#menu i').forEach((b, i) => K(b, [[T[1][0], {width: '80px', height: '16px'}, E.INOUT], [T[1][1], {width: '44px', height: i ? '5px' : '5px'}]]));
+K('#menu', [[T[1][0], {gap: '12px'}], [T[1][1], {gap: '5px'}]], {add: false});
+
+say('#q', .25, 11.2, {st: .14}); cue(.25, 'swish');
+inOut('#dev', .6, 11.2, {dy: 100, d: .8}); cue(.6, 'whoosh');
+$$('#dev > div').forEach((e, i) => pop(e, 1.0 + i * .1, null, {s: .6}));
+[1.0, 1.3, 1.6, 1.9].forEach((t, i) => cue(t, 'pop2', {f: 450 + i * 80, v: .6}));
+inOut('#l1', 1.4, 3.5, {dy: 20, d: .35, od: .2});
+inOut('#l2', 4.3, 6.7, {dy: 20, d: .35, od: .2});
+inOut('#l3', 7.5, 9.8, {dy: 20, d: .35, od: .2});
+T.forEach(([a, b]) => { cue(a, 'swoop'); cue(b - .1, 'snap'); });
+say('#fin', 10.0, 11.2, {st: .12}); cue(10.0, 'chime');
+S.start();
+</script></body></html>

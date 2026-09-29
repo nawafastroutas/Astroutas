@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 26 · ما بعد الإطلاق</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  .browser{left:300px;top:840px;width:480px;height:340px}
+  .browser .b{position:absolute;border-radius:5px}
+  #live{position:absolute;right:14px;top:6px;font:600 16px var(--mono);color:var(--green);display:flex;align-items:center;gap:6px;direction:ltr}
+  #live i{width:10px;height:10px;border-radius:50%;background:#3FA36F}
+  #links{left:0;top:0;width:1080px;height:1920px;overflow:visible}
+  .nd{position:absolute;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;background:var(--ink-4);border:3px solid var(--green-l);display:flex;align-items:center;justify-content:center}
+  .nl{position:absolute;width:300px;margin-left:-150px;text-align:center}
+  .nl b{display:block;font-size:36px}
+  .nl span{font-size:24px;color:var(--muted)}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:370px">ما بعد <span class="gl">الإطلاق؟</span></div>
+  <svg class="abs" id="links" viewBox="0 0 1080 1920" fill="none" stroke="#3A423E" stroke-width="3" stroke-dasharray="10 10"></svg>
+  <div class="browser" id="br"><div class="top"><i></i><i></i><i></i><div id="live"><i></i>LIVE</div></div>
+    <div class="b" style="right:24px;top:62px;width:200px;height:26px;background:#14201B"></div><div class="b" style="right:24px;top:100px;width:150px;height:14px;background:#C9C7BD"></div>
+    <div class="b" style="left:24px;top:62px;width:190px;height:130px;background:#3F7A62"></div><div class="b" style="right:24px;top:140px;width:120px;height:40px;background:#3F7A62"></div>
+    <div class="b" style="left:24px;right:24px;top:214px;height:90px;background:#E6E5DD"></div></div>
+  <div id="nodes"></div>
+  <div class="abs cx h-m" id="fin" style="top:1500px">علاقتنا <span class="gl">ما تنتهي</span> بالتسليم.</div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, draw, cue, icon, $, $$, E} = S;
+S.setup({day: 26, dur: 14.6, mood: 'calm'});
+
+const N = [['shield', 'حماية', 'نسخ احتياطي وأمان', 210, 770], ['wrench', 'صيانة', 'نصلّح أي خلل بسرعة', 870, 770],
+           ['refresh', 'تحديثات', 'محتوى وميزات جديدة', 210, 1260], ['chat', 'دعم', 'نرد على استفساراتك', 870, 1260]];
+const box = $('#nodes'), svg = $('#links');
+N.forEach(([ic, t, d, x, y], i) => {
+  box.insertAdjacentHTML('beforeend', `<div class="nd" id="n${i}" style="left:${x}px;top:${y}px">${icon(ic, 64, '#5FA88A', 1.8)}</div>
+    <div class="nl" id="l${i}" style="left:${x}px;top:${y + (y < 1000 ? -170 : 90)}px"><b>${t}</b><span>${d}</span></div>`);
+  svg.insertAdjacentHTML('beforeend', `<path id="p${i}" d="M${x} ${y} L540 1010"/>`);
+});
+
+say('#q', .2, 11.5, {st: .14}); cue(.2, 'swish');
+inOut('#br', .7, 11.5, {dy: 60, s: .9}); cue(.7, 'whoosh');
+K('#live i', [...Array(12)].map((_, k) => [1 + k * .6, {opacity: k % 2 ? .3 : 1}, E.INOUT]));
+N.forEach((_, i) => {
+  const t = 1.8 + i * 1.3;
+  pop(`#n${i}`, t, 11.5); cue(t, 'pop', {f: 520 + i * 80});
+  fade(`#p${i}`, t + .1, 11.4, .2); draw(`#p${i}`, t + .1, t + .6); cue(t + .15, 'zip', {v: .5});
+  inOut(`#l${i}`, t + .3, 11.5, {dy: 20});
+  // a pulse runs along to the site
+  K(`#n${i}`, [[t + .7, {boxShadow: '0 0 0 0 rgba(95,168,138,.5)'}], [t + 1.3, {boxShadow: '0 0 0 30px rgba(95,168,138,0)'}]]);
+});
+// all four keep the site healthy
+K('#br', [[7.4, {transform: 'scale(1)'}], [7.6, {transform: 'scale(1.05)'}, E.INOUT], [8.0, {transform: 'scale(1)'}]], {add: true});
+cue(7.4, 'success');
+say('#fin', 8.4, 11.5, {st: .12});
+S.start();
+</script></body></html>

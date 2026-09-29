@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 19 · سيكولوجية الألوان</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  .pn{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;text-align:center;padding:0 90px}
+  .pn .nm{font-weight:700;font-size:150px;line-height:1.1}
+  .pn .mn{font-weight:600;font-size:54px}
+  .pn .hex{font:500 30px var(--mono);opacity:.7;direction:ltr}
+  .pn .bz{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:20px}
+  .pn .bz span{padding:10px 24px;border-radius:999px;font-weight:600;font-size:32px;border:2px solid currentColor}
+  .pn .lb{font-size:28px;opacity:.75;margin-top:14px}
+  #save{left:0;right:0;top:1500px;text-align:center}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:760px">وش يقول <span class="gl">لونك</span><br>عن نشاطك؟</div>
+  <div class="abs cx lab" id="sv" style="top:1060px">SAVE FOR LATER 🔖</div>
+  <div id="panels"></div>
+  <div class="full" id="endp" style="background:var(--ink)"></div>
+  <div class="abs cx h-m" id="end" style="top:820px">احفظه… <span class="gl">وارجع له</span><br>وقت تختار ألوانك 🔖</div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, $, $$, E} = S;
+S.setup({day: 19, dur: 17.6, mood: 'calm'});
+
+const C = [
+  ['الأزرق', '#1E5FA8', '#FFFFFF', 'ثقة وهدوء', ['عيادات', 'تقنية', 'خدمات مالية']],
+  ['الأخضر', '#3F7A62', '#FFFFFF', 'نمو وصحة', ['صحة', 'زراعة', 'منتجات طبيعية']],
+  ['الأحمر', '#C0392B', '#FFFFFF', 'حماس وشهية', ['مطاعم', 'عروض', 'رياضة']],
+  ['الأسود', '#111111', '#F5EFE6', 'فخامة وأناقة', ['عطور', 'أزياء', 'مجوهرات']],
+  ['الذهبي', '#E0A43A', '#1E1A16', 'دفء وتفاؤل', ['مقاهي', 'أطفال', 'سياحة']],
+];
+const box = $('#panels');
+C.forEach(([n, bg, fg, m, bz], i) => box.insertAdjacentHTML('beforeend', `<div class="pn" id="p${i}" style="background:${bg};color:${fg}">
+  <div class="hex">${bg}</div><div class="nm">${n}</div><div class="mn">${m}</div><div class="lb">يناسب</div><div class="bz">${bz.map(b => `<span>${b}</span>`).join('')}</div></div>`));
+
+say('#q', .2, 1.9, {st: .12}); fade('#sv', .7, 1.9); cue(.2, 'swish');
+const pts = [[540, 960], [200, 400], [880, 1500], [900, 380], [180, 1520]];
+C.forEach((_, i) => {
+  const a = 2.0 + i * 2.35, [x, y] = pts[i], p = $(`#p${i}`), last = i === C.length - 1;
+  const fr = [[a, {clipPath: `circle(0px at ${x}px ${y}px)`}, E.INOUT], [a + .6, {clipPath: `circle(2300px at ${x}px ${y}px)`}]];
+    K(p, fr);
+  const kids = [...p.children];
+  kids.forEach((k, j) => inOut(k, a + .35 + j * .1, null, {dy: 40}));
+  $$('.bz span', p).forEach((s, j) => pop(s, a + .9 + j * .12, null));
+  cue(a, 'whoosh', {v: .8}); cue(a + .9, 'pop2', {f: 500 + i * 60});
+});
+fade('#endp', 13.9, null, .3);
+say('#end', 14.1, null, {st: .12}); cue(14.1, 'chime');
+S.start();
+</script></body></html>

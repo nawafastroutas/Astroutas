@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 10 · الدومين والاستضافة</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  #gr{left:120px;width:840px;top:1150px;height:70px;background:#2A3530;border-top:10px solid var(--green-l);border-radius:4px;transform-origin:center}
+  #pole{left:250px;top:930px;width:16px;height:220px;background:#C9C7BD;transform-origin:bottom}
+  #board{left:140px;top:870px;width:320px;height:96px;border-radius:6px;background:var(--paper);color:var(--ink);display:flex;align-items:center;justify-content:center;font:600 34px var(--mono);direction:ltr;transform-origin:50% 100%}
+  #house{left:520px;top:810px;width:360px;height:340px}
+  #walls{position:absolute;left:30px;right:30px;top:120px;bottom:0;background:#FBFAF6;transform-origin:bottom}
+  #roof{position:absolute;left:0;right:0;top:0;height:130px;background:var(--green);clip-path:polygon(50% 0,100% 100%,0 100%)}
+  .hp{position:absolute;border-radius:4px}
+  .cap{position:absolute;left:80px;right:80px;top:1290px;display:flex;align-items:center;gap:28px;justify-content:center}
+  .cap .ic{width:100px;height:100px;border-radius:50%;background:var(--ink-4);border:2px solid var(--ink-2);display:flex;align-items:center;justify-content:center;flex:none}
+  .cap .t{font-weight:700;font-size:48px}
+  .cap .d{font-size:28px;color:var(--muted)}
+  .num{position:absolute;width:56px;height:56px;border-radius:50%;background:var(--green-l);color:var(--ink);font:700 28px var(--mono);display:flex;align-items:center;justify-content:center}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:370px">الدومين والاستضافة<br><span class="gl">ببساطة</span></div>
+  <div class="abs" id="gr"></div>
+  <div class="abs" id="pole"></div>
+  <div class="abs" id="board">yourname.om</div>
+  <div class="abs" id="house"><div id="walls"><div class="hp" style="left:40px;top:50px;width:80px;height:70px;background:#C9DDD2"></div><div class="hp" style="right:40px;top:50px;width:80px;height:70px;background:#C9DDD2"></div><div class="hp" style="left:50%;bottom:0;width:80px;height:120px;margin-left:-40px;background:#14201B;border-radius:40px 40px 0 0"></div></div><div id="roof"></div></div>
+  <div class="num" id="n1" style="left:512px;top:1162px">1</div>
+  <div class="num" id="n2" style="left:430px;top:840px">2</div>
+  <div class="num" id="n3" style="left:870px;top:780px">3</div>
+  <div class="cap" id="c1"><div class="ic"></div><div><div class="t">الاستضافة = <span class="gl">الأرض</span></div><div class="d">المكان اللي يعيش فيه موقعك</div></div></div>
+  <div class="cap" id="c2"><div class="ic"></div><div><div class="t">الدومين = <span class="gl">العنوان</span></div><div class="d">اللي يكتبه الناس للوصول لك</div></div></div>
+  <div class="cap" id="c3"><div class="ic"></div><div><div class="t">الموقع = <span class="gl">البيت</span></div><div class="d">اللي يشوفه ويتعامل معه عميلك</div></div></div>
+  <div class="abs cx h-m" id="fin" style="top:1290px">الثلاثة لازم يكونون جاهزين…<br><span class="gl">ونرتّبها لك.</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, icon, $, $$, E} = S;
+S.setup({day: 10, dur: 15.8, mood: 'warm'});
+[['server', 1], ['globe', 2], ['home', 3]].forEach(([n, i]) => $(`#c${i} .ic`).innerHTML = icon(n, 50, '#5FA88A', 1.8));
+
+say('#q', .25, 12.8, {st: .12}); cue(.25, 'swish');
+// 1 — the land
+K('#gr', [[1.0, {transform: 'scaleX(0)', opacity: 1}, E.INOUT], [1.7, {transform: 'scaleX(1)', opacity: 1}], [12.6, {transform: 'scaleX(1)', opacity: 1}], [12.9, {transform: 'scaleX(1)', opacity: 0}]]);
+cue(1.0, 'zip'); cue(1.6, 'thud');
+inOut('#c1', 1.6, 3.6, {dy: 30}); pop($('#c1 .ic'), 1.8, null);
+// 2 — the address
+K('#pole', [[3.8, {transform: 'scaleY(0)'}, E.OUT], [4.2, {transform: 'scaleY(1)'}]]);
+K('#board', [[4.1, {transform: 'rotate(-30deg) scale(0)', opacity: 0}, E.BACK], [4.7, {transform: 'rotate(0deg) scale(1)', opacity: 1}]]);
+cue(3.8, 'thud'); cue(4.2, 'pop'); cue(4.4, 'type', {n: 11, gap: .06});
+inOut('#c2', 4.0, 6.2, {dy: 30}); pop($('#c2 .ic'), 4.2, null);
+// 3 — the house
+K('#walls', [[6.4, {transform: 'scaleY(0)'}, E.OUT], [7.0, {transform: 'scaleY(1)'}]]);
+K('#roof', [[6.9, {transform: 'translateY(-300px)', opacity: 0}, E.BACK], [7.5, {transform: 'translateY(0)', opacity: 1}]]);
+$$('#walls .hp').forEach((h, i) => pop(h, 7.4 + i * .12, null));
+cue(6.4, 'grow', {d: .7}); cue(7.3, 'thud'); cue(7.5, 'pop2');
+inOut('#c3', 6.6, 8.8, {dy: 30}); pop($('#c3 .ic'), 6.8, null);
+// recap numbers
+['#n1', '#n2', '#n3'].forEach((n, i) => { pop(n, 9.0 + i * .25, 12.6); cue(9.0 + i * .25, 'pop', {f: 600 + i * 120}); });
+say('#fin', 9.6, 12.6, {st: .12}); cue(9.8, 'chime');
+S.start();
+</script></body></html>

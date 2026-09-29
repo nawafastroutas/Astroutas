@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 17 · هذا أو ذاك</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  .phone{left:320px;top:600px;width:440px;height:880px;overflow:visible}
+  .phone .scr{border-radius:42px}
+  .phone .scr > div{position:absolute}
+  .tagAB{position:absolute;top:-30px;left:50%;width:84px;height:84px;margin-left:-42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 44px var(--lat);z-index:6;box-shadow:0 8px 20px rgba(0,0,0,.35)}
+  .mi{left:24px;right:24px;height:74px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:22px;font-weight:600}
+  .mi .mono{font-size:20px}
+  #vote{left:0;right:0;top:1520px;text-align:center}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:370px">هذا… <span class="gl">أو ذاك؟</span></div>
+  <div class="phone" id="pA"><div class="scr" style="background:#121212;color:#F5EFE6">
+    <div style="left:24px;right:24px;top:56px;display:flex;justify-content:space-between;align-items:center"><b style="font:700 22px var(--lat);letter-spacing:.12em;color:#E0A458">EMBER</b><span style="font-size:26px">☰</span></div>
+    <div style="left:0;right:0;top:110px;height:300px;background:radial-gradient(circle at 50% 55%,#5a3a22 0 32%,#2a1c12 33% 60%,#121212 61%)"></div>
+    <div style="right:24px;top:430px;font-weight:700;font-size:46px;line-height:1.2">طعم<br>ما يُنسى.</div>
+    <div style="right:24px;top:560px;background:#E0A458;color:#121212;font-weight:700;font-size:22px;padding:14px 28px;border-radius:30px">اطلب الآن</div>
+    <div class="mi" style="top:650px;background:#1E1E1E"><span>برجر الفحم</span><span class="mono" style="color:#E0A458">3.5 OMR</span></div>
+    <div class="mi" style="top:736px;background:#1E1E1E"><span>بطاطس متبلة</span><span class="mono" style="color:#E0A458">1.2 OMR</span></div>
+  </div><div class="notch"></div><div class="tagAB" style="background:#E0A458;color:#121212">A</div></div>
+  <div class="phone" id="pB"><div class="scr" style="background:#F7F6F1;color:#1B2420">
+    <div style="left:24px;right:24px;top:56px;display:flex;justify-content:space-between;align-items:center"><b style="font:600 22px var(--lat);letter-spacing:.04em">ember.</b><span style="font-size:20px;color:#7C837E">القائمة · الفروع</span></div>
+    <div style="right:24px;top:120px;font-weight:700;font-size:44px;line-height:1.25">أكل طازج،<br><span style="color:#3F7A62">كل يوم.</span></div>
+    <div style="right:24px;top:250px;font-size:20px;color:#7C837E">مكوّنات محلية، وطلب خلال دقيقة.</div>
+    <div style="right:24px;top:300px;background:#3F7A62;color:#fff;font-weight:700;font-size:22px;padding:14px 28px;border-radius:8px">اطلب الآن</div>
+    <div style="left:24px;right:24px;top:390px;height:230px;border-radius:14px;background:#DDE8E1;display:flex;align-items:center;justify-content:center"><div style="width:150px;height:150px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 26px #EFE3CF"></div></div>
+    <div class="mi" style="top:650px;background:#fff;border:1.5px solid #E6E5DD"><span>سلطة الموسم</span><span class="mono" style="color:#3F7A62">2.8 OMR</span></div>
+    <div class="mi" style="top:736px;background:#fff;border:1.5px solid #E6E5DD"><span>برجر مشوي</span><span class="mono" style="color:#3F7A62">3.5 OMR</span></div>
+  </div><div class="notch"></div><div class="tagAB" style="background:#3F7A62;color:#fff">B</div></div>
+  <div class="abs cx h-m" id="vote">صوّت في التعليقات: <span class="lat" style="color:#E0A458">A</span> أو <span class="lat gl">B</span>؟ 👇</div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, $, $$, E} = S;
+S.setup({day: 17, dur: 14.6, mood: 'playful'});
+
+say('#q', .2, 11.5, {st: .14}); cue(.2, 'swish');
+const pos = (x, s = 1, r = 0) => ({transform: `translateX(${x}px) scale(${s}) rotate(${r}deg)`, opacity: 1});
+const off = (x) => ({transform: `translateX(${x}px) scale(.9)`, opacity: 0});
+// A alone, swipe to B alone, then both side by side
+K('#pA', [[.7, off(0), E.OUT], [1.3, pos(0)], [3.2, pos(0), E.INOUT], [3.8, off(700)], [5.2, off(700), E.OUT], [5.9, pos(255, .78, 3)],
+          [11.3, pos(255, .78, 3), E.IN], [11.6, off(255)]]);
+K('#pB', [[3.2, off(-700), E.INOUT], [3.8, pos(0)], [5.2, pos(0), E.INOUT], [5.9, pos(-255, .78, -3)], [11.3, pos(-255, .78, -3), E.IN], [11.6, off(-255)]]);
+cue(.7, 'whoosh'); cue(3.2, 'swoop'); cue(5.2, 'whoosh');
+$$('.tagAB').forEach((t, i) => pop(t, [1.2, 3.7][i], null));
+cue(1.2, 'pop'); cue(3.7, 'pop');
+// scroll a touch inside each to show it's alive
+// alternate highlights while asking for the vote
+[7.0, 7.8, 8.6, 9.4].forEach((t, i) => {
+  const el = i % 2 ? '#pB' : '#pA';
+  K($(`${el} .tagAB`), [[t, {transform: 'scale(1)'}], [t + .15, {transform: 'scale(1.35)'}, E.BACK], [t + .5, {transform: 'scale(1)'}]]);
+  cue(t, 'tick', {f: i % 2 ? 2400 : 1800, v: 1.6});
+});
+say('#vote', 6.3, 11.4, {st: .1}); cue(6.3, 'chime');
+S.start();
+</script></body></html>

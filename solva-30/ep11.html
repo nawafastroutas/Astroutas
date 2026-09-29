@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 11 · أخطاء التصميم</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  #pg{left:150px;top:620px;width:780px;height:720px;border-radius:8px;overflow:hidden;background:#FFF3B0;color:var(--ink)}
+  #pg > *{position:absolute}
+  .x{font-family:'DejaVu Serif',serif}
+  .bt{border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff}
+  #pop{left:190px;top:200px;width:400px;height:260px;background:#fff;border:4px solid #FF006E;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.4);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font-weight:700;font-size:34px;color:#FF006E;z-index:5}
+  #pop i{position:absolute;left:14px;top:8px;font-style:normal;font-size:30px;color:#999}
+  .fix{position:absolute;left:100px;right:100px;top:1400px;display:flex;justify-content:center}
+  .fix .chip{background:var(--ink-4);color:var(--paper);border-color:var(--ink-2);font-size:34px;padding:14px 30px}
+  .fix .chip b{color:var(--green-l)}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:370px">صفحة <span class="rd">مزعجة</span>؟<br>خلنا نرتّبها.</div>
+  <div class="abs" id="pg">
+    <div id="logo" style="right:40px;top:36px;width:46px;height:46px;border-radius:8px;background:#00BBF9"></div>
+    <div id="nv" style="left:50px;top:52px;display:flex;gap:16px"><div class="bar" style="width:70px;height:14px"></div><div class="bar" style="width:70px;height:14px"></div><div class="bar" style="width:70px;height:14px"></div></div>
+    <div id="img" style="left:50px;top:140px;width:300px;height:240px;border-radius:8px;background:#9B5DE5"></div>
+    <div id="tx" class="x" style="right:50px;top:140px;font-size:48px;font-weight:700;line-height:1.2;color:#E63946">أهلاً بكم في<br>موقعنا!!!</div>
+    <div id="tc" style="right:50px;top:140px;font-size:50px;font-weight:700;line-height:1.3;opacity:0">عنوان واضح<br>ومباشر.</div>
+    <div id="sx" class="mono" style="right:50px;top:278px;font-size:22px;color:#4D96FF;font-style:italic">*** best prices *** call now ***</div>
+    <div id="sc" style="right:50px;top:282px;font-size:26px;color:var(--ink-3);opacity:0">سطر يشرح فكرتك باختصار.</div>
+    <div id="b1" class="bt" style="right:50px;top:330px;width:220px;height:68px;font-size:26px;background:#FF006E">ابدأ الآن</div>
+    <div id="b2" class="bt" style="left:250px;top:420px;width:150px;height:56px;font-size:22px;background:#4D96FF">اتصل!!</div>
+    <div id="b3" class="bt" style="left:470px;top:230px;width:130px;height:52px;font-size:22px;background:#FFB703">سجّل</div>
+    <div id="b4" class="bt" style="left:70px;top:620px;width:150px;height:56px;font-size:22px;background:#8338EC">عروض 🔥</div>
+    <div id="c1" style="left:50px;top:460px;width:210px;height:220px;border-radius:8px;background:#FF6B6B"></div>
+    <div id="c2" style="left:285px;top:460px;width:210px;height:220px;border-radius:8px;background:#4D96FF"></div>
+    <div id="c3" style="left:520px;top:460px;width:210px;height:220px;border-radius:8px;background:#FFD93D"></div>
+    <div id="pop"><i>✕</i>اشترك الآن!!!<span style="font-size:22px;color:#666">لا تفوّت العروض!!!</span></div>
+  </div>
+  <div class="fix" id="f1"><span class="chip">نوافذ مزعجة ← <b>بدون</b></span></div>
+  <div class="fix" id="f2"><span class="chip">٦ ألوان ← <b>لونين</b></span></div>
+  <div class="fix" id="f3"><span class="chip">خطوط كثيرة ← <b>خط واحد</b></span></div>
+  <div class="fix" id="f4"><span class="chip">زحمة ← <b>مساحة ومحاذاة</b></span></div>
+  <div class="fix" id="f5"><span class="chip">أزرار كثيرة ← <b>زر واحد واضح</b></span></div>
+  <div class="abs cx h-m" id="fin" style="top:1400px">الترتيب يريّح العين… <span class="gl">ويقنع.</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, $, $$, E} = S;
+S.setup({day: 11, dur: 17.4, mood: 'playful'});
+
+// chaotic offsets for every element (cleaned in step 4)
+const chaos = {logo: 'translate(-20px,10px) rotate(12deg) scale(1.3)', nv: 'translate(30px,-12px) rotate(-3deg)', img: 'translate(330px,90px) rotate(7deg) scale(.8)',
+  tx: 'translate(-60px,-50px) rotate(-5deg)', tc: 'translate(-60px,-50px) rotate(-5deg)', sx: 'translate(-110px,10px) rotate(3deg)', sc: 'translate(-110px,10px) rotate(3deg)',
+  b1: 'translate(-280px,-30px) rotate(-6deg)', c1: 'translate(10px,-40px) rotate(-4deg) scale(1.1)', c2: 'translate(-30px,30px) rotate(5deg)', c3: 'translate(40px,-10px) rotate(-7deg) scale(.9)',
+  b2: 'rotate(8deg)', b3: 'rotate(-10deg)', b4: 'rotate(5deg)'};
+const T = {pop: 3.0, col: 4.8, font: 6.6, space: 8.4, btn: 10.2};
+Object.entries(chaos).forEach(([id, tr]) => K('#' + id, [[T.space, {transform: tr}, E.INOUT], [T.space + .9, {transform: id[0] === 'b' && id !== 'b1' ? tr : 'none'}]]));
+// jitter on the chaotic buttons to make it feel noisy
+['#b2', '#b3', '#b4'].forEach((b, i) => K(b, [...Array(10)].map((_, k) => [1 + k * .25 + i * .07, {translate: `${k % 2 ? 4 : -4}px 0`}, E.LIN]).concat([[3.8, {translate: '0 0'}]])));
+
+say('#q', .25, 14.1, {st: .1}); cue(.25, 'swish');
+inOut('#pg', .6, 14.1, {dy: 100}); cue(.6, 'glitch');
+pop('#pop', 1.3, null); cue(1.3, 'error');
+K('#pop', [[T.pop, {opacity: 1, transform: 'scale(1)'}, E.IN], [T.pop + .35, {opacity: 0, transform: 'scale(.5)'}]]);
+// step 2 — colours
+const col = (id, a, b, prop = 'backgroundColor') => K(id, [[T.col, {[prop]: a}, E.INOUT], [T.col + .7, {[prop]: b}]]);
+col('#pg', '#FFF3B0', '#FBFAF6'); col('#logo', '#00BBF9', '#3F7A62'); col('#img', '#9B5DE5', '#14201B'); col('#b1', '#FF006E', '#3F7A62');
+col('#c1', '#FF6B6B', '#F1F0EA'); col('#c2', '#4D96FF', '#F1F0EA'); col('#c3', '#FFD93D', '#F1F0EA');
+col('#b2', '#4D96FF', '#C9C7BD'); col('#b3', '#FFB703', '#C9C7BD'); col('#b4', '#8338EC', '#C9C7BD');
+// step 3 — typography
+fade('#tx', T.font, null); K('#tx', [[T.font, {opacity: 1}], [T.font + .4, {opacity: 0}]]); K('#tc', [[T.font, {opacity: 0}], [T.font + .4, {opacity: 1}]]);
+K('#sx', [[T.font, {opacity: 1}], [T.font + .4, {opacity: 0}]]); K('#sc', [[T.font, {opacity: 0}], [T.font + .4, {opacity: 1}]]);
+// step 5 — one clear button
+['#b2', '#b3', '#b4'].forEach((b, i) => K(b, [[T.btn + i * .12, {opacity: 1, scale: '1'}, E.IN], [T.btn + .35 + i * .12, {opacity: 0, scale: '0.3'}]]));
+K('#b1', [[T.btn + .5, {boxShadow: '0 0 0 0 rgba(63,122,98,.6)'}], [T.btn + 1.2, {boxShadow: '0 0 0 22px rgba(63,122,98,0)'}]]);
+
+Object.values(T).forEach((t, i) => { inOut(`#f${i + 1}`, t, t + 1.55, {dy: 30, d: .35, od: .2}); cue(t, 'swish'); cue(t + .3, 'right', {v: .8}); });
+K('#pg', [[T.btn + .6, {scale: '1'}], [T.btn + .8, {scale: '1.03'}, E.INOUT], [T.btn + 1.2, {scale: '1'}]]);
+say('#fin', 12.0, 14.1, {st: .12}); cue(12.0, 'chime');
+S.start();
+</script></body></html>

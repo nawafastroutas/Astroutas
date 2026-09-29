@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 24 · قالب جاهز أم تفصيل؟</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  .fig{position:absolute;top:700px}
+  .tt{position:absolute;top:610px;width:540px;text-align:center}
+  .tt .n{font-weight:700;font-size:46px}
+  .tt .s{font-size:26px;color:var(--muted)}
+  #pud{left:600px;top:1190px;width:300px;height:56px;border-radius:50%;background:#FBFAF6;border:3px solid #C9C7BD;transform:scaleX(0)}
+  .tape{position:absolute;height:0;border-top:5px dashed #D9A441}
+  .tapev{position:absolute;width:0;border-left:5px dashed #D9A441}
+  .cm{position:absolute;font:600 22px var(--mono);color:#B8862E;direction:ltr}
+  #sc{left:120px;top:1040px}
+  .verdict{position:absolute;top:1290px;width:470px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;font-size:30px;font-weight:600;line-height:1.4}
+  .verdict svg{flex:none}
+  #hang{left:710px;top:660px}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:370px">قالب <span class="rd">جاهز</span>… أم <span class="g">تفصيل؟</span></div>
+  <div class="tt" id="tR" style="right:0"><div class="n">قالب جاهز</div><div class="s">مقاس واحد للجميع</div></div>
+  <div class="tt" id="tL" style="left:0"><div class="n g">تصميم مخصص</div><div class="s">مفصّل على مقاسك</div></div>
+  <div class="abs" id="pud"></div>
+  <div class="fig" id="rdy" style="left:620px"></div>
+  <div class="fig" id="tlr" style="left:200px"></div>
+  <div class="tape" id="tp1" style="left:262px;top:872px;width:136px;transform-origin:right"></div>
+  <div class="tapev" id="tp2" style="left:420px;top:870px;height:350px;transform-origin:top"></div>
+  <div class="cm" id="cm1" style="left:292px;top:830px">46 cm</div>
+  <div class="cm" id="cm2" style="left:436px;top:1030px">142 cm</div>
+  <div class="abs" id="sc"></div>
+  <div class="verdict" id="vR" style="right:35px"></div>
+  <div class="verdict" id="vL" style="left:35px"></div>
+  <div class="abs cx h-m" id="fin" style="top:1420px">القالب يمشّي الحال…<br><span class="g">والتفصيل يدوم.</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, icon, person, mood, $, $$, E} = S;
+S.setup({day: 24, dur: 16.0, mood: 'warm', bg: 'paper'});
+$('#rdy').innerHTML = person({w: 260, dish: true, skin: '#B98A68'});
+$('#tlr').innerHTML = person({w: 260, dish: true, skin: '#C89B7B', tassel: '#3F7A62'});
+$('#sc').innerHTML = icon('scissors', 90, '#14201B', 1.8);
+$('#vR').innerHTML = icon('x', 40, '#C2654F', 2.6) + '<span>أسرع… بس ما يناسبك تمامًا</span>';
+$('#vL').innerHTML = icon('check', 40, '#3F7A62', 2.6) + '<span>على مقاس مشروعك… ويدوم</span>';
+
+// too-long sleeves on the ready-made one
+const NS = 'http://www.w3.org/2000/svg';
+$$('#rdy .arm-l, #rdy .arm-r').forEach((g, i) => {
+  const x = i ? 144 : 56, r = document.createElementNS(NS, 'rect');
+  Object.entries({x: x - 13, y: 228, width: 26, height: 64, rx: 12, fill: '#FBFAF6', stroke: '#C9C7BD', 'stroke-width': 3, class: 'slv'}).forEach(([k, v]) => r.setAttribute(k, v));
+  r.style.transformBox = 'fill-box'; r.style.transformOrigin = 'top'; g.appendChild(r);
+});
+
+say('#q', .2, 12.9, {st: .14}); cue(.2, 'swish');
+// ready-made: grabbed off the rack, doesn't fit
+inOut('#tR', .8, 12.9, {dy: 20});
+inOut('#rdy', .9, 12.9, {dy: 60}); cue(.9, 'whoosh');
+K('#pud', [[1.8, {transform: 'scaleX(0)'}, E.BACK], [2.3, {transform: 'scaleX(1)'}], [12.9, {transform: 'scaleX(1)', opacity: 1}], [13.1, {transform: 'scaleX(1)', opacity: 0}]]);
+$$('#rdy .slv').forEach(s => K(s, [[1.8, {transform: 'scaleY(0)'}, E.BACK], [2.3, {transform: 'scaleY(1)'}]]));
+cue(1.8, 'boing');
+mood('#rdy', 2.3, 'flat');
+K($('#rdy .arm-l'), [[2.6, {transform: 'rotate(8deg)'}, E.INOUT], [2.9, {transform: 'rotate(40deg)'}], [3.4, {transform: 'rotate(40deg)'}, E.INOUT], [3.7, {transform: 'rotate(8deg)'}]]);
+K($('#rdy .arm-r'), [[2.6, {transform: 'rotate(-8deg)'}, E.INOUT], [2.9, {transform: 'rotate(-40deg)'}], [3.4, {transform: 'rotate(-40deg)'}, E.INOUT], [3.7, {transform: 'rotate(-8deg)'}]]);
+cue(2.7, 'wrong', {v: .6});
+
+// tailored: measured, cut, fits
+inOut('#tL', 4.0, 12.9, {dy: 20});
+inOut('#tlr', 4.1, 12.9, {dy: 60}); cue(4.1, 'whoosh');
+K('#tp1', [[4.8, {transform: 'scaleX(0)', opacity: 1}, E.INOUT], [5.3, {transform: 'scaleX(1)', opacity: 1}], [7.6, {transform: 'scaleX(1)', opacity: 1}], [7.9, {transform: 'scaleX(1)', opacity: 0}]]);
+K('#tp2', [[5.3, {transform: 'scaleY(0)', opacity: 1}, E.INOUT], [5.9, {transform: 'scaleY(1)', opacity: 1}], [7.6, {transform: 'scaleY(1)', opacity: 1}], [7.9, {transform: 'scaleY(1)', opacity: 0}]]);
+fade('#cm1', 5.2, 7.6, .25); fade('#cm2', 5.8, 7.6, .25);
+cue(4.8, 'zip'); cue(5.3, 'zip');
+K('#sc', [[6.1, {opacity: 0, transform: 'rotate(0deg) translateX(0)'}, E.OUT], [6.3, {opacity: 1, transform: 'rotate(0deg) translateX(0)'}],
+          [6.45, {opacity: 1, transform: 'rotate(-18deg) translateX(-6px)'}], [6.6, {opacity: 1, transform: 'rotate(0deg) translateX(-12px)'}], [6.75, {opacity: 1, transform: 'rotate(-18deg) translateX(-18px)'}],
+          [6.9, {opacity: 1, transform: 'rotate(0deg) translateX(-24px)'}], [7.2, {opacity: 0, transform: 'rotate(0deg) translateX(-24px)'}]]);
+cue(6.45, 'snap'); cue(6.75, 'snap');
+K('#tlr', [[7.4, {transform: 'scale(1)'}], [7.6, {transform: 'scale(1.05)'}, E.INOUT], [8.0, {transform: 'scale(1)'}]], {add: true});
+cue(7.4, 'chime');
+// verdicts
+inOut('#vR', 8.4, 10.0, {dy: 30}); cue(8.4, 'wrong', {v: .5});
+inOut('#vL', 9.0, 10.0, {dy: 30}); cue(9.0, 'right', {v: .7});
+say('#fin', 10.4, 12.9, {st: .12}); cue(10.4, 'swish');
+S.start();
+</script></body></html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 30 · ملخص الشهر</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  .cut{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;opacity:0}
+  .cut .d{font:600 34px var(--mono);letter-spacing:.1em;direction:ltr}
+  .cut .t{font-weight:700;font-size:88px;text-align:center;line-height:1.25;padding:0 80px}
+  #grid{left:90px;top:620px;width:900px;display:grid;grid-template-columns:repeat(6,1fr);gap:14px;direction:ltr}
+  #grid div{height:130px;border-radius:6px;background:var(--ink-4);border:1.5px solid var(--ink-2);display:flex;align-items:center;justify-content:center;font:600 34px var(--mono);color:var(--muted)}
+  #ty{left:0;right:0;top:1410px;text-align:center}
+</style></head><body>
+<div id="stage">
+  <div id="cuts"></div>
+  <div class="abs cx h-l" id="q" style="top:370px">٣٠ يوم… <span class="gl">شكرًا لكم</span></div>
+  <div class="abs" id="grid"></div>
+  <div class="abs h-m" id="ty">خلّنا نبني <span class="gl">موقعك</span> الجاي.</div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, icon, MARK, $, $$, E} = S;
+S.setup({day: 30, dur: 17.0, mood: 'drive', end: {cta: 'تواصل معنا', line: 'شكرًا على متابعتكم — <b>نشوفكم في المشروع الجاي.</b>'}});
+
+const CUTS = [[1, 'mark', 'من نحن'], [2, 'monitor', 'قبل وبعد'], [3, 'rocket', 'رحلة البناء'], [5, 'clock', 'موظف ٢٤ ساعة'], [9, 'home', 'بيت ملك'],
+  [12, 'car', 'سباق السرعة'], [13, 'search', 'الظهور في البحث'], [14, 'phone', 'كل الشاشات'], [16, 'question', 'خمّن النشاط'], [19, 'palette', 'الألوان'],
+  [24, 'scissors', 'التفصيل'], [26, 'shield', 'ما بعد الإطلاق']];
+const TH = [['#14201B', '#F1F0EA', '#5FA88A'], ['#3F7A62', '#F1F0EA', '#F1F0EA'], ['#F1F0EA', '#14201B', '#3F7A62']];
+const box = $('#cuts');
+CUTS.forEach(([d, ic, t], i) => {
+  const [bg, fg, ac] = TH[i % 3];
+  box.insertAdjacentHTML('beforeend', `<div class="cut" id="k${i}" style="background:${bg};color:${fg}"><div>${ic === 'mark' ? `<div style="width:120px;height:180px">${MARK(ac, 13)}</div>` : icon(ic, 180, ac, 1.6)}</div>
+    <div class="d" style="color:${ac}">DAY ${String(d).padStart(2, '0')}</div><div class="t">${t}</div></div>`);
+});
+for (let n = 1; n <= 30; n++) $('#grid').insertAdjacentHTML('beforeend', `<div id="g${n}">${String(n).padStart(2, '0')}</div>`);
+
+// fast montage on the beat (112 bpm)
+const beat = 60 / 112;
+CUTS.forEach((_, i) => {
+  const a = .3 + i * beat;
+  K(`#k${i}`, [[a, {opacity: 0, transform: 'scale(1.08)'}, 'steps(1,end)'], [a + .01, {opacity: 1, transform: 'scale(1.08)'}, E.OUT], [a + beat, {opacity: 1, transform: 'scale(1)'}, 'steps(1,end)'], [a + beat + .01, {opacity: 0, transform: 'scale(1)'}]]);
+  cue(a, i % 2 ? 'snap' : 'thud', {v: .7});
+  if (i % 4 === 0) cue(a, 'swish', {v: .5});
+});
+const after = .3 + CUTS.length * beat;
+cue(after - .6, 'riser', {d: .6});
+say('#q', after + .1, 13.7, {st: .14});
+// all 30 days light up
+for (let n = 1; n <= 30; n++){
+  const t = after + .5 + n * .07;
+  pop(`#g${n}`, t, 13.7, {s: .4, d: .35});
+  K(`#g${n}`, [[t + .1, {backgroundColor: '#223029', color: '#7C837E'}], [t + .3, {backgroundColor: '#3F7A62', color: '#F1F0EA'}]]);
+  if (n % 3 === 0) cue(t, 'pop2', {f: 400 + n * 20, v: .4});
+}
+cue(after + 2.7, 'chime');
+say('#ty', after + 3.0, 13.7, {st: .12});
+S.start();
+</script></body></html>

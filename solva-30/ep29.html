@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — Day 29 · هل تحتاج موقع؟</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  .qb{position:absolute;right:60px;width:540px;height:150px;border-radius:8px;background:var(--ink);color:var(--paper);display:flex;align-items:center;gap:18px;padding:0 28px;font-weight:700;font-size:36px;line-height:1.35}
+  .qb .n{font:600 24px var(--mono);color:var(--green-l);flex:none}
+  .rb{position:absolute;left:60px;width:330px;height:150px;border-radius:8px;border:2px dashed var(--stone);display:flex;align-items:center;justify-content:center;text-align:center;padding:0 20px;font-weight:600;font-size:29px;line-height:1.4;color:var(--ink-3)}
+  .no{position:absolute;left:390px;width:90px;height:4px;background:var(--stone);transform-origin:right}
+  .no span,.yes span{position:absolute;font-weight:700;font-size:24px;white-space:nowrap}
+  .no span{top:-40px;left:50%;transform:translateX(-50%);color:var(--muted)}
+  .yes{position:absolute;right:327px;width:6px;height:90px;background:var(--green);transform-origin:top}
+  .yes span{right:22px;top:26px;color:var(--green)}
+  #fr{left:60px;right:60px;top:1420px;height:130px;border-radius:8px;background:var(--green);color:var(--paper);display:flex;align-items:center;justify-content:center;gap:16px;font-weight:700;font-size:44px}
+</style></head><body>
+<div id="stage">
+  <div class="abs cx h-l" id="q" style="top:370px">تحتاج <span class="g">موقع؟</span></div>
+  <div class="abs cx h-m" id="q2" style="top:390px">وين وصلت أنت؟ <span class="g">👇</span></div>
+  <div id="tree"></div>
+  <div class="abs" id="fr"></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, pop, fade, say, cue, icon, $, $$, E} = S;
+S.setup({day: 29, dur: 14.8, mood: 'playful', bg: 'paper', end: {cta: 'اكتب نتيجتك في التعليقات'}});
+$('#fr').innerHTML = icon('check', 48, '#F1F0EA', 3) + 'تحتاج متجر أو نظام حجز';
+
+const R = [['تبيع منتج أو خدمة؟', 'صفحة تعريف بسيطة تكفيك'], ['عملاؤك يدوّرون عنك أونلاين؟', 'ابدأ بصفحة هبوط'], ['تبي تستقبل طلبات أو حجوزات؟', 'موقع تعريفي متكامل']];
+const box = $('#tree');
+R.forEach(([q, r], i) => {
+  const y = 600 + i * 270;
+  box.insertAdjacentHTML('beforeend', `<div class="qb" id="Q${i}" style="top:${y}px"><span class="n">Q${i + 1}</span>${q}</div>
+    <div class="no" id="N${i}" style="top:${y + 73}px"><span>لا</span></div>
+    <div class="rb" id="R${i}" style="top:${y}px">${r}</div>
+    <div class="yes" id="Y${i}" style="top:${y + 158}px;height:${i < 2 ? 104 : 254}px"><span>نعم</span></div>`);
+});
+
+say('#q', .2, 7.4, {st: .14}); cue(.2, 'swish');
+R.forEach((_, i) => {
+  const t = .8 + i * 1.8;
+  inOut(`#Q${i}`, t, 11.7, {dx: 80, dy: 0}); cue(t, 'whoosh', {v: .6});
+  K(`#N${i}`, [[t + .5, {transform: 'scaleX(0)'}, E.INOUT], [t + .8, {transform: 'scaleX(1)'}]]);
+  inOut(`#R${i}`, t + .7, 11.7, {dx: -60, dy: 0}); cue(t + .7, 'pop2', {f: 400, v: .6});
+  K(`#Y${i}`, [[t + 1.2, {transform: 'scaleY(0)'}, E.INOUT], [t + 1.6, {transform: 'scaleY(1)'}]]);
+  cue(t + 1.2, 'zipdown', {v: .7});
+  $$(`#N${i}, #Y${i}`).forEach(e => K(e, [[11.5, {opacity: 1}], [11.7, {opacity: 0}]], {add: false}));
+});
+pop('#fr', 6.4, 11.7, {s: .7}); cue(6.4, 'success');
+say('#q2', 7.7, 11.7, {st: .14}); cue(7.7, 'swish');
+// pulse the three "no" outcomes then the "yes" one
+[8.4, 8.8, 9.2].forEach((t, i) => { K(`#R${i}`, [[t, {borderColor: '#C9C7BD', transform: 'scale(1)'}], [t + .15, {borderColor: '#3F7A62', transform: 'scale(1.05)'}, E.INOUT], [t + .5, {borderColor: '#C9C7BD', transform: 'scale(1)'}]], {add: true}); cue(t, 'tick', {v: 1.2}); });
+K('#fr', [[9.7, {transform: 'scale(1)'}], [9.9, {transform: 'scale(1.05)'}, E.INOUT], [10.3, {transform: 'scale(1)'}]], {add: true}); cue(9.7, 'ding');
+S.start();
+</script></body></html>

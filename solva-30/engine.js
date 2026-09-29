@@ -372,5 +372,5 @@ async function audioWebm(){
 }
 
 window.S = {K, inOut, pop, fade, say, words, count, hook, draw, cue, setup, start, seek, audioWebm, renderAudio,
-  icon, person, mood, MARK, $, $$, get D(){ return D; }, E: {OUT, INOUT, IN, BACK, LIN}};
+  icon, person, mood, MARK, $, $$, get D(){ return D; }, get CFG(){ return CFG; }, E: {OUT, INOUT, IN, BACK, LIN}};
 })();
