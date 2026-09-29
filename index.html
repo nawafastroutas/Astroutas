@@ -3961,7 +3961,6 @@ html:not(.js) .splash {
         <a href="#home" class="active">الرئيسية</a>
         <a href="#categories">المتجر</a>
         <a href="#categories">الأقسام</a>
-        <a href="#builder">إنشاء سبحة خاصة</a>
         <a href="#story">عن سبحة</a>
         <a href="#contact">تواصل معنا</a>
       </nav>
@@ -3988,7 +3987,6 @@ html:not(.js) .splash {
             <p>سبح مختارة بعناية من أجود المواد، بتفاصيل تحكي الذوق العُماني وترافقك في كل وقت.</p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="#categories">استكشف الأقسام <i data-lucide="arrow-left"></i></a>
-              <a class="btn btn-outline" href="#builder"><i data-lucide="sparkles"></i> إنشاء سبحة خاصة</a>
             </div>
             <div class="hero-points">
               <span><i data-lucide="badge-check"></i> فحص جودة</span>
@@ -4135,306 +4133,6 @@ html:not(.js) .splash {
               <div class="inline-products-grid" id="inlineProductsGrid"></div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="builder">
-      <div class="container">
-        <div class="builder-wrap builder-no-preview">
-          <div class="builder-copy">
-            <span class="eyebrow" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.12)">صمّمها خطوة بخطوة</span>
-            <h2>إنشاء سبحة خاصة</h2>
-            <p>اختر شكل الخرز، ثم نوع السبحة، ثم اختر الطربوش المناسب، وبعدها حدّد عدد الحبات وحجم الخرز.</p>
-
-            <div class="wizard-progress-caption">
-              <span>خطوات تصميم السبحة</span>
-              <strong id="wizardProgressText">الخطوة 1 من 4</strong>
-            </div>
-            <div class="wizard-progress" id="wizardProgress" aria-label="تقدم تصميم السبحة">
-              <span class="wizard-progress-item active" data-progress-step="1"></span>
-              <span class="wizard-progress-item" data-progress-step="2"></span>
-              <span class="wizard-progress-item" data-progress-step="3"></span>
-              <span class="wizard-progress-item" data-progress-step="4"></span>
-              
-            </div>
-
-            <div class="builder-step">
-              <div class="builder-step-head">
-                <div class="builder-step-title"><span class="step-number">1</span> اختر شكل الخرز</div>
-                <span class="step-hint">اختر شكلاً واحداً</span>
-              </div>
-
-              <div class="shape-reference-title">✤ أشكال الخرز ✤</div>
-              <div class="bead-shapes-grid" id="beadShapesGrid">
-                <button class="bead-shape-option" type="button" data-shape="round" data-label="مدور">
-                  <span class="shape-preview"><svg viewBox="0 0 100 88" aria-hidden="true">
-      
-      <path d="M50 13 C69 13 83 28 83 44 C83 62 69 75 50 75 C31 75 17 62 17 44 C17 27 31 13 50 13 Z" fill="#211b17"/>
-      <path d="M27 65 L72 22" fill="none" stroke="#f4efe5" stroke-width="3.1" stroke-linecap="round" stroke-dasharray="6 5"/>
-    </svg></span><span>مدور</span>
-                </button>
-                <button class="bead-shape-option" type="button" data-shape="barrel" data-label="برميلي">
-                  <span class="shape-preview"><svg viewBox="0 0 100 88" aria-hidden="true">
-      
-      <path d="M28 15 C23 15 19 18 16 22 L9 31 C6 35 7 40 11 44 L48 79 C52 83 57 82 61 78 L88 50 C92 46 92 40 88 36 L55 17 C47 13 36 14 28 15 Z" fill="#211b17"/>
-      <path d="M24 67 L76 25" fill="none" stroke="#f4efe5" stroke-width="3.1" stroke-linecap="round" stroke-dasharray="6 5"/>
-    </svg></span><span>برميلي</span>
-                </button>
-                <button class="bead-shape-option" type="button" data-shape="istanbuli" data-label="إسطنبولي">
-                  <span class="shape-preview"><svg viewBox="0 0 100 88" aria-hidden="true">
-      
-      <path d="M27 18 C38 12 58 12 72 18 C79 22 83 30 82 39 C82 50 79 62 72 68 C63 75 43 76 29 72 C19 69 15 59 16 47 C16 35 19 23 27 18 Z" fill="#211b17"/>
-      <path d="M27 65 L72 25" fill="none" stroke="#f4efe5" stroke-width="3.1" stroke-linecap="round" stroke-dasharray="6 5"/>
-    </svg></span><span>إسطنبولي</span>
-                </button>
-                <button class="bead-shape-option" type="button" data-shape="bilya" data-label="بلية بوز">
-                  <span class="shape-preview"><svg viewBox="0 0 100 88" aria-hidden="true">
-      
-      <path d="M29 17 C41 11 61 12 73 19 C81 24 84 34 82 45 C80 58 73 69 61 74 C47 79 31 75 22 66 C15 58 15 45 18 34 C20 26 23 20 29 17 Z" fill="#211b17"/>
-      <path d="M27 66 L73 24" fill="none" stroke="#f4efe5" stroke-width="3.1" stroke-linecap="round" stroke-dasharray="6 5"/>
-    </svg></span><span>بلية بوز</span>
-                </button>
-                <button class="bead-shape-option" type="button" data-shape="fallahi" data-label="فلاحي">
-                  <span class="shape-preview"><svg viewBox="0 0 100 88" aria-hidden="true">
-      
-      <path d="M31 18 C43 10 62 12 72 22 C83 33 82 50 72 62 C61 75 43 78 30 69 C17 60 14 43 20 31 C22 25 26 21 31 18 Z" fill="#211b17"/>
-      <path d="M27 66 L72 24" fill="none" stroke="#f4efe5" stroke-width="3.1" stroke-linecap="round" stroke-dasharray="6 5"/>
-    </svg></span><span>فلاحي</span>
-                </button>
-                <button class="bead-shape-option" type="button" data-shape="pigeon" data-label="بيض الحمام">
-                  <span class="shape-preview"><svg viewBox="0 0 100 88" aria-hidden="true">
-      
-      <path d="M33 12 C44 7 59 11 68 20 C77 29 80 43 75 55 C70 67 59 76 47 77 C35 78 24 69 20 57 C16 45 20 31 27 21 C29 17 31 14 33 12 Z" fill="#211b17"/>
-      <path d="M29 68 L67 20" fill="none" stroke="#f4efe5" stroke-width="3.1" stroke-linecap="round" stroke-dasharray="6 5"/>
-    </svg></span><span>بيض الحمام</span>
-                </button>
-                <button class="bead-shape-option" type="button" data-shape="teardrop" data-label="دمعة">
-                  <span class="shape-preview"><svg viewBox="0 0 100 88" aria-hidden="true">
-      
-      <path d="M75 11 C62 12 46 17 35 25 C24 33 17 44 16 55 C15 66 23 76 35 77 C47 78 58 70 65 60 C73 48 77 30 75 11 Z" fill="#211b17"/>
-      <path d="M29 68 L69 19" fill="none" stroke="#f4efe5" stroke-width="3.1" stroke-linecap="round" stroke-dasharray="6 5"/>
-    </svg></span><span>دمعة</span>
-                </button>
-                <button class="bead-shape-option" type="button" data-shape="pine" data-label="صنوبري">
-                  <span class="shape-preview"><svg viewBox="0 0 100 88" aria-hidden="true">
-      
-      <path d="M30 14 C24 14 19 18 15 23 L10 31 C7 36 8 41 12 45 L50 79 C54 82 59 81 63 77 L88 52 C93 47 92 40 87 36 L56 17 C49 13 38 13 30 14 Z" fill="#211b17"/>
-      <path d="M24 68 L78 24" fill="none" stroke="#f4efe5" stroke-width="3.1" stroke-linecap="round" stroke-dasharray="6 5"/>
-    </svg></span><span>صنوبري</span>
-                </button>
-                <button class="bead-shape-option" type="button" data-shape="tharwi" data-label="ذروي">
-                  <span class="shape-preview"><svg viewBox="0 0 100 88" aria-hidden="true">
-      
-      <path d="M28 15 C39 8 55 9 66 18 C78 28 83 44 79 57 C75 70 63 78 50 77 C37 76 26 67 21 55 C16 43 18 27 28 15 Z" fill="#211b17"/>
-      <path d="M31 20 L68 68" fill="none" stroke="#f4efe5" stroke-width="3.1" stroke-linecap="round" stroke-dasharray="6 5"/>
-    </svg></span><span>ذروي</span>
-                </button>
-                <button class="bead-shape-option" type="button" data-shape="apple" data-label="تفاحة">
-                  <span class="shape-preview"><svg viewBox="0 0 100 88" aria-hidden="true">
-      
-      <path d="M47 15 C53 10 60 11 65 15 C77 17 85 28 84 41 C83 55 76 68 64 73 C52 78 37 76 27 69 C17 62 14 49 18 38 C22 27 31 19 42 17 C44 16 46 16 47 15 Z" fill="#211b17"/>
-      <path d="M28 67 L72 23" fill="none" stroke="#f4efe5" stroke-width="3.1" stroke-linecap="round" stroke-dasharray="6 5"/>
-    </svg></span><span>تفاحة</span>
-                </button>
-                <button class="bead-shape-option" type="button" data-shape="olive" data-label="زيتوني">
-                  <span class="shape-preview"><svg viewBox="0 0 100 88" aria-hidden="true">
-      
-      <path d="M77 10 C62 11 48 16 37 25 C26 34 19 46 18 58 C17 68 25 76 36 76 C49 76 61 67 68 56 C76 43 80 26 77 10 Z" fill="#211b17"/>
-      <path d="M29 68 L70 18" fill="none" stroke="#f4efe5" stroke-width="3.1" stroke-linecap="round" stroke-dasharray="6 5"/>
-    </svg></span><span>زيتوني</span>
-                </button>
-              </div>
-              <div class="builder-choice-note" id="shapeChoiceNote"><i data-lucide="mouse-pointer-2"></i> اختر شكل الخرز للانتقال إلى اختيار النوع</div>
-            </div>
-
-            <div class="builder-next-options is-disabled" id="builderNextOptions">
-              <div class="builder-step">
-                <div class="builder-step-head">
-                  <div class="builder-step-title"><span class="step-number">2</span> اختر نوع السبحة</div>
-                  <span class="step-hint" id="selectedMaterialText">لم يتم اختيار النوع</span>
-                  <span class="step-hint" id="selectedShapeText">لم يتم اختيار الشكل</span>
-                </div>
-
-                <div class="material-types-grid" id="materialTypesGrid">
-                  <button class="material-type-option bead-photo-option" type="button" data-material="عقيق داؤدي">
-                    <span class="bead-photo-wrap">
-                      <img src="assets/subbha-0a6b66b6b9c62819.jpg" alt="خرز عقيق داؤدي" loading="lazy" loading="lazy" decoding="async">
-                    </span>
-                    <strong>عقيق داؤدي</strong>
-                  </button>
-                  <button class="material-type-option bead-photo-option" type="button" data-material="عقيق">
-                    <span class="bead-photo-wrap">
-                      <img src="assets/subbha-2029c4f46791f1b0.jpg" alt="خرز عقيق" loading="lazy" loading="lazy" decoding="async">
-                    </span>
-                    <strong>عقيق</strong>
-                  </button>
-                  <button class="material-type-option bead-photo-option" type="button" data-material="عين القط الأبيض">
-                    <span class="bead-photo-wrap">
-                      <img src="assets/subbha-6ddaba2a5755c711.jpg" alt="خرز عين القط الأبيض" loading="lazy" loading="lazy" decoding="async">
-                    </span>
-                    <strong>عين القط الأبيض</strong>
-                  </button>
-                  <button class="material-type-option bead-photo-option" type="button" data-material="عين النمر الأخضر">
-                    <span class="bead-photo-wrap">
-                      <img src="assets/subbha-e998690ac1e3aafe.jpg" alt="خرز عين النمر الأخضر" loading="lazy" loading="lazy" decoding="async">
-                    </span>
-                    <strong>عين النمر الأخضر</strong>
-                  </button>
-                  <button class="material-type-option bead-photo-option" type="button" data-material="عين النمر الأزرق">
-                    <span class="bead-photo-wrap">
-                      <img src="assets/subbha-d1ea11837117c5e7.jpg" alt="خرز عين النمر الأزرق" loading="lazy" loading="lazy" decoding="async">
-                    </span>
-                    <strong>عين النمر الأزرق</strong>
-                  </button>
-                  <button class="material-type-option bead-photo-option" type="button" data-material="عين النمر الأسود">
-                    <span class="bead-photo-wrap">
-                      <img src="assets/subbha-e2639a94bf18c9e7.jpg" alt="خرز عين النمر الأسود" loading="lazy" loading="lazy" decoding="async">
-                    </span>
-                    <strong>عين النمر الأسود</strong>
-                  </button>
-                  <button class="material-type-option bead-photo-option" type="button" data-material="عين النمر">
-                    <span class="bead-photo-wrap">
-                      <img src="assets/subbha-5f8775165d20637c.jpg" alt="خرز عين النمر" loading="lazy" loading="lazy" decoding="async">
-                    </span>
-                    <strong>عين النمر</strong>
-                  </button>
-                  <button class="material-type-option bead-photo-option" type="button" data-material="عقيق أحمر">
-                    <span class="bead-photo-wrap">
-                      <img src="assets/subbha-05f54add62a1184b.jpg" alt="خرز عقيق أحمر" loading="lazy" loading="lazy" decoding="async">
-                    </span>
-                    <strong>عقيق أحمر</strong>
-                  </button>
-                  <button class="material-type-option bead-photo-option" type="button" data-material="الأجت الأحمر">
-                    <span class="bead-photo-wrap">
-                      <img src="assets/subbha-b2e8f21fc9ff206a.jpg" alt="خرز الأجت الأحمر" loading="lazy" loading="lazy" decoding="async">
-                    </span>
-                    <strong>الأجت الأحمر</strong>
-                  </button>
-                  <button class="material-type-option bead-photo-option" type="button" data-material="العقيق الأخضر">
-                    <span class="bead-photo-wrap">
-                      <img src="assets/subbha-fe5c0d169d48542a.jpg" alt="خرز العقيق الأخضر" loading="lazy" loading="lazy" decoding="async">
-                    </span>
-                    <strong>العقيق الأخضر</strong>
-                  </button>
-                  <button class="material-type-option bead-photo-option" type="button" data-material="حجر الهيماتيت">
-                    <span class="bead-photo-wrap">
-                      <img src="assets/subbha-3f38da55b43c6555.jpg" alt="خرز حجر الهيماتيت" loading="lazy" loading="lazy" decoding="async">
-                    </span>
-                    <strong>حجر الهيماتيت</strong>
-                  </button>
-                </div>
-                <div class="builder-choice-note" id="materialChoiceNote"><i data-lucide="mouse-pointer-2"></i> اختر نوع السبحة للانتقال إلى اختيار الطربوش</div>
-              </div>
-
-              <div class="builder-final-options is-disabled" id="builderFinalOptions">
-                <div class="builder-step">
-                  <div class="builder-step-head">
-                    <div class="builder-step-title"><span class="step-number">3</span> اختر نوع الطربوش</div>
-                    <span class="step-hint" id="selectedColorText">لم يتم اختيار الطربوش</span>
-                  </div>
-
-                  <div class="tassel-types-grid" id="tasselTypesGrid">
-                  <button class="tassel-type-option" type="button" data-tassel="تفصال">
-                    <span class="tassel-image"><img src="assets/subbha-8e34bf99b3359e94.webp" alt="طربوش تفصال" loading="lazy" decoding="async"></span>
-                    <strong>تفصال</strong>
-                    <small>اضغط للاختيار</small>
-                  </button>
-                  <button class="tassel-type-option" type="button" data-tassel="تمليكة">
-                    <span class="tassel-image"><img src="assets/subbha-7420ea84d57f700e.webp" alt="طربوش تمليكة" loading="lazy" decoding="async"></span>
-                    <strong>تمليكة</strong>
-                    <small>اضغط للاختيار</small>
-                  </button>
-                  <button class="tassel-type-option" type="button" data-tassel="طربزونة">
-                    <span class="tassel-image"><img src="assets/subbha-c8f41ceb199cf59c.webp" alt="طربوش طربزونة" loading="lazy" decoding="async"></span>
-                    <strong>طربزونة</strong>
-                    <small>اضغط للاختيار</small>
-                  </button>
-                  <button class="tassel-type-option" type="button" data-tassel="كركوشه">
-                    <span class="tassel-image"><img src="assets/subbha-f68c6699b830f70c.webp" alt="طربوش كركوشه" loading="lazy" decoding="async"></span>
-                    <strong>كركوشه</strong>
-                    <small>اضغط للاختيار</small>
-                  </button>
-                  </div>
-                  <div class="builder-choice-note" id="tasselChoiceNote"><i data-lucide="mouse-pointer-2"></i> اختر أحد أنواع الطربوشات للانتقال إلى التفاصيل</div>
-                </div>
-
-                <div class="builder-details-options is-disabled" id="builderDetailsOptions">
-                  <div class="builder-step">
-                    <div class="builder-step-head">
-                      <div class="builder-step-title"><span class="step-number">4</span> أكمل التفاصيل</div>
-                      <span class="step-hint" id="selectedTasselText">لم يتم اختيار الطربوش</span>
-                    </div>
-
-                    <div class="controls-grid">
-                      <div class="field">
-                        <label>عدد الحبات</label>
-                        <select id="beadCount">
-                          <option value="33">33 حبة</option>
-                          <option value="45">45 حبة</option>
-                          <option value="66">66 حبة</option>
-                          <option value="99">99 حبة</option>
-                        </select>
-                      </div>
-                      <div class="field bead-size-field">
-                        <label>حجم الخرز</label>
-                        <div class="bead-size-options" id="beadSizeOptions" role="radiogroup" aria-label="حجم الخرز">
-                          <button type="button" class="bead-size-option active" data-size="6" role="radio" aria-checked="true">
-                            <span class="bead-size-ball size-6"></span><strong>6 مم</strong>
-                          </button>
-                          <button type="button" class="bead-size-option" data-size="8" role="radio" aria-checked="false">
-                            <span class="bead-size-ball size-8"></span><strong>8 مم</strong>
-                          </button>
-                          <button type="button" class="bead-size-option" data-size="10" role="radio" aria-checked="false">
-                            <span class="bead-size-ball size-10"></span><strong>10 مم</strong>
-                          </button>
-                          <button type="button" class="bead-size-option" data-size="12" role="radio" aria-checked="false">
-                            <span class="bead-size-ball size-12"></span><strong>12 مم</strong>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="field custom-notes-field" style="margin-top:16px">
-                      <label for="customNotes">ملاحظات إضافية على السبحة</label>
-                      <textarea id="customNotes" rows="4" placeholder="اكتب أي تفاصيل خاصة مثل التغليف، الحفر، الفواصل، أو أي طلب إضافي"></textarea>
-                    </div>
-                  </div>
-
-                  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
-                    <button class="btn btn-primary" id="addCustomBtn" style="background:var(--gold)">أضف الطلب للسلة</button>
-                    <button class="btn btn-outline" id="whatsappCustomBtn" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.25)">أرسل الطلب لواتساب</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <aside class="builder-summary" id="builderSummary">
-            <span class="summary-kicker">ملخص السبحة الخاصة</span>
-            <div class="summary-shape" id="summaryShapeIcon">
-              <i data-lucide="sparkles"></i>
-            </div>
-            <div class="summary-tassel-preview" id="summaryTasselPreview">
-              <span>صورة الطربوش المختار</span>
-              <div><i data-lucide="package"></i></div>
-            </div>
-            <h3 id="summaryTitle">ابدأ باختيار شكل الخرز</h3>
-            <p id="summaryDescription">سيظهر هنا ملخص اختياراتك بدون معاينة ثلاثية الأبعاد.</p>
-
-            <div class="summary-list">
-              <div><span>شكل الخرز</span><strong id="summaryShape">لم يُحدد</strong></div>
-              <div><span>نوع السبحة</span><strong id="summaryMaterial">لم يُحدد</strong></div>
-                            <div><span>نوع الطربوش</span><strong id="summaryTassel">لم يُحدد</strong></div>
-              <div><span>عدد الحبات</span><strong id="summaryCount">33 حبة</strong></div>
-              <div><span>حجم الخرز</span><strong id="summaryBeadSize">6 مم</strong></div>
-            </div>
-
-            <div class="summary-price">
-              <span>السعر يبدأ من</span>
-              <strong><span id="customPrice">0.000</span> ر.ع</strong>
-            </div>
-            <small>السعر يبدأ من 33 حبة، ويزداد تلقائياً عند زيادة عدد الحبات. ويُؤكد السعر النهائي بعد مراجعة الخامة والحجم والتوفر.</small>
-          </aside>
         </div>
       </div>
     </section>
@@ -5430,6 +5128,7 @@ ${lines}
     }
 
     function updateBuilderSummary(){
+      if(!$("#customPrice")) return;
       if($("#beadCount")) customConfig.count=Number($("#beadCount").value);
       if($("#customNotes")) customConfig.notes=$("#customNotes").value.trim();
 
@@ -6299,7 +5998,7 @@ ${lines}
     };
 
 
-    $("#beadShapesGrid").addEventListener("click",e=>{
+    $("#beadShapesGrid")?.addEventListener("click",e=>{
       const option=e.target.closest("[data-shape]");
       if(!option)return;
       if(option.classList.contains("builder-unavailable")){toast("هذا الشكل غير متوفر حالياً","alert-circle");return;}
@@ -6315,7 +6014,7 @@ ${lines}
       builderWizard.advance("shape","material",`تم الاختيار: ${option.dataset.label}`);
     });
 
-    $("#materialTypesGrid").addEventListener("click",e=>{
+    $("#materialTypesGrid")?.addEventListener("click",e=>{
       const option=e.target.closest("[data-material]");
       if(!option)return;
       if(option.classList.contains("builder-unavailable")){toast("هذه الخامة غير متوفرة حالياً","alert-circle");return;}
@@ -6334,7 +6033,7 @@ ${lines}
     });
 
 
-    $("#tasselTypesGrid").addEventListener("click",e=>{
+    $("#tasselTypesGrid")?.addEventListener("click",e=>{
       const option=e.target.closest("[data-tassel]");
       if(!option)return;
       if(option.classList.contains("builder-unavailable")){toast("هذا الطربوش غير متوفر حالياً","alert-circle");return;}
@@ -6350,7 +6049,7 @@ ${lines}
       builderWizard.advance("tassel","details",`تم الاختيار: ${customConfig.tassel}`);
     });
 
-    $("#beadCount").addEventListener("change",()=>{
+    $("#beadCount")?.addEventListener("change",()=>{
       updateBuilderSummary();
       builderWizard.complete("details",`${customConfig.count} حبة — ${customConfig.beadSize} مم`);
       builderWizard.updateProgress(4);
@@ -6370,8 +6069,8 @@ ${lines}
       builderWizard.updateProgress(4);
       toast(`تم اختيار حجم ${customConfig.beadSize} مم`,"check-circle");
     });
-    $("#addCustomBtn").addEventListener("click",addCustom);
-    $("#whatsappCustomBtn").addEventListener("click",()=>{
+    $("#addCustomBtn")?.addEventListener("click",addCustom);
+    $("#whatsappCustomBtn")?.addEventListener("click",()=>{
       if(!customConfig.shape){toast("اختر شكل الخرز أولاً","alert-circle");return}
       if(!customConfig.material){toast("اختر نوع السبحة أولاً","alert-circle");return}
       if(!customConfig.tassel){toast("اختر نوع الطربوش أولاً","alert-circle");return}
