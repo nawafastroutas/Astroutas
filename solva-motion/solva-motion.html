@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solva Motion</title>
+<style>
+  :root{
+    --bg:#070B1A; --ink:#EEF2FF; --muted:#8A94B8; --line:rgba(255,255,255,.38);
+    --a:#7C5CFF; --b:#22D3EE; --card:#111834;
+    --grad:linear-gradient(135deg,var(--a),var(--b));
+    --ar:"Cairo","Tajawal","DejaVu Sans",system-ui,sans-serif;
+    --mono:"DejaVu Sans Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#000;overflow:hidden}
+  #stage{position:absolute;width:1920px;height:1080px;left:50%;top:50%;
+    transform-origin:center;background:var(--bg);overflow:hidden;font-family:var(--ar);color:var(--ink)}
+  .abs{position:absolute}
+
+  /* background */
+  .grid{inset:0;background-image:
+      linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+    background-size:64px 64px;
+    -webkit-mask-image:radial-gradient(ellipse at center,#000 30%,transparent 75%);
+            mask-image:radial-gradient(ellipse at center,#000 30%,transparent 75%)}
+  .glow{width:900px;height:900px;border-radius:50%;filter:blur(120px);opacity:.35}
+  .g1{background:var(--a);left:-300px;top:-350px}
+  .g2{background:var(--b);right:-350px;bottom:-400px;opacity:.25}
+
+  /* scene 1: code */
+  .s1{inset:0;display:flex;align-items:center;justify-content:center;direction:ltr}
+  .code{font-family:var(--mono);font-size:64px;font-weight:700;display:flex;align-items:center}
+  .type{display:inline-block;overflow:hidden;white-space:nowrap;width:0}
+  .t-tag{color:#8BA3FF}.t-at{color:#22D3EE}.t-str{color:#C4B5FD}.t-p{color:var(--muted)}
+  .caret{display:inline-block;width:6px;height:74px;background:var(--b);margin-left:6px;border-radius:3px}
+
+  /* browser */
+  .browser{left:400px;top:190px;width:1120px;height:690px;border-radius:22px;
+    background:#0C1228;border:1px solid rgba(255,255,255,.12);
+    box-shadow:0 40px 120px rgba(0,0,0,.55),0 0 0 1px rgba(124,92,255,.15);overflow:hidden}
+  .bar{height:52px;background:#0F1733;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;padding:0 22px;gap:10px;direction:ltr}
+  .dot{width:13px;height:13px;border-radius:50%}
+  .url{margin-left:22px;flex:0 0 420px;height:30px;border-radius:15px;background:rgba(255,255,255,.06);
+    font:600 15px var(--mono);color:var(--muted);display:flex;align-items:center;padding:0 16px}
+  .url b{color:var(--ink)}
+  .page{position:absolute;inset:52px 0 0 0}
+  .blk{position:absolute;border:2px dashed var(--line);border-radius:10px;overflow:hidden}
+  .blk .f{position:absolute;inset:0;opacity:0}
+  .pill{border-radius:999px}
+
+  .f-grad{background:var(--grad)}
+  .f-white{background:#EEF2FF}
+  .f-muted{background:#3A4470}
+  .f-card{background:var(--card)}
+  .cta-t{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff}
+  .hero-art .c{position:absolute;border-radius:50%;background:rgba(255,255,255,.22)}
+  .card-ic{position:absolute;right:26px;top:28px;width:54px;height:54px;border-radius:16px;background:var(--grad)}
+  .card-l{position:absolute;right:26px;height:12px;border-radius:6px;background:#3A4470}
+  .ripple{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:rgba(255,255,255,.55);opacity:0}
+
+  .cursor{left:0;top:0;width:44px;height:44px;opacity:0;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+
+  /* phone */
+  .phone{left:1240px;top:175px;width:330px;height:680px;border-radius:52px;background:#0C1228;
+    border:10px solid #1A2244;box-shadow:0 40px 120px rgba(0,0,0,.6);overflow:hidden;opacity:0}
+  .notch{position:absolute;top:10px;left:50%;width:110px;height:26px;margin-left:-55px;border-radius:14px;background:#1A2244}
+  .pb{position:absolute;border-radius:10px;opacity:0}
+
+  .caption{left:0;right:0;bottom:96px;text-align:center;font-size:40px;font-weight:700;opacity:0}
+  .caption span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* scene 3: words */
+  .words{inset:0;display:flex;align-items:center;justify-content:center;gap:56px}
+  .w{font-size:150px;font-weight:700;opacity:0;position:relative;line-height:1.3}
+  .w.hl{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sep{width:18px;height:18px;border-radius:50%;background:var(--grad);opacity:0}
+  .uline{position:absolute;left:0;right:0;bottom:6px;height:10px;border-radius:5px;background:var(--grad);transform:scaleX(0);transform-origin:right}
+
+  /* scene 4: logo */
+  .logo{inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .lockup{display:flex;align-items:center;gap:40px;direction:ltr}
+  .mark{width:190px;height:190px;border-radius:52px;background:var(--grad);position:relative;overflow:hidden;opacity:0;
+    box-shadow:0 30px 90px rgba(124,92,255,.45)}
+  .mark svg{position:absolute;inset:0}
+  .shine{position:absolute;top:-40%;left:-80%;width:50%;height:180%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:rotate(20deg)}
+  .wm{font-family:"DejaVu Sans",sans-serif;font-weight:700;font-size:190px;letter-spacing:-6px;display:flex;line-height:1}
+  .wm span{display:inline-block;opacity:0}
+  .tag{margin-top:46px;font-size:52px;font-weight:700;color:var(--ink);opacity:0}
+  .tag em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .btn{margin-top:40px;padding:22px 56px;border-radius:999px;background:var(--grad);font-size:34px;font-weight:700;color:#fff;opacity:0;
+    box-shadow:0 20px 60px rgba(34,211,238,.3)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="abs grid" id="grid"></div>
+  <div class="abs glow g1"></div>
+  <div class="abs glow g2"></div>
+
+  <!-- Scene 1 -->
+  <div class="abs s1" id="s1">
+    <div class="code"><span class="type" id="type"><span class="t-tag">&lt;website</span> <span class="t-at">by</span><span class="t-p">=</span><span class="t-str">"solva"</span> <span class="t-tag">/&gt;</span></span><span class="caret" id="caret"></span></div>
+  </div>
+
+  <!-- Scene 2: browser -->
+  <div class="abs browser" id="browser">
+    <div class="bar">
+      <span class="dot" style="background:#FF5F57"></span><span class="dot" style="background:#FEBC2E"></span><span class="dot" style="background:#28C840"></span>
+      <div class="url">https://<b>your-brand</b>.com</div>
+    </div>
+    <div class="page">
+      <!-- nav -->
+      <div class="blk w1" style="right:36px;top:24px;width:44px;height:44px;border-radius:12px"><div class="f f-grad"></div></div>
+      <div class="blk w1 pill" style="right:110px;top:38px;width:80px;height:16px"><div class="f f-muted"></div></div>
+      <div class="blk w1 pill" style="right:210px;top:38px;width:80px;height:16px"><div class="f f-muted"></div></div>
+      <div class="blk w1 pill" style="right:310px;top:38px;width:80px;height:16px"><div class="f f-muted"></div></div>
+      <div class="blk w1 pill" style="left:36px;top:24px;width:130px;height:44px"><div class="f f-grad"></div></div>
+      <!-- hero text -->
+      <div class="blk w1 pill" style="right:36px;top:120px;width:440px;height:36px"><div class="f f-white"></div></div>
+      <div class="blk w1 pill" style="right:36px;top:170px;width:330px;height:36px"><div class="f f-white"></div></div>
+      <div class="blk w1 pill" style="right:36px;top:228px;width:400px;height:14px"><div class="f f-muted"></div></div>
+      <div class="blk w1 pill" style="right:36px;top:252px;width:310px;height:14px"><div class="f f-muted"></div></div>
+      <div class="blk w1 pill" id="cta" style="right:36px;top:292px;width:190px;height:56px"><div class="f f-grad"><div class="cta-t">ابدأ الآن</div><div class="ripple" id="ripple"></div></div></div>
+      <!-- hero art -->
+      <div class="blk w1 hero-art" style="left:36px;top:104px;width:470px;height:256px;border-radius:20px"><div class="f f-grad">
+        <div class="c" style="width:180px;height:180px;left:40px;top:40px"></div>
+        <div class="c" style="width:90px;height:90px;left:250px;top:120px;background:rgba(255,255,255,.35)"></div>
+        <div class="c" style="width:50px;height:50px;left:370px;top:40px"></div>
+      </div></div>
+      <!-- cards -->
+      <div class="blk w1" style="left:36px;top:396px;width:333px;height:198px;border-radius:18px"><div class="f f-card"><div class="card-ic"></div><div class="card-l" style="top:106px;width:180px"></div><div class="card-l" style="top:132px;width:130px"></div></div></div>
+      <div class="blk w1" style="left:393px;top:396px;width:333px;height:198px;border-radius:18px"><div class="f f-card"><div class="card-ic"></div><div class="card-l" style="top:106px;width:180px"></div><div class="card-l" style="top:132px;width:130px"></div></div></div>
+      <div class="blk w1" style="left:750px;top:396px;width:333px;height:198px;border-radius:18px"><div class="f f-card"><div class="card-ic"></div><div class="card-l" style="top:106px;width:180px"></div><div class="card-l" style="top:132px;width:130px"></div></div></div>
+    </div>
+  </div>
+
+  <svg class="abs cursor" id="cursor" viewBox="0 0 24 24"><path d="M4 2l15 9.5-6.6 1.3 3.9 7.4-2.9 1.5-3.9-7.4L4 19z" fill="#fff" stroke="#070B1A" stroke-width="1.3" stroke-linejoin="round"/></svg>
+
+  <!-- phone -->
+  <div class="abs phone" id="phone">
+    <div class="notch"></div>
+    <div class="pb" style="right:22px;top:56px;width:36px;height:36px;border-radius:10px;background:var(--grad)"></div>
+    <div class="pb" style="left:22px;top:66px;width:40px;height:6px;border-radius:3px;background:#3A4470;box-shadow:0 11px 0 #3A4470"></div>
+    <div class="pb" style="left:22px;right:22px;top:118px;height:170px;border-radius:18px;background:var(--grad)"></div>
+    <div class="pb" style="right:22px;top:310px;width:230px;height:26px;border-radius:13px;background:#EEF2FF"></div>
+    <div class="pb" style="right:22px;top:346px;width:170px;height:26px;border-radius:13px;background:#EEF2FF"></div>
+    <div class="pb" style="right:22px;top:390px;width:240px;height:11px;border-radius:6px;background:#3A4470"></div>
+    <div class="pb" style="right:22px;top:430px;width:140px;height:44px;border-radius:22px;background:var(--grad)"></div>
+    <div class="pb" style="left:22px;right:22px;top:500px;height:130px;border-radius:18px;background:var(--card)"></div>
+  </div>
+
+  <div class="abs caption" id="caption">مواقع <span>متجاوبة</span> مع كل الشاشات</div>
+
+  <!-- Scene 3 -->
+  <div class="abs words" id="words">
+    <div class="w" id="w1">نصمم</div><div class="sep" id="sp1"></div>
+    <div class="w" id="w2">نبني</div><div class="sep" id="sp2"></div>
+    <div class="w hl" id="w3">نطلق<div class="uline" id="ul"></div></div>
+  </div>
+
+  <!-- Scene 4 -->
+  <div class="abs logo" id="logo">
+    <div class="lockup">
+      <div class="mark" id="mark">
+        <svg viewBox="0 0 190 190"><path id="spath" d="M128 58c-8-10-20-14-34-14-20 0-35 11-35 27 0 36 72 20 72 55 0 16-16 28-38 28-16 0-30-6-38-18"
+          fill="none" stroke="#fff" stroke-width="20" stroke-linecap="round"/></svg>
+        <div class="shine" id="shine"></div>
+      </div>
+      <div class="wm" id="wm"><span>S</span><span>o</span><span>l</span><span>v</span><span>a</span></div>
+    </div>
+    <div class="tag" id="tag">نبني موقعك الإلكتروني <em>باحتراف</em></div>
+    <div class="btn" id="btn">ابدأ مشروعك الآن</div>
+  </div>
+</div>
+
+<script>
+const D = 13;                                   // total length in seconds
+const OUT = 'cubic-bezier(.16,1,.3,1)', INOUT = 'cubic-bezier(.65,0,.35,1)', BACK = 'cubic-bezier(.34,1.56,.64,1)';
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+
+// frames: [[timeSec, props, easingToNext], ...] -> one WAAPI animation spanning the whole piece
+function K(el, frames){
+  if (typeof el === 'string') el = $(el);
+  const kf = frames.map(([t, p, e]) => ({...p, offset: Math.min(1, t / D), easing: e || OUT}));
+  if (kf[0].offset > 0) kf.unshift({...kf[0], offset: 0});
+  if (kf[kf.length - 1].offset < 1) kf.push({...kf[kf.length - 1], offset: 1});
+  el.animate(kf, {duration: D * 1000, fill: 'both'});
+}
+
+// background
+K('#grid', [[0, {opacity: 0}], [1.2, {opacity: 1}]]);
+K('.g1', [[0, {transform: 'translate(0,0)'}, 'linear'], [D, {transform: 'translate(260px,160px)'}]]);
+K('.g2', [[0, {transform: 'translate(0,0)'}, 'linear'], [D, {transform: 'translate(-240px,-120px)'}]]);
+
+// scene 1 — typing
+K('#type', [[0.35, {width: '0ch'}, 'steps(22,end)'], [1.55, {width: '22ch'}]]);
+$('#caret').animate([{opacity: 1}, {opacity: 1, offset: .5}, {opacity: 0, offset: .5}, {opacity: 0}], {duration: 700, iterations: Infinity});
+K('#s1', [[1.95, {opacity: 1, transform: 'scale(1)', filter: 'blur(0px)'}, INOUT],
+          [2.45, {opacity: 0, transform: 'scale(1.25)', filter: 'blur(12px)'}]]);
+
+// scene 2 — browser
+K('#browser', [
+  [2.2, {opacity: 0, transform: 'translateY(60px) scale(.88)'}],
+  [2.9, {opacity: 1, transform: 'translateY(0) scale(1)'}],
+  [5.9, {opacity: 1, transform: 'translate(0,0) scale(1)'}, INOUT],
+  [6.7, {opacity: 1, transform: 'translate(-250px,0) scale(.82)'}],
+  [7.7, {opacity: 1, transform: 'translate(-250px,0) scale(.82)'}, INOUT],
+  [8.2, {opacity: 0, transform: 'translate(-250px,60px) scale(.78)'}],
+]);
+$$('.w1').forEach((el, i) => {
+  const b = 2.7 + i * 0.075, f = 3.95 + i * 0.045;
+  K(el, [[b, {opacity: 0, transform: 'scale(.4)', borderColor: 'rgba(255,255,255,.38)'}, BACK],
+         [b + .45, {opacity: 1, transform: 'scale(1)', borderColor: 'rgba(255,255,255,.38)'}],
+         [f, {opacity: 1, transform: 'scale(1)', borderColor: 'rgba(255,255,255,.38)'}],
+         [f + .4, {opacity: 1, transform: 'scale(1)', borderColor: 'rgba(255,255,255,0)'}]]);
+  K(el.querySelector('.f'), [[f, {opacity: 0}], [f + .4, {opacity: 1}]]);
+});
+
+// cursor clicks the CTA (CTA centre ≈ 1389,563 on stage)
+K('#cursor', [
+  [4.55, {opacity: 0, transform: 'translate(1000px,900px)'}],
+  [4.75, {opacity: 1, transform: 'translate(1000px,900px)'}, INOUT],
+  [5.3,  {opacity: 1, transform: 'translate(1385px,560px) scale(1)'}, 'ease-in'],
+  [5.4,  {opacity: 1, transform: 'translate(1385px,560px) scale(.8)'}, 'ease-out'],
+  [5.55, {opacity: 1, transform: 'translate(1385px,560px) scale(1)'}],
+  [5.85, {opacity: 0, transform: 'translate(1420px,600px) scale(1)'}],
+]);
+K('#cta', [[5.38, {transform: 'scale(1)'}, 'ease-out'], [5.46, {transform: 'scale(.94)'}, BACK], [5.75, {transform: 'scale(1)'}]]);
+K('#ripple', [[5.4, {opacity: .8, transform: 'scale(0)'}], [6.0, {opacity: 0, transform: 'scale(9)'}]]);
+
+// phone (responsive)
+K('#phone', [
+  [6.0, {opacity: 0, transform: 'translateX(260px) rotate(6deg)'}],
+  [6.8, {opacity: 1, transform: 'translateX(0) rotate(0deg)'}],
+  [7.75, {opacity: 1, transform: 'translate(0,0)'}, INOUT],
+  [8.25, {opacity: 0, transform: 'translate(0,60px)'}],
+]);
+$$('.pb').forEach((el, i) => K(el, [[6.45 + i * .06, {opacity: 0, transform: 'translateY(16px)'}], [6.9 + i * .06, {opacity: 1, transform: 'translateY(0)'}]]));
+K('#caption', [
+  [6.6, {opacity: 0, transform: 'translateY(30px)'}], [7.1, {opacity: 1, transform: 'translateY(0)'}],
+  [7.7, {opacity: 1, transform: 'translateY(0)'}, INOUT], [8.1, {opacity: 0, transform: 'translateY(20px)'}],
+]);
+
+// scene 3 — words
+['#w1', '#w2', '#w3'].forEach((s, i) => {
+  const t = 8.3 + i * .38;
+  K(s, [[t, {opacity: 0, transform: 'translateY(80px)', filter: 'blur(14px)'}],
+        [t + .6, {opacity: 1, transform: 'translateY(0)', filter: 'blur(0px)'}],
+        [9.95, {opacity: 1, transform: 'translateY(0)', filter: 'blur(0px)'}, INOUT],
+        [10.35, {opacity: 0, transform: 'translateY(-50px)', filter: 'blur(10px)'}]]);
+});
+['#sp1', '#sp2'].forEach((s, i) => K(s, [[8.6 + i * .38, {opacity: 0, transform: 'scale(0)'}, BACK], [8.95 + i * .38, {opacity: 1, transform: 'scale(1)'}],
+                                         [9.95, {opacity: 1, transform: 'scale(1)'}], [10.3, {opacity: 0, transform: 'scale(0)'}]]));
+K('#ul', [[9.35, {transform: 'scaleX(0)'}, INOUT], [9.8, {transform: 'scaleX(1)'}]]);
+
+// scene 4 — logo
+K('#mark', [[10.3, {opacity: 0, transform: 'scale(0) rotate(-120deg)'}, BACK], [11.0, {opacity: 1, transform: 'scale(1) rotate(0deg)'}]]);
+const sp = $('#spath'), len = sp.getTotalLength();
+sp.style.strokeDasharray = len;
+K(sp, [[10.6, {strokeDashoffset: len}, INOUT], [11.35, {strokeDashoffset: 0}]]);
+K('#shine', [[11.6, {transform: 'translateX(0) rotate(20deg)'}, INOUT], [12.3, {transform: 'translateX(560px) rotate(20deg)'}]]);
+$$('#wm span').forEach((el, i) => K(el, [[10.7 + i * .07, {opacity: 0, transform: 'translateY(90px)', filter: 'blur(10px)'}],
+                                         [11.3 + i * .07, {opacity: 1, transform: 'translateY(0)', filter: 'blur(0px)'}]]));
+K('#tag', [[11.3, {opacity: 0, transform: 'translateY(30px)'}], [11.9, {opacity: 1, transform: 'translateY(0)'}]]);
+K('#btn', [[11.7, {opacity: 0, transform: 'scale(.7)'}, BACK], [12.2, {opacity: 1, transform: 'scale(1)'}]]);
+
+// ---- playback ----
+const stage = $('#stage');
+function fit(){ const s = Math.min(innerWidth / 1920, innerHeight / 1080); stage.style.transform = `translate(-50%,-50%) scale(${s})`; }
+addEventListener('resize', fit); fit();
+
+// deterministic seek used by the renderer
+window.seek = t => document.getAnimations().forEach(a => { a.pause(); a.currentTime = t * 1000; });
+
+if (!location.search.includes('render')) {
+  // loop with a short hold on the final frame
+  let start = performance.now();
+  (function loop(now){
+    const t = (now - start) / 1000;
+    if (t > D + 1.5) start = now;
+    window.seek(Math.min(t, D));
+    requestAnimationFrame(loop);
+  })(start);
+}
+</script>
+</body>
+</html>
