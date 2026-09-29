@@ -5207,10 +5207,17 @@ ${lines}
     }
 
     function splitExtrasCategory(p){
-      if(!p || !["الإضافات","إضافات"].includes(p.mainCategory)) return p;
+      if(!p) return p;
+      const BOX_WORDS=/بوكس|بكس|باكس|box|علب|صندوق|صناديق/i;
       const text=`${p.name||""} ${p.category||""} ${p.productType||""} ${p.description||""}`;
-      const isWallet=/محفظ|محافظ|حافظ|علب|صندوق|صناديق|تغليف|كيس|أكياس|جراب|wallet|case|box|pouch/i.test(text);
-      return {...p, mainCategory: isWallet ? "المحفظات" : "الكركوشات", migratedFromExtras:true};
+      if(["الإضافات","إضافات"].includes(p.mainCategory)){
+        const isWallet=BOX_WORDS.test(text) || /محفظ|محافظ|حافظ|تغليف|كيس|أكياس|جراب|wallet|case|pouch/i.test(text);
+        return {...p, mainCategory: isWallet ? "المحفظات" : "الكركوشات", migratedFromExtras:true};
+      }
+      if(["الكركوشات","كركوشات"].includes(p.mainCategory) && BOX_WORDS.test(text)){
+        return {...p, mainCategory:"المحفظات", migratedFromExtras:true};
+      }
+      return p;
     }
 
     let extrasMigrationSaved=false;
@@ -5226,7 +5233,7 @@ ${lines}
           const {migratedFromExtras, ...clean}=normalizeProductForFirebase(p);
           return firebaseDB.ref("products/"+clean.id).set(clean);
         }));
-        toast(`تم نقل ${pending.length} منتج من «الإضافات» إلى المحفظات والكركوشات`,"check-circle");
+        toast(`تم نقل ${pending.length} منتج إلى قسمه الصحيح (المحفظات / الكركوشات)`,"check-circle");
       }catch(err){
         extrasMigrationSaved=false;
         console.warn("Extras migration save failed",err);
