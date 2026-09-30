@@ -191,3 +191,8 @@ createSplash({ waitFor: [fetch('/api/events').then(r => r.json())] });
 
 فيديو تعريفي مدته ٢٠ ثانية لشعار نادي الثقافة والأدب (أفقي 16:9 وعمودي 9:16)،
 مع مصدره القابل للتعديل: انظر [`motion/literature-culture-club`](motion/literature-culture-club/README.md).
+
+## موشن جرافيك — نادي الفلك والفضاء
+
+نفس الفكرة لشعار نادي الفلك والفضاء (أفقي 16:9 وعمودي 9:16)،
+مع مصدره القابل للتعديل: انظر [`motion/astronomy-space-club`](motion/astronomy-space-club/README.md).
