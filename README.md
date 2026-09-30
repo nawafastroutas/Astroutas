@@ -184,3 +184,10 @@ createSplash({ waitFor: [fetch('/api/events').then(r => r.json())] });
 - تعطيل JavaScript → لا شاشة، والمحتوى ظاهر ومنسّق.
 - `prefers-reduced-motion` → بلا دوران، ويكتمل التسلسل.
 - لا أخطاء JavaScript، والموقع قابل للنقر والتمرير بعد الاختفاء.
+
+---
+
+## موشن جرافيك — نادي الثقافة والأدب
+
+فيديو تعريفي مدته ٢٠ ثانية لشعار نادي الثقافة والأدب (أفقي 16:9 وعمودي 9:16)،
+مع مصدره القابل للتعديل: انظر [`motion/literature-culture-club`](motion/literature-culture-club/README.md).

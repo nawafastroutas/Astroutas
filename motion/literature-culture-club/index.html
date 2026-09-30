@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نادي الثقافة والأدب — موشن جرافيك</title>
+<!--
+  موشن جرافيك (٢٠ ثانية) لشعار نادي الثقافة والأدب — كلية التربية بالرستاق.
+
+  كل الحركة دالة واحدة في الزمن: render(t) — لا توجد CSS animations.
+  لذلك نفس الصفحة تُعرض حيّة في المتصفح، وتُصدَّر إطارًا بإطار بدقة تامة
+  عبر render.js (Playwright + ffmpeg).
+
+  الشعار مُعاد بناؤه كمتجه (vector) من الصورة الأصلية:
+  - العلامة: أربعة أقواس ربع دائرة مراكزها زوايا مستطيل 95×59، نصف القطر 41.25،
+    متشابكة (الفيروزي فوق البنفسجي يسارًا، والعكس يمينًا) + معيّن مقعّر الأضلاع.
+  - العربي: Tajawal Medium — الإنجليزي: Barlow Medium (أقرب بديل مجاني لـ DIN).
+  الإحداثيات داخل #lock هي نفس بكسلات الشعار الأصلي (632×192).
+
+  ?t=12.5  يجمّد الصفحة عند لحظة معيّنة (للمعاينة).
+-->
+<style>
+  @font-face { font-family: 'Tajawal'; font-weight: 500; src: url(fonts/Tajawal-Medium.ttf) format('truetype'); }
+  @font-face { font-family: 'Tajawal'; font-weight: 700; src: url(fonts/Tajawal-Bold.ttf) format('truetype'); }
+  @font-face { font-family: 'Barlow';  font-weight: 500; src: url(fonts/Barlow-Medium.ttf) format('truetype'); }
+
+  :root {
+    --purple: #622673;
+    --teal:   #73A3B3;
+    --paper:  #FBF8F4;
+  }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--paper); }
+  #stage { position: fixed; inset: 0; overflow: hidden;
+           background: radial-gradient(120% 95% at 50% 46%, #FFFFFF 0%, #FBF8F4 48%, #F2ECE5 100%); }
+  #grain { position: absolute; inset: 0; opacity: .05; mix-blend-mode: multiply; pointer-events: none; }
+  #fx    { position: absolute; inset: 0; }
+  #svg   { position: absolute; inset: 0; }
+  .ar    { font-family: 'Tajawal', sans-serif; }
+  .en    { font-family: 'Barlow', sans-serif; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="grain"></div>
+  <canvas id="fx"></canvas>
+  <svg id="svg" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- lattice: spreads out from the first word, and later clears a hole behind the logo -->
+      <radialGradient id="gReveal" gradientUnits="userSpaceOnUse">
+        <stop offset="0"   stop-color="#fff"/>
+        <stop offset=".78" stop-color="#fff"/>
+        <stop offset="1"   stop-color="#000"/>
+      </radialGradient>
+      <mask id="mReveal" maskUnits="userSpaceOnUse" x="-5000" y="-5000" width="10000" height="10000">
+        <rect x="-5000" y="-5000" width="10000" height="10000" fill="url(#gReveal)"/>
+      </mask>
+      <radialGradient id="gHole" gradientUnits="userSpaceOnUse">
+        <stop offset="0"   stop-color="#000"/>
+        <stop offset=".42" stop-color="#000"/>
+        <stop offset="1"   stop-color="#fff"/>
+      </radialGradient>
+      <mask id="mHole" maskUnits="userSpaceOnUse" x="-5000" y="-5000" width="10000" height="10000">
+        <rect x="-5000" y="-5000" width="10000" height="10000" fill="url(#gHole)"/>
+      </mask>
+
+      <!-- camera motion blur (screen space) -->
+      <filter id="fMotion" filterUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+        <feGaussianBlur id="fMotionBlur" stdDeviation="0 0"/>
+      </filter>
+      <filter id="fW0" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0"/></filter>
+      <filter id="fW1" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0"/></filter>
+      <filter id="fW2" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0"/></filter>
+
+      <clipPath id="cWord" clipPathUnits="userSpaceOnUse"><rect x="-300" y="-120" width="600" height="156"/></clipPath>
+
+      <!-- logo diamond, centred on the origin (concave sides) -->
+      <path id="diamondShape" d="M0 -14.2 Q3.49 -5.96 8.3 0 Q3.49 5.96 0 14.2 Q-3.49 5.96 -8.3 0 Q-3.49 -5.96 0 -14.2Z"/>
+
+      <!-- title wipes: Arabic reveals right→left, English left→right -->
+      <linearGradient id="gAr" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#fff"/>
+      </linearGradient>
+      <mask id="mAr" maskUnits="userSpaceOnUse" x="100" y="20" width="400" height="80">
+        <rect x="100" y="20" width="400" height="80" fill="url(#gAr)"/>
+      </mask>
+      <linearGradient id="gEn" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/>
+      </linearGradient>
+      <mask id="mEn" maskUnits="userSpaceOnUse" x="0" y="70" width="500" height="50">
+        <rect x="0" y="70" width="500" height="50" fill="url(#gEn)"/>
+      </mask>
+
+      <!-- sheen across the finished logo -->
+      <filter id="fWhite"><feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0"/></filter>
+      <mask id="mLogo" maskUnits="userSpaceOnUse" x="0" y="0" width="632" height="192">
+        <use href="#lockupArt" filter="url(#fWhite)"/>
+      </mask>
+      <linearGradient id="gSheen" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0"  stop-color="#fff" stop-opacity="0"/>
+        <stop offset=".5" stop-color="#fff" stop-opacity=".75"/>
+        <stop offset="1"  stop-color="#fff" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+
+    <g id="screen">
+      <g id="cam">
+        <g mask="url(#mReveal)"><g mask="url(#mHole)"><g id="lattice"></g></g></g>
+
+        <g id="words"></g>
+
+        <g id="lock" transform="translate(-489 -75)">
+          <g id="ripples"></g>
+          <g id="burst"></g>
+          <g id="lockupArt">
+            <!-- thin guides traced just before the arcs are inked -->
+            <g id="guides" fill="none" stroke-width=".38" opacity="0">
+              <path id="gdA" pathLength="1" stroke="#622673" d="M441.5 86.75 A41.25 41.25 0 0 0 482.75 45.5"/>
+              <path id="gdC" pathLength="1" stroke="#73A3B3" d="M441.5 63.25 A41.25 41.25 0 0 1 482.75 104.5"/>
+              <path id="gdD" pathLength="1" stroke="#73A3B3" d="M536.5 63.25 A41.25 41.25 0 0 0 495.25 104.5"/>
+              <path id="gdB" pathLength="1" stroke="#622673" d="M536.5 86.75 A41.25 41.25 0 0 1 495.25 45.5"/>
+            </g>
+            <!-- woven order: A, C, D, B -->
+            <g id="arcs" fill="none" stroke-width="7.2" stroke-linecap="butt" stroke-opacity=".87">
+              <path id="arcA" pathLength="1" stroke="#622673" d="M441.5 86.75 A41.25 41.25 0 0 0 482.75 45.5"/>
+              <path id="arcC" pathLength="1" stroke="#73A3B3" d="M441.5 63.25 A41.25 41.25 0 0 1 482.75 104.5"/>
+              <path id="arcD" pathLength="1" stroke="#73A3B3" d="M536.5 63.25 A41.25 41.25 0 0 0 495.25 104.5"/>
+              <path id="arcB" pathLength="1" stroke="#622673" d="M536.5 86.75 A41.25 41.25 0 0 1 495.25 45.5"/>
+            </g>
+            <g transform="translate(489 75.2)"><use id="diamond" href="#diamondShape" fill="#73A3B0"/></g>
+
+            <g id="tAr" mask="url(#mAr)">
+              <text class="ar" x="179.68" y="68.45" font-size="30.82" font-weight="500" fill="#622673"
+                    direction="rtl" text-anchor="end">نادي الثقافة والأدب</text>
+            </g>
+            <g id="tEn" mask="url(#mEn)">
+              <text class="en" x="75" y="103.9" font-size="31.286" font-weight="500" letter-spacing="0.2083"
+                    fill="#622673">Literature &amp; Culture Club</text>
+            </g>
+            <rect id="rule" x="77" y="118.53" width="459" height="1.35" fill="#622673"/>
+            <g id="tBotEn">
+              <text class="en" x="76" y="147.6" font-size="22.286" font-weight="500" fill="#622673">Rustaq College of Education</text>
+              <rect x="354.8" y="140.4" width="6.8" height="2" fill="#622673"/>
+            </g>
+            <g id="tBotAr">
+              <text class="ar" x="366.41" y="147.19" font-size="20.12" font-weight="500" fill="#622673"
+                    direction="rtl" text-anchor="end">كلية التربية بالرستاق</text>
+            </g>
+          </g>
+          <rect id="sheen" x="0" y="0" width="632" height="192" fill="url(#gSheen)" mask="url(#mLogo)" opacity="0"/>
+        </g>
+      </g>
+    </g>
+  </svg>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const DURATION = 20;
+  const PURPLE = '#622673', TEAL = '#73A3B3', TEAL_TEXT = '#467F91';
+  const NS = 'http://www.w3.org/2000/svg';
+
+  // ---------- helpers ----------
+  const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const lerp  = (a, b, t) => a + (b - a) * t;
+  const prog  = (t, a, b) => clamp((t - a) / (b - a));
+  const lerpLog = (a, b, t) => Math.exp(lerp(Math.log(a), Math.log(b), t));
+  const E = {
+    outExpo:   x => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x),
+    outCubic:  x => 1 - Math.pow(1 - x, 3),
+    inCubic:   x => x * x * x,
+    inOutCubic:x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+    inOutSine: x => -(Math.cos(Math.PI * x) - 1) / 2,
+    outSine:   x => Math.sin(x * Math.PI / 2),
+    outBack:   (x, s = 1.9) => 1 + (s + 1) * Math.pow(x - 1, 3) + s * Math.pow(x - 1, 2),
+  };
+  const $ = id => document.getElementById(id);
+  const el = (tag, attrs, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  };
+  const set = (n, attrs) => { for (const k in attrs) n.setAttribute(k, attrs[k]); };
+  // deterministic RNG so every render is identical
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+
+  // ---------- layout ----------
+  let W, H, PORTRAIT, S_WORD, S_MARK, S_LOCK;
+  const P_LOCK = { x: -183.5, y: 22 };            // centre of the full lockup, world units
+  const CELLS  = [{ x: 570, y: 59 }, { x: 380, y: -59 }, { x: 190, y: 59 }];   // where the words live
+  const ORIGIN = { x: 0, y: 0 };                  // the lattice cell that becomes the logo mark
+
+  function layout() {
+    W = window.innerWidth; H = window.innerHeight;
+    PORTRAIT = H > W;
+    const m = Math.min(W, H);
+    S_WORD = m / 360;
+    S_MARK = m * 0.52 / 102;
+    S_LOCK = PORTRAIT ? W * 0.84 / 463 : Math.min(W * 0.64 / 463, H * 0.34 / 110);
+    const svg = $('svg');
+    set(svg, { width: W, height: H, viewBox: `0 0 ${W} ${H}` });
+    set($('fMotion'), { width: W, height: H });
+    const fx = $('fx'); fx.width = W; fx.height = H;
+  }
+
+  // ---------- camera ----------
+  // world -> screen:  screen = (W/2, H/2) + s * (world - P)
+  function camera(t) {
+    let P, s;
+    const [c1, c2, c3] = CELLS;
+    if (t < 2.4) {
+      P = c1; s = S_WORD * lerp(0.9, 1, E.outSine(prog(t, 0, 2.4)));
+    } else if (t < 4.4) {
+      const k = E.inOutCubic(prog(t, 2.4, 3.3));
+      P = { x: lerp(c1.x, c2.x, k), y: lerp(c1.y, c2.y, k) }; s = S_WORD;
+    } else if (t < 6.45) {
+      const k = E.inOutCubic(prog(t, 4.4, 5.3));
+      P = { x: lerp(c2.x, c3.x, k), y: lerp(c2.y, c3.y, k) }; s = S_WORD;
+    } else if (t < 8.4) {
+      const k = E.inOutCubic(prog(t, 6.45, 8.4));
+      P = { x: lerp(c3.x, ORIGIN.x, k), y: lerp(c3.y, ORIGIN.y, k) };
+      s = lerpLog(S_WORD, S_MARK, k);
+    } else if (t < 9.9) {
+      P = ORIGIN; s = S_MARK * lerp(1, 1.025, E.inOutSine(prog(t, 8.4, 9.9)));
+    } else if (t < 11.2) {
+      const k = E.inOutCubic(prog(t, 9.9, 11.2));
+      P = { x: lerp(ORIGIN.x, P_LOCK.x, k), y: lerp(ORIGIN.y, P_LOCK.y, k) };
+      s = lerpLog(S_MARK * 1.025, S_LOCK, k);
+    } else {
+      P = P_LOCK; s = S_LOCK * lerp(1, 1.045, E.inOutSine(prog(t, 11.2, 20)));
+    }
+    return { x: P.x, y: P.y, s };
+  }
+
+  // same concave diamond as #diamondShape, as path data at (x, y) and scale k
+  function diamondPath(x, y, k) {
+    const p = (a, b) => `${(x + a * k).toFixed(2)} ${(y + b * k).toFixed(2)}`;
+    return `M${p(0, -14.2)} Q${p(3.49, -5.96)} ${p(8.3, 0)} Q${p(3.49, 5.96)} ${p(0, 14.2)} ` +
+           `Q${p(-3.49, 5.96)} ${p(-8.3, 0)} Q${p(-3.49, -5.96)} ${p(0, -14.2)}Z`;
+  }
+
+  // ---------- build: lattice ----------
+  // The logo mark is one cell of an endless pattern: circles (r = 41.25) on a 95 × 59 grid,
+  // with a diamond in the middle of every cell.
+  const LATTICE = [];
+  function buildLattice() {
+    const g = $('lattice');
+    const circles = el('g', { fill: 'none', stroke: TEAL, 'stroke-opacity': .55 }, g);
+    const diamonds = el('g', { fill: 'none', stroke: PURPLE, 'stroke-opacity': .32 }, g);
+    for (let i = -8; i <= 10; i++) {
+      for (let j = -10; j <= 10; j++) {
+        const cx = 47.5 + 95 * i, cy = 29.5 + 59 * j;
+        LATTICE.push({ n: el('circle', { cx, cy, r: 41.25,
+                       'vector-effect': 'non-scaling-stroke', 'stroke-width': 1.25 }, circles), cx, cy });
+        el('path', { d: diamondPath(95 * i, 59 * j, .55),
+                     'vector-effect': 'non-scaling-stroke', 'stroke-width': 1.1 }, diamonds);
+      }
+    }
+  }
+
+  // ---------- build: words ----------
+  const WORDS = [
+    { ar: 'نقرأ',  en: 'WE READ',   tin: 0.75, tout: 2.2 },
+    { ar: 'نكتب',  en: 'WE WRITE',  tin: 3.05, tout: 4.2 },
+    { ar: 'نُبدع', en: 'WE CREATE', tin: 5.05, tout: 6.25 },
+  ];
+  function buildWords() {
+    const root = $('words');
+    WORDS.forEach((w, i) => {
+      const c = CELLS[i];
+      const g = el('g', { transform: `translate(${c.x} ${c.y})` }, root);
+      const all = el('g', {}, g);
+      const clip = el('g', { 'clip-path': 'url(#cWord)' }, all);
+      const move = el('g', { filter: `url(#fW${i})` }, clip);
+      const t = el('text', { class: 'ar', x: 0, y: 0, 'font-size': 76, 'font-weight': 700, fill: PURPLE,
+                             'text-anchor': 'middle', direction: 'rtl' }, move);
+      t.textContent = w.ar;
+      const sep = el('g', { transform: 'translate(0 50)' }, all);
+      const l1 = el('line', { x1: -7, y1: 0, x2: -7, y2: 0, stroke: TEAL, 'stroke-width': .9, 'stroke-linecap': 'round' }, sep);
+      const l2 = el('line', { x1: 7,  y1: 0, x2: 7,  y2: 0, stroke: TEAL, 'stroke-width': .9, 'stroke-linecap': 'round' }, sep);
+      const d  = el('use', { href: '#diamondShape', fill: TEAL }, sep);
+      const cap = el('text', { class: 'en', x: 0, y: 74, 'font-size': 10, 'font-weight': 500, fill: TEAL_TEXT,
+                               'text-anchor': 'middle' }, all);
+      cap.textContent = w.en;
+      w.nodes = { all, move, blur: $(`fW${i}`).firstElementChild, l1, l2, d, cap };
+    });
+  }
+
+  // ---------- build: diamond burst + ripples ----------
+  const BURST = [];
+  const RINGS = [];
+  function buildBurst() {
+    const g = $('burst');
+    for (let i = 0; i < 14; i++) {
+      const a = (i / 14) * Math.PI * 2 + 0.2;
+      const n = el('use', { href: '#diamondShape', fill: i % 2 ? PURPLE : TEAL, opacity: 0 }, g);
+      BURST.push({ n, a, dist: 62 + rnd() * 46, sc: .16 + rnd() * .14, spin: (rnd() - .5) * 200 });
+    }
+    const r = $('ripples');
+    const rings = [[8.36, TEAL, 150], [8.5, PURPLE, 120], [16.0, TEAL, 95], [16.18, PURPLE, 78]];
+    for (const [t0, col, rmax] of rings) {
+      RINGS.push({ t0, rmax, n: el('circle', { cx: 489, cy: 75.2, r: 0, fill: 'none', stroke: col,
+                                               'stroke-width': .8, opacity: 0 }, r) });
+    }
+  }
+
+  // ---------- particles & soft colour blobs (canvas) ----------
+  const PARTS = [];
+  function buildParticles() {
+    for (let i = 0; i < 46; i++) {
+      const d = .15 + rnd() * .85;
+      PARTS.push({
+        x: rnd(), y: rnd(), d,
+        size: 3 + d * 9,
+        col: rnd() < .55 ? [115, 163, 179] : [98, 38, 115],
+        a: .10 + d * .32,
+        rot: rnd() * Math.PI, spin: (rnd() - .5) * .8,
+        vy: 8 + d * 18, ph: rnd() * Math.PI * 2,
+      });
+    }
+  }
+  function drawFx(t, cam, fade) {
+    const cv = $('fx'), c = cv.getContext('2d');
+    c.clearRect(0, 0, W, H);
+    // where the world origin sits on screen — particles follow it with parallax
+    const ox = W / 2 - cam.s * cam.x, oy = H / 2 - cam.s * cam.y;
+    const c0 = camera(0);
+    const ox0 = W / 2 - c0.s * c0.x, oy0 = H / 2 - c0.s * c0.y;
+    const inA = E.outCubic(prog(t, 0, 1.6)) * fade;
+
+    // two slow colour blobs
+    const blobs = [
+      [.22 + .05 * Math.sin(t * .25), .28 + .04 * Math.cos(t * .2), .55, [98, 38, 115], .075],
+      [.80 + .04 * Math.cos(t * .22), .74 + .05 * Math.sin(t * .18), .6,  [115, 163, 179], .11],
+    ];
+    for (const [bx, by, br, col, a] of blobs) {
+      const x = bx * W + (ox - ox0) * .06, y = by * H + (oy - oy0) * .06, r = br * Math.max(W, H);
+      const g = c.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, `rgba(${col},${a * inA})`); g.addColorStop(1, `rgba(${col},0)`);
+      c.fillStyle = g; c.fillRect(0, 0, W, H);
+    }
+
+    const zoom = cam.s / c0.s;
+    for (const p of PARTS) {
+      const par = p.d * .45;
+      let x = p.x * (W + 200) + (ox - ox0) * par;
+      let y = p.y * (H + 200) + (oy - oy0) * par - p.vy * t;
+      // gentle zoom parallax around screen centre
+      const zf = Math.pow(zoom, p.d * .35);
+      x = W / 2 + (x - W / 2) * zf; y = H / 2 + (y - H / 2) * zf;
+      x = ((x + 100) % (W + 200) + (W + 200)) % (W + 200) - 100;
+      y = ((y + 100) % (H + 200) + (H + 200)) % (H + 200) - 100;
+      const tw = .65 + .35 * Math.sin(t * 1.3 + p.ph);
+      const a = p.a * tw * inA;
+      if (a < .004) continue;
+      const sz = p.size * Math.pow(zf, .5);
+      c.save(); c.translate(x, y); c.rotate(p.rot + p.spin * t);
+      c.fillStyle = `rgba(${p.col},${a})`;
+      c.beginPath();
+      c.moveTo(0, -sz); c.quadraticCurveTo(sz * .25, -sz * .25, sz * .58, 0);
+      c.quadraticCurveTo(sz * .25, sz * .25, 0, sz); c.quadraticCurveTo(-sz * .25, sz * .25, -sz * .58, 0);
+      c.quadraticCurveTo(-sz * .25, -sz * .25, 0, -sz); c.fill();
+      c.restore();
+    }
+  }
+
+  function buildGrain() {
+    const cv = document.createElement('canvas'); cv.width = cv.height = 256;
+    const c = cv.getContext('2d'), img = c.createImageData(256, 256);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const v = 128 + (rnd() - .5) * 255;
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255;
+    }
+    c.putImageData(img, 0, 0);
+    $('grain').style.backgroundImage = `url(${cv.toDataURL()})`;
+  }
+
+  // ---------- the frame ----------
+  function render(t) {
+    t = clamp(t, 0, DURATION);
+    const cam = camera(t);
+    const fade = 1 - E.inOutSine(prog(t, 19.25, 20));
+
+    set($('cam'), { transform: `translate(${W / 2} ${H / 2}) scale(${cam.s}) translate(${-cam.x} ${-cam.y})` });
+
+    // motion blur from camera velocity (px per frame at 60 fps)
+    const dt = 1 / 60, prev = camera(Math.max(0, t - dt));
+    const vx = Math.abs((W / 2 - cam.s * cam.x) - (W / 2 - prev.s * prev.x));
+    const vy = Math.abs((H / 2 - cam.s * cam.y) - (H / 2 - prev.s * prev.y));
+    const bx = Math.min(vx * .2, 6), by = Math.min(vy * .2, 6);
+    if (bx > .15 || by > .15) {
+      $('fMotionBlur').setAttribute('stdDeviation', `${bx.toFixed(2)} ${by.toFixed(2)}`);
+      $('screen').setAttribute('filter', 'url(#fMotion)');
+    } else {
+      $('screen').removeAttribute('filter');
+    }
+
+    // lattice: grows out from the first word, dims for the logo, clears a hole behind it
+    const c1 = CELLS[0];
+    const rr = Math.max(1, lerp(0, 1500, E.outCubic(prog(t, 0, 3.2))));
+    set($('gReveal'), { cx: c1.x, cy: c1.y, r: rr });
+    let la = 1;
+    la = lerp(la, .5, E.inOutSine(prog(t, 6.9, 8.4)));
+    la = lerp(la, .42, E.inOutSine(prog(t, 9.9, 11.2)));
+    $('lattice').setAttribute('opacity', (la * fade).toFixed(3));
+    for (const c of LATTICE) {
+      const d = Math.hypot(c.cx - c1.x, (c.cy - c1.y) * 1.3);
+      c.n.setAttribute('opacity', (.62 + .38 * Math.sin(d * .012 - t * 1.6)).toFixed(3));
+    }
+    const hk1 = E.inOutCubic(prog(t, 6.45, 8.4)), hk2 = E.inOutCubic(prog(t, 9.9, 11.2));
+    const hx = t < 9.9 ? cam.x : lerp(ORIGIN.x, P_LOCK.x, hk2);
+    const hy = t < 9.9 ? cam.y : lerp(ORIGIN.y, P_LOCK.y, hk2);
+    const hrx = lerp(lerp(170, 118, hk1), 330, hk2), hry = lerp(lerp(104, 78, hk1), 118, hk2);
+    set($('gHole'), { cx: hx, cy: hy, r: hrx,
+                      gradientTransform: `translate(${hx} ${hy}) scale(1 ${hry / hrx}) translate(${-hx} ${-hy})` });
+
+    // words
+    for (const w of WORDS) {
+      const N = w.nodes;
+      const pin = prog(t, w.tin, w.tin + .9), pout = E.inCubic(prog(t, w.tout, w.tout + .45));
+      const vis = (t >= w.tin - .01 && t <= w.tout + .5);
+      N.all.setAttribute('display', vis ? 'inline' : 'none');
+      if (!vis) continue;
+      const alpha = E.outCubic(prog(t, w.tin, w.tin + .45)) * (1 - pout);
+      set(N.all, { opacity: alpha.toFixed(3), transform: `translate(0 ${(-4 - 18 * pout).toFixed(2)})` });
+      set(N.move, { transform: `translate(0 ${(62 * (1 - E.outExpo(pin))).toFixed(2)})` });
+      N.blur.setAttribute('stdDeviation', (4.5 * (1 - E.outCubic(pin)) + 4 * pout).toFixed(2));
+      const L = 40 * E.outExpo(prog(t, w.tin + .2, w.tin + 1.2));
+      set(N.l1, { x2: -7 - L }); set(N.l2, { x2: 7 + L });
+      const ds = .36 * clamp(E.outBack(prog(t, w.tin + .15, w.tin + .75)), 0, 2);
+      set(N.d, { transform: `rotate(${(90 * (1 - E.outCubic(prog(t, w.tin + .15, w.tin + .75)))).toFixed(1)}) scale(${ds.toFixed(3)})` });
+      const ca = E.outCubic(prog(t, w.tin + .25, w.tin + 1.0));
+      const ls = lerp(.95, .42, E.outExpo(prog(t, w.tin + .25, w.tin + 1.4))) * 10;
+      set(N.cap, { opacity: ca.toFixed(3), 'letter-spacing': ls.toFixed(2), x: (ls / 2).toFixed(2) });
+    }
+
+    // logo mark: thin guides trace the four arcs, then the arcs are inked over them
+    const gk = E.outCubic(prog(t, 6.45, 7.2));
+    for (const id of ['gdA', 'gdB', 'gdC', 'gdD']) set($(id), { 'stroke-dasharray': '1 1', 'stroke-dashoffset': (1 - gk).toFixed(4) });
+    $('guides').setAttribute('opacity', (.8 * prog(t, 6.45, 6.6) * (1 - E.inOutSine(prog(t, 7.8, 8.3)))).toFixed(3));
+    const arcs = [['arcA', 6.85], ['arcB', 6.85], ['arcC', 7.0], ['arcD', 7.0]];
+    for (const [id, t0] of arcs) {
+      const k = E.inOutCubic(prog(t, t0, t0 + 1.3));
+      set($(id), { 'stroke-dasharray': '1 1', 'stroke-dashoffset': (1 - k).toFixed(4),
+                   display: k > 0 ? 'inline' : 'none' });
+    }
+    // diamond pops
+    const dk = prog(t, 8.25, 8.95);
+    const dsc = dk <= 0 ? 0 : E.outBack(dk, 2.4);
+    set($('diamond'), { transform: `rotate(${(-90 * (1 - E.outCubic(dk))).toFixed(2)}) scale(${Math.max(0, dsc).toFixed(4)})` });
+    // burst of little diamonds
+    for (const b of BURST) {
+      const k = prog(t, 8.3, 9.35);
+      if (k <= 0 || k >= 1) { b.n.setAttribute('opacity', 0); continue; }
+      const dd = b.dist * E.outExpo(k);
+      const x = 489 + Math.cos(b.a) * dd, y = 75.2 + Math.sin(b.a) * dd * .8;
+      set(b.n, { opacity: (1 - E.inCubic(k)).toFixed(3),
+                 transform: `translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${(b.spin * k).toFixed(1)}) scale(${(b.sc * (1 - .5 * k)).toFixed(3)})` });
+    }
+    for (const r of RINGS) {
+      const k = prog(t, r.t0, r.t0 + 1.5);
+      if (k <= 0 || k >= 1) { r.n.setAttribute('opacity', 0); continue; }
+      set(r.n, { r: (12 + (r.rmax - 12) * E.outCubic(k)).toFixed(2), opacity: (.55 * (1 - k)).toFixed(3) });
+    }
+
+    // titles
+    const arK = E.inOutCubic(prog(t, 10.45, 11.75));
+    const arEdge = lerp(452, 140, arK);
+    set($('gAr'), { x1: arEdge, x2: arEdge + 34 });
+    $('tAr').setAttribute('transform', `translate(0 ${(5 * (1 - E.outCubic(prog(t, 10.45, 11.6)))).toFixed(2)})`);
+    const enK = E.inOutCubic(prog(t, 10.75, 12.05));
+    const enEdge = lerp(40, 460, enK);
+    set($('gEn'), { x1: enEdge - 34, x2: enEdge });
+    $('tEn').setAttribute('transform', `translate(0 ${(5 * (1 - E.outCubic(prog(t, 10.75, 11.9)))).toFixed(2)})`);
+    const ruleW = 459 * E.inOutCubic(prog(t, 11.25, 12.35));
+    set($('rule'), { x: 536 - ruleW, width: Math.max(0, ruleW) });
+    const be = E.outCubic(prog(t, 11.7, 12.7)), ba = E.outCubic(prog(t, 11.85, 12.85));
+    set($('tBotEn'), { opacity: be.toFixed(3), transform: `translate(${(-10 * (1 - be)).toFixed(2)} 0)` });
+    set($('tBotAr'), { opacity: ba.toFixed(3), transform: `translate(${(10 * (1 - ba)).toFixed(2)} 0)` });
+
+    // sheen
+    const sk = prog(t, 13.35, 14.65);
+    if (sk > 0 && sk < 1) {
+      const cx = lerp(20, 640, E.inOutSine(sk));
+      set($('gSheen'), { x1: cx - 46, x2: cx + 46, gradientTransform: `rotate(-24 ${cx} 97)` });
+      $('sheen').setAttribute('opacity', 1);
+    } else {
+      $('sheen').setAttribute('opacity', 0);
+    }
+
+    // end: gentle fade back to paper so the clip loops cleanly
+    $('lock').setAttribute('opacity', fade.toFixed(3));
+    drawFx(t, cam, fade);
+  }
+
+  // ---------- boot ----------
+  window.DURATION = DURATION;
+  window.ready = (async () => {
+    layout();
+    buildGrain(); buildLattice(); buildWords(); buildBurst(); buildParticles();
+    await Promise.all([
+      document.fonts.load("700 76px 'Tajawal'", 'نقرأ نكتب نُبدع'),
+      document.fonts.load("500 30px 'Tajawal'", 'نادي الثقافة والأدب'),
+      document.fonts.load("500 30px 'Barlow'", 'Literature & Culture Club'),
+    ]);
+    await document.fonts.ready;
+    window.render = render;
+    const q = new URLSearchParams(location.search);
+    if (q.has('capture')) return;
+    if (q.has('t')) { render(parseFloat(q.get('t'))); return; }
+    const t0 = performance.now();
+    const loop = now => { render(((now - t0) / 1000) % (DURATION + 0.6)); requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
+    window.addEventListener('resize', () => { location.reload(); });
+  })();
+})();
+</script>
+</body>
+</html>
