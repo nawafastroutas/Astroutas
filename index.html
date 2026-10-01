@@ -4248,7 +4248,7 @@ html:not(.js) .splash {
       </div>
       <div class="footer-bottom">
         <span>© 2026 Subbha. جميع الحقوق محفوظة.</span>
-        <span>subbha.om — سلطنة عُمان</span>
+        <span>subbha.om — سلطنة عُمان · <a href="#admin" class="admin-entry-link">دخول الإدارة</a></span>
       </div>
     </div>
   </footer>
@@ -6427,27 +6427,14 @@ ${lines}
     <button class="icon-btn modal-close" data-close-auth><i data-lucide="x"></i></button>
     <div style="padding:34px">
       <span class="eyebrow">حساب Subbha</span>
-      <h2>تسجيل الدخول أو إنشاء حساب</h2>
-      <p style="color:var(--muted);line-height:1.8">يمكن لأي زائر إنشاء حساب مباشرة. التسجيل مطلوب فقط عند إتمام الطلب أو حفظ التصميم في الملف الشخصي.</p>
-      <div class="subbha-auth-tabs">
-        <button type="button" class="active" data-auth-tab="login">دخول</button>
-        <button type="button" data-auth-tab="register">إنشاء حساب</button>
-      </div>
-      <form id="loginForm" class="auth-panel active">
+      <h2>الدخول برقم الهاتف</h2>
+      <p style="color:var(--muted);line-height:1.8">اكتب رقم هاتفك لمتابعة طلباتك. لا تحتاج بريداً إلكترونياً ولا كلمة مرور، ويمكنك الطلب مباشرة بدون دخول.</p>
+      <form id="phoneLoginForm">
         <div class="form-grid" style="grid-template-columns:1fr">
-          <div class="form-field"><label>البريد الإلكتروني</label><input required type="email" name="email" placeholder="name@email.com"></div>
-          <div class="form-field"><label>كلمة المرور</label><input required type="password" name="password" placeholder="••••••••"></div>
+          <div class="form-field"><label>رقم الهاتف</label><input required name="phone" inputmode="tel" autocomplete="tel" placeholder="9xxxxxxx"></div>
+          <div class="form-field"><label>الاسم (اختياري)</label><input name="name" autocomplete="name" placeholder="اسمك"></div>
         </div>
-        <button class="btn btn-primary" style="width:100%;margin-top:15px">دخول</button>
-      </form>
-      <form id="registerForm" class="auth-panel">
-        <div class="form-grid" style="grid-template-columns:1fr">
-          <div class="form-field"><label>الاسم</label><input required name="name" placeholder="اسم المستخدم"></div>
-          <div class="form-field"><label>رقم الهاتف</label><input required name="phone" placeholder="9xxxxxxx"></div>
-          <div class="form-field"><label>البريد الإلكتروني</label><input required type="email" name="email" placeholder="name@email.com"></div>
-          <div class="form-field"><label>كلمة المرور</label><input required type="password" name="password" placeholder="••••••••"></div>
-        </div>
-        <button class="btn btn-primary" style="width:100%;margin-top:15px">إنشاء حساب</button>
+        <button class="btn btn-primary" style="width:100%;margin-top:15px">متابعة</button>
       </form>
     </div>
   </div>
@@ -6547,23 +6534,24 @@ ${lines}
       }
     }
     const btn=$q('#profileBtn');
-    if(btn){btn.innerHTML=user?`<span style="font-weight:900;font-size:.8rem">${(user.name||user.email||'حسابي').slice(0,2)}</span>`:'<i data-lucide="user"></i>'; if(window.lucide) lucide.createIcons();}
+    if(btn){btn.innerHTML=user?.name?`<span style="font-weight:900;font-size:.8rem">${escapeHtml(user.name.slice(0,2))}</span>`:'<i data-lucide="user"></i>'; if(window.lucide) lucide.createIcons();}
   }
+  // آخر 8 أرقام تكفي لمطابقة الرقم العُماني سواء كُتب بمفتاح 968 أو بدونه.
+  const phoneKey=p=>String(p||'').replace(/\D/g,'').slice(-8);
   function renderProfile(){
     const user=getCurrent();
     if(!user){openAuth(false);return;}
-    const orders=(JSON.parse(localStorage.getItem('subbhaOrders')||'[]')).filter(o=>o.userEmail===user.email || o.customer?.email===user.email);
-    const designs=(JSON.parse(localStorage.getItem('subbhaCustomDesigns')||'[]')).filter(d=>d.userEmail===user.email);
-    $q('#profileTitle').textContent=`أهلاً ${user.name||user.email}`;
+    const key=phoneKey(user.phone);
+    const orders=(JSON.parse(localStorage.getItem('subbhaOrders')||'[]')).filter(o=>(key && phoneKey(o.customer?.phone)===key) || (user.email && (o.userEmail===user.email || o.customer?.email===user.email)));
+    $q('#profileTitle').textContent=`أهلاً ${user.name||''}`.trim();
     $q('#profileContent').innerHTML=`
       <div class="profile-grid">
-        <div class="profile-card"><strong>البريد</strong><small>${escapeHtml(user.email)}</small></div>
+        <div class="profile-card"><strong>الاسم</strong><small>${escapeHtml(user.name||'غير مضاف')}</small></div>
         <div class="profile-card"><strong>الهاتف</strong><small>${escapeHtml(user.phone||'غير مضاف')}</small></div>
       </div>
       <h3 style="margin-top:24px">طلباتي</h3>
       ${orders.length?`<table class="admin-table"><thead><tr><th>رقم الطلب</th><th>الإجمالي</th><th>الحالة</th><th>فاتورة</th></tr></thead><tbody>${orders.map(o=>`<tr><td>#${String(o.id).slice(-6)}</td><td>${moneySafe(o.total)} ر.ع</td><td>${escapeHtml(o.status||'جديد')}</td><td><button class="btn btn-soft" data-export-invoice="${o.id}">تصدير</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty-state">لا توجد طلبات بعد</div>'}
-      <h3 style="margin-top:24px">تصاميمي الخاصة</h3>
-      ${designs.length?`<div class="profile-grid">${designs.map(d=>`<div class="profile-card"><strong>${escapeHtml(d.title)}</strong><small>${escapeHtml(d.details)}</small><div style="margin-top:10px"><button class="btn btn-soft" data-reorder-design="${d.id}">إضافة للسلة</button></div></div>`).join('')}</div>`:'<div class="empty-state">لم يتم حفظ تصاميم بعد</div>'}`;
+`;
     $q('#profileModal').classList.add('open');document.body.classList.add('no-scroll');
   }
   function saveDesignToProfile(){
@@ -6582,11 +6570,10 @@ ${lines}
     }catch(e){console.warn(e)}
   }
   function openCheckoutGuard(){
+    openCheckout();
     const user=getCurrent();
-    if(!user){toast('سجلي الدخول أو أنشئي حساب لإتمام الطلب','alert-circle');openAuth(true,'register');return;}
-    $q('#checkoutModal')?.classList.add('open');document.body.classList.add('no-scroll');
     const f=$q('#checkoutForm');
-    if(f){ if(f.elements.email) f.elements.email.value=user.email; if(f.elements.name && !f.elements.name.value) f.elements.name.value=user.name||''; if(f.elements.phone && !f.elements.phone.value) f.elements.phone.value=user.phone||'';}
+    if(f && user){ if(f.elements.name && !f.elements.name.value) f.elements.name.value=user.name||''; if(f.elements.phone && !f.elements.phone.value) f.elements.phone.value=user.phone||'';}
   }
   function exportInvoice(orderId){
     const all=JSON.parse(localStorage.getItem('subbhaOrders')||'[]');
@@ -6683,62 +6670,32 @@ ${lines}
     toast('انتهت صلاحية جلسة الإدارة؛ سجّل الدخول مجدداً','alert-circle');
   },true));
   document.addEventListener('submit',async function(e){
-    if(e.target.id==='loginForm'){
+    if(e.target.id==='phoneLoginForm'){
       e.preventDefault();
       const fd=Object.fromEntries(new FormData(e.target).entries());
-      fd.email = String(fd.email||'').trim().toLowerCase();
-      if(!fbReady()){toast('تسجيل الدخول غير متاح حتى يتصل Firebase','alert-circle');return;}
-      try{
-        const cred=await firebase.auth().signInWithEmailAndPassword(fd.email,fd.password);
-        const user=await loadFirebaseUser(cred);
-        setCurrent(user);closeAuth();toast('تم تسجيل الدخول','check-circle');
-        if(isVerifiedAdmin(user)){
-          $q('#profileModal')?.classList.remove('open');
-          const shell=$q('#adminShell'); if(shell){shell.classList.add('open'); shell.style.display='block';}
-          document.body.classList.add('no-scroll');
-          renderAdmin('overview');
-          return;
-        }
-        if(pendingCheckout) openCheckoutGuard();
-      }catch(err){
-        console.warn(err);
-        const code=String(err.code||'');
-        if(code.includes('user-not-found')){toast('هذا البريد غير مسجل. استخدم إنشاء حساب','alert-circle');setAuthTab('register');return;}
-        if(code.includes('invalid-credential')){toast('البريد أو كلمة المرور غير صحيحين','alert-circle');return;}
-        if(code.includes('wrong-password')){toast('كلمة المرور غير صحيحة','alert-circle');return;}
-        if(code.includes('operation-not-allowed')){toast('فعّلي Email/Password من Firebase Authentication أولاً','alert-circle');return;}
-        if(code.includes('unauthorized-domain')){toast('أضف subbha.netlify.app في Firebase Authorized domains','alert-circle');return;}
-        toast('تعذر تسجيل الدخول: '+(err.code||err.message||'خطأ غير معروف'),'alert-circle');
-      }
-    }
-    if(e.target.id==='registerForm'){
-      e.preventDefault();
-      const fd=Object.fromEntries(new FormData(e.target).entries());
-      fd.email = String(fd.email||'').trim().toLowerCase();
-      if(!fbReady()){toast('إنشاء الحساب غير متاح حتى يتصل Firebase','alert-circle');return;}
-      if(fd.email===ADMIN_EMAIL){toast('حساب الإدارة لا يُنشأ من التسجيل العام','alert-circle');return;}
-      try{
-        if(!fd.email || !fd.password){toast('اكتب البريد وكلمة المرور','alert-circle');return;}
-        if(String(fd.password).length < 6){toast('كلمة المرور يجب أن تكون 6 أحرف على الأقل','alert-circle');return;}
-        const cred=await firebase.auth().createUserWithEmailAndPassword(fd.email,fd.password);
-        if(fd.name && cred.user.updateProfile){ await cred.user.updateProfile({displayName:fd.name}).catch(()=>{}); }
-        const user=await loadFirebaseUser(cred,{name:fd.name||'',phone:fd.phone||''});
-        setCurrent(user);closeAuth();toast('تم إنشاء الحساب بنجاح','check-circle');
-        if(pendingCheckout) openCheckoutGuard();
-      }catch(err){
-        console.warn(err);
-        const code=String(err.code||'');
-        if(code.includes('email-already-in-use')){toast('هذا البريد مسجل مسبقاً، استخدمي دخول','alert-circle');setAuthTab('login');return;}
-        if(code.includes('weak-password')){toast('كلمة المرور ضعيفة، استخدمي 6 أحرف أو أكثر','alert-circle');return;}
-        if(code.includes('invalid-email')){toast('صيغة البريد غير صحيحة','alert-circle');return;}
-        if(code.includes('operation-not-allowed')){toast('فعّلي Email/Password من Firebase Authentication أولاً','alert-circle');return;}
-        toast('تعذر إنشاء الحساب. تأكدي من إعدادات Firebase أو الدومين','alert-circle');
-      }
-    }
-    if(e.target.id==='checkoutForm' && !getCurrent()){
-      e.preventDefault();e.stopImmediatePropagation();toast('التسجيل مطلوب عند الطلب فقط','alert-circle');openAuth(true);
+      const phone=String(fd.phone||'').replace(/[^\d+]/g,'');
+      if(phone.replace(/\D/g,'').length<8){toast('اكتب رقم هاتف صحيح','alert-circle');return;}
+      setCurrent({phone,name:String(fd.name||'').trim(),role:'USER'});
+      e.target.reset();closeAuth();toast('تم الدخول برقم هاتفك','check-circle');
+      if(pendingCheckout){pendingCheckout=false;openCheckoutGuard();}
+      else renderProfile();
     }
   },true);
+  // يُستدعى بعد إتمام الطلب لحفظ رقم العميل دون المساس بجلسة الإدارة.
+  window.subbhaRememberCustomer=function(customer){
+    const current=getCurrent();
+    if(current?.uid)return;
+    const phone=String(customer?.phone||'').replace(/[^\d+]/g,'');
+    if(phone.replace(/\D/g,'').length<8)return;
+    setCurrent({phone,name:String(customer?.name||current?.name||'').trim(),role:'USER'});
+  };
+  function openAdminFromHash(){
+    if(location.hash!=='#admin')return;
+    history.replaceState(null,'',location.pathname+location.search);
+    window.openAdminLogin?.();
+  }
+  window.addEventListener('hashchange',openAdminFromHash);
+  setTimeout(openAdminFromHash,0);
   document.addEventListener('click',async function(e){
     if(e.target.closest('#addCustomBtn')) setTimeout(saveDesignToProfile,250);
     if(e.target.closest('#logoutBtn')){
@@ -7061,15 +7018,23 @@ ${lines}
 
     // عملية واحدة تحفظ الطلب واستخدام الكود معاً، ولا تزيل السلة عند الفشل.
     const whatsappWindow=window.open('about:blank','_blank');
+    // العميل يطلب بلا حساب؛ جلسة مجهولة تسمح بالكتابة إن كانت قواعد Firebase تشترط تسجيل الدخول.
+    try{if(window.firebase?.auth && !firebase.auth().currentUser)await firebase.auth().signInAnonymously();}
+    catch(err){console.warn('Anonymous sign-in unavailable',err);}
+    let savedToCloud=true;
     try{
       const updates={[`subbha/orders/${order.id}`]:order};
       if(appliedCoupon)updates['subbha/discountCoupons']=nextCoupons.length?nextCoupons:null;
       await firebaseDB.ref().update(updates);
     }catch(err){
       console.warn('Order sync failed',err);
-      whatsappWindow?.close();
-      toast('تعذر حفظ الطلب في السحابة؛ لم يتم تأكيده ولم تُستخدم السلة أو الكود','alert-circle');
-      return;
+      if(appliedCoupon){
+        whatsappWindow?.close();
+        toast('تعذر حفظ الطلب في السحابة؛ لم يتم تأكيده ولم تُستخدم السلة أو الكود','alert-circle');
+        return;
+      }
+      // بدون كود خصم لا يوجد ما نحميه؛ لا نضيّع الطلب ونرسله عبر واتساب.
+      savedToCloud=false;
     }
     if(appliedCoupon){
       discountCoupons=nextCoupons;
@@ -7125,7 +7090,8 @@ ${lines}
     updateCheckoutDiscountSummary();
     document.querySelector('#checkoutModal')?.classList.remove('open');
     document.body.classList.remove('no-scroll');
-    toast('تم إنشاء الطلب وتطبيق الخصم وفتح واتساب','check-circle');
+    window.subbhaRememberCustomer?.(order.customer);
+    toast(savedToCloud?'تم إنشاء الطلب وفتح واتساب':'تم إرسال الطلب عبر واتساب (لم يُحفظ في لوحة الإدارة)','check-circle');
     window.lastCreatedOrder=order;
     setTimeout(()=>{
       if(confirm('تم إنشاء الطلب. هل تريد تصديره الآن كملف PDF؟'))exportOrderPdf(order);
