@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>سبحة · SUBHA — موشن جرافيك</title>
+<meta name="description" content="موشن جرافيك طولي ١٠٨٠×١٩٢٠ لمتجر سبحة.">
+<link rel="stylesheet" href="scene.css">
+</head>
+<body>
+
+<!-- ========================================================================
+     المسرح: ١٠٨٠×١٩٢٠ بالضبط. كل الحركة عبر CSS فقط (بلا requestAnimationFrame)
+     حتى يستطيع render.mjs أن «يقفز» إلى أي لحظة ويلتقط إطارًا مطابقًا تمامًا.
+     ======================================================================== -->
+<div class="stage" id="stage">
+
+  <!-- ورق الخلفية + حُبيبات -->
+  <div class="paper"></div>
+  <div class="grain"></div>
+
+  <!-- لوحان داكنان ينزلقان لتغطية المشهد في المقطعين الداكنين -->
+  <div class="ink ink-a"></div>
+  <div class="ink ink-b"></div>
+
+  <!-- ====================== ١ · الافتتاحية ====================== -->
+  <section class="scene s-intro" style="--t0:0s;--dur:5s">
+    <div class="lockup">
+      <img class="mark" src="brand/mark-ink.png" alt="سبحة SUBHA">
+      <span class="diamond"></span>
+      <div class="dotwrap">
+        <span class="thread"></span>
+        <div class="dots" id="introDots"></div>
+      </div>
+      <img class="tag" src="brand/tagline-ink.png" alt="هوية عُمانية بتفاصيل راقية">
+    </div>
+  </section>
+
+  <!-- ====================== ٢ · العبارة ====================== -->
+  <section class="scene scene--ink s-say" style="--t0:5s;--dur:3.3s">
+    <div class="say">
+      <span class="eyebrow">عُمـــان<i>·</i>OMAN</span>
+      <h1 class="say-line l1">ليست مجرّد خرزات</h1>
+      <h1 class="say-line l2">بل تفاصيلُ تُروى</h1>
+      <span class="say-rule"></span>
+    </div>
+  </section>
+
+  <!-- ====================== ٣ · فاصل: أقسامنا ====================== -->
+  <section class="scene s-bridge" style="--t0:8.3s;--dur:1.4s">
+    <div class="bridge">
+      <span class="diamond sm"></span>
+      <h2 class="bridge-ar">أقسامنا</h2>
+      <span class="bridge-lat">THE COLLECTIONS</span>
+    </div>
+  </section>
+
+  <!-- ====================== ٤ · السُّبَح ====================== -->
+  <section class="scene s-card" style="--t0:9.7s;--dur:3.6s">
+    <div class="card">
+      <div class="head"><span class="idx">٠١</span><span class="hrule"></span><span class="lat">PRAYER BEADS</span></div>
+      <div class="motif motif-misbaha">
+        <div class="sway">
+          <div class="loop" id="misbaha"></div>
+          <div class="shahid"></div>
+          <div class="minitassel" id="misbahaTassel"></div>
+        </div>
+      </div>
+      <h2 class="title">السُّبَح</h2>
+      <span class="uline"></span>
+      <p class="desc">٣٣ و٩٩ خرزة — كهرمان، ويُسر، وعاجٌ نباتي، وخشب العود.</p>
+    </div>
+  </section>
+
+  <!-- ====================== ٥ · الكركوشات ====================== -->
+  <section class="scene s-card" style="--t0:13.3s;--dur:3.6s">
+    <div class="card">
+      <div class="head"><span class="idx">٠٢</span><span class="hrule"></span><span class="lat">TASSELS</span></div>
+      <div class="motif motif-tassels" id="tassels"></div>
+      <h2 class="title">الكركوشات</h2>
+      <span class="uline"></span>
+      <p class="desc">حريرٌ مجدول بعقدةٍ يدوية، بلونٍ يليق بخرزك.</p>
+    </div>
+  </section>
+
+  <!-- ====================== ٦ · التعليقات ====================== -->
+  <section class="scene s-card" style="--t0:16.9s;--dur:3.6s">
+    <div class="card">
+      <div class="head"><span class="idx">٠٣</span><span class="hrule"></span><span class="lat">CHARMS</span></div>
+      <div class="motif motif-charms">
+        <span class="rail-line"></span>
+        <div class="charms" id="charms"></div>
+      </div>
+      <h2 class="title">التعليقات</h2>
+      <span class="uline"></span>
+      <p class="desc">قِطَعٌ صغيرة تُعلَّق بالكركوش — توقيعك الخاص.</p>
+    </div>
+  </section>
+
+  <!-- ====================== ٧ · المحفظات ====================== -->
+  <section class="scene s-card" style="--t0:20.5s;--dur:3.6s">
+    <div class="card">
+      <div class="head"><span class="idx">٠٤</span><span class="hrule"></span><span class="lat">CASES</span></div>
+      <div class="motif motif-case">
+        <div class="peek" id="casePeek"></div>
+        <svg viewBox="0 0 440 320" class="casesvg" aria-hidden="true">
+          <rect class="d1 body" x="60" y="108" width="320" height="176" rx="26"/>
+          <path class="d2 flap" d="M60 134 Q60 70 128 70 H312 Q380 70 380 134"/>
+          <path class="d3 stitch" d="M86 148 H354"/>
+          <path class="d4 stitch" d="M86 258 H354"/>
+          <circle class="d5 clasp" cx="220" cy="196" r="22"/>
+          <path class="d6" d="M220 174 V218"/>
+        </svg>
+      </div>
+      <h2 class="title">المحفظات</h2>
+      <span class="uline"></span>
+      <p class="desc">عُلبٌ وجيوبٌ من الجلد والمخمل تحفظ سبحتك.</p>
+    </div>
+  </section>
+
+  <!-- ====================== ٨ · الإهداء ====================== -->
+  <section class="scene scene--ink s-card s-gift" style="--t0:24.1s;--dur:3.5s">
+    <div class="card">
+      <div class="head"><span class="idx">هديّة</span><span class="hrule"></span><span class="lat">GIFTING</span></div>
+      <div class="motif motif-gift">
+        <div class="sparks" id="sparks"></div>
+        <svg viewBox="0 0 440 340" class="giftsvg" aria-hidden="true">
+          <g class="lid">
+            <rect class="g1" x="92" y="112" width="256" height="46" rx="10"/>
+            <path class="g2 bow" d="M220 112 C220 78 182 66 170 84 C160 99 190 112 220 112 C250 112 280 99 270 84 C258 66 220 78 220 112Z"/>
+            <path class="g3" d="M220 112 V96"/>
+          </g>
+          <rect class="g4 box" x="108" y="166" width="224" height="140" rx="12"/>
+          <path class="g5 ribbon" d="M220 166 V306"/>
+          <path class="g6 ribbon" d="M108 214 H332"/>
+        </svg>
+      </div>
+      <h2 class="title">الإهداء</h2>
+      <span class="uline"></span>
+      <p class="desc">تغليفٌ فاخر وبطاقةٌ بخط اليد — تصل جاهزةً للإهداء.</p>
+    </div>
+  </section>
+
+  <!-- ====================== ٩ · الختام ====================== -->
+  <section class="scene s-out" style="--t0:27.6s;--dur:3s">
+    <div class="lockup out">
+      <img class="mark" src="brand/mark-ink.png" alt="سبحة SUBHA">
+      <span class="diamond"></span>
+      <img class="tag" src="brand/tagline-ink.png" alt="هوية عُمانية بتفاصيل راقية">
+      <span class="cta"><span class="cta-fill"></span><b>اطلبها الآن</b></span>
+    </div>
+  </section>
+
+  <!-- إطار رفيع دائم + شريط الخرز السفلي -->
+  <div class="frame"><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i></div>
+  <div class="topline"><span>SUBHA</span><em>·</em><span>OMAN</span></div>
+  <div class="rail" id="rail"></div>
+
+</div>
+
+<script src="scene.js"></script>
+</body>
+</html>

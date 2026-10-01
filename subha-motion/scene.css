@@ -1,0 +1,392 @@
+/* ===========================================================================
+   سبحة · SUBHA — موشن جرافيك طولي ١٠٨٠×١٩٢٠
+   ---------------------------------------------------------------------------
+   قاعدة واحدة تحكم الملف كله: كل حركة هنا هي CSS animation لها
+   `animation-delay` مطلق على الخط الزمني العام (يبدأ من الصفر). لذلك يستطيع
+   render.mjs ضبط `currentTime` لكل الحركات على لحظة واحدة والتقاط إطار
+   مطابق تمامًا في كل مرة — بلا أي اعتماد على الساعة الحقيقية.
+
+   كل مشهد يحمل `--t0` (بدايته) و`--dur` (مدته)، وأبناؤه يحسبون تأخيرهم
+   بـ calc() نسبةً إلى `--t0`. لتحريك مشهد على الخط الزمني: غيّر `--t0` فقط.
+   =========================================================================== */
+
+@font-face{font-family:"Subha AR";src:url("fonts/FreeSerif.ttf") format("truetype");font-weight:400;font-display:block}
+@font-face{font-family:"Subha AR";src:url("fonts/FreeSerifBold.ttf") format("truetype");font-weight:700;font-display:block}
+@font-face{font-family:"Subha LT";src:url("fonts/Italiana-Regular.ttf") format("truetype");font-weight:400;font-display:block}
+@font-face{font-family:"Subha UI";src:url("fonts/Outfit-Regular.ttf") format("truetype");font-weight:400;font-display:block}
+@font-face{font-family:"Subha UI";src:url("fonts/Outfit-Bold.ttf") format("truetype");font-weight:700;font-display:block}
+
+:root{
+  /* ألوان مأخوذة بالعيّنة من ملف الشعار نفسه */
+  --paper:#F7F2EA;  --paper-hi:#FCF8F2;  --paper-lo:#EDE4D6;
+  --ink:#14110E;    --ink-deep:#0B0907;
+  --taupe:#7C6B5D;  --gold:#B9955C;      --gold-hi:#D9BC87;
+
+  --b1:#7A6A5C; --b2:#6C5B4E; --b3:#5E4B3F; --b4:#B9955C;
+  --b5:#463529; --b6:#433227; --b7:#463529;
+
+  /* ألوان سياقية — تُقلب في المشاهد الداكنة */
+  --fg:var(--ink); --muted:var(--taupe); --line:rgba(124,107,93,.32);
+
+  --e-out:cubic-bezier(.16,.84,.32,1);
+  --e-soft:cubic-bezier(.33,0,.1,1);
+  --e-pop:cubic-bezier(.34,1.46,.48,1);
+}
+.scene--ink{--fg:var(--paper); --muted:#B3A28D; --line:rgba(247,242,234,.26)}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#15120F;height:100%;overflow:hidden}
+body{display:flex;align-items:flex-start;justify-content:center}
+
+.stage{
+  position:relative;width:1080px;height:1920px;flex:none;overflow:hidden;
+  background:var(--paper);color:var(--fg);
+  transform-origin:top center;transform:scale(var(--fit,1));
+  font-family:"Subha AR",serif;
+  -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;
+}
+
+/* ---------- الخلفية ---------- */
+.paper{position:absolute;inset:0;
+  background:
+    radial-gradient(130% 78% at 50% 22%, var(--paper-hi) 0%, var(--paper) 46%, var(--paper-lo) 100%);
+}
+.grain{position:absolute;inset:0;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='220' height='220' filter='url(%23n)' opacity='0.14'/></svg>");
+}
+
+/* ---------- اللوح الداكن (مشهدا العبارة والإهداء) ---------- */
+.ink{position:absolute;inset:0;z-index:1;opacity:0;
+  background:radial-gradient(120% 70% at 50% 28%, #1B1713 0%, var(--ink) 52%, var(--ink-deep) 100%);
+  clip-path:inset(100% 0 0 0);
+  animation-timing-function:var(--e-soft);animation-fill-mode:none}
+.ink-a{animation-name:inkA;animation-duration:4s;animation-delay:4.8s}
+.ink-b{animation-name:inkB;animation-duration:4.2s;animation-delay:23.9s}
+@keyframes inkA{
+  0%{opacity:1;clip-path:inset(100% 0 0 0)}
+  15%{opacity:1;clip-path:inset(0 0 0 0)}
+  83%{opacity:1;clip-path:inset(0 0 0 0)}
+  100%{opacity:1;clip-path:inset(0 0 100% 0)}
+}
+@keyframes inkB{
+  0%{opacity:1;clip-path:inset(100% 0 0 0)}
+  13%{opacity:1;clip-path:inset(0 0 0 0)}
+  86%{opacity:1;clip-path:inset(0 0 0 0)}
+  100%{opacity:1;clip-path:inset(0 0 100% 0)}
+}
+
+/* ---------- نافذة ظهور المشهد ---------- */
+.scene{position:absolute;inset:0;z-index:2;opacity:0;
+  animation-name:win;animation-duration:var(--dur);animation-delay:var(--t0);
+  animation-timing-function:linear;animation-fill-mode:none}
+@keyframes win{from{opacity:1}to{opacity:1}}
+
+/* ---------- عناصر دائمة: الإطار، السطر العلوي، شريط الخرز ---------- */
+.frame{position:absolute;inset:44px;z-index:3;border:1px solid var(--line);pointer-events:none}
+.frame .c{position:absolute;width:26px;height:26px;border:0 solid var(--gold);opacity:.75}
+.frame .tl{top:-1px;right:-1px;border-top-width:2px;border-right-width:2px}
+.frame .tr{top:-1px;left:-1px;border-top-width:2px;border-left-width:2px}
+.frame .bl{bottom:-1px;right:-1px;border-bottom-width:2px;border-right-width:2px}
+.frame .br{bottom:-1px;left:-1px;border-bottom-width:2px;border-left-width:2px}
+
+.topline{position:absolute;top:92px;left:0;right:0;z-index:3;display:flex;gap:16px;direction:ltr;
+  justify-content:center;align-items:center;
+  font-family:"Subha UI",sans-serif;font-size:19px;letter-spacing:.44em;
+  color:var(--muted);opacity:.78;text-indent:.44em}
+.topline em{font-style:normal;color:var(--gold);letter-spacing:0;text-indent:0}
+
+.rail{position:absolute;bottom:104px;left:0;right:0;z-index:3;
+  display:flex;justify-content:center;align-items:center;gap:15px;direction:ltr}
+.rail i{position:relative;width:13px;height:13px;border-radius:50%;background:var(--muted);opacity:.34;
+  animation-name:railOn;animation-duration:var(--rd);animation-delay:var(--rt);
+  animation-timing-function:var(--e-out);animation-fill-mode:none}
+@keyframes railOn{
+  0%{opacity:.34;transform:scale(1);background:var(--muted)}
+  12%{opacity:1;transform:scale(1.5);background:var(--gold)}
+  88%{opacity:1;transform:scale(1.5);background:var(--gold)}
+  100%{opacity:.34;transform:scale(1);background:var(--muted)}
+}
+/* الختام: كل الخرز يتحوّل ذهبًا بالتتابع */
+.rail i::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--gold);opacity:0;
+  animation-name:railFinal;animation-duration:2.6s;
+  animation-delay:calc(27.9s + var(--i) * .07s);
+  animation-timing-function:var(--e-out);animation-fill-mode:none}
+@keyframes railFinal{0%{opacity:0;transform:scale(1)}18%{opacity:1;transform:scale(1.5)}100%{opacity:1;transform:scale(1.5)}}
+
+/* ---------- المعيّن (عنصر الهوية) ---------- */
+.diamond{width:30px;height:30px;background:var(--fg);transform:rotate(45deg)}
+.diamond.sm{width:18px;height:18px;background:var(--gold)}
+
+/* ===========================================================================
+   ١ · الافتتاحية — الخيط يُشدّ، ثم تتساقط الخرزات السبع، ثم ينكشف الشعار
+   =========================================================================== */
+.lockup{position:absolute;left:50%;top:50%;display:flex;flex-direction:column;align-items:center;
+  transform:translate(-50%,-50%)}
+.lockup .mark{width:760px;display:block;opacity:0;clip-path:inset(0 0 0 100%)}
+.lockup .diamond{margin-top:60px;transform:rotate(45deg) scale(0);opacity:0}
+.lockup .tag{width:302px;display:block;margin-top:48px;opacity:0}
+
+.dotwrap{position:relative;margin-top:56px;height:16px;display:flex;align-items:center;justify-content:center}
+.thread{position:absolute;top:50%;left:50%;width:380px;height:1px;background:var(--line);
+  transform:translate(-50%,-50%) scaleX(0)}
+.dots{position:relative;display:flex;gap:13px;direction:ltr}
+.dot{width:15px;height:15px;border-radius:50%;background:var(--c);transform:translateY(-860px)}
+
+.s-intro .thread{animation:threadDraw 3.6s var(--e-out) calc(var(--t0) + .15s) both}
+@keyframes threadDraw{
+  0%{transform:translate(-50%,-50%) scaleX(0);opacity:1}
+  30%{transform:translate(-50%,-50%) scaleX(1);opacity:1}
+  78%{transform:translate(-50%,-50%) scaleX(1);opacity:1}
+  100%{transform:translate(-50%,-50%) scaleX(1);opacity:0}
+}
+.s-intro .dot{animation:beadDrop .95s var(--e-pop) calc(var(--t0) + .55s + var(--i) * .13s) both}
+@keyframes beadDrop{
+  0%{transform:translateY(-860px);opacity:0}
+  12%{opacity:1}
+  100%{transform:translateY(0);opacity:1}
+}
+.s-intro .mark{animation:markWipe 1.2s var(--e-soft) calc(var(--t0) + 1.95s) both}
+@keyframes markWipe{
+  0%{opacity:0;clip-path:inset(0 0 0 100%);transform:translateY(16px)}
+  22%{opacity:1}
+  100%{opacity:1;clip-path:inset(0 0 0 0%);transform:translateY(0)}
+}
+.s-intro .diamond{animation:diamondPop .8s var(--e-pop) calc(var(--t0) + 2.55s) both}
+@keyframes diamondPop{
+  0%{opacity:0;transform:rotate(-45deg) scale(0)}
+  100%{opacity:1;transform:rotate(45deg) scale(1)}
+}
+.s-intro .tag{animation:riseIn .9s var(--e-out) calc(var(--t0) + 3.15s) both}
+@keyframes riseIn{0%{opacity:0;transform:translateY(22px)}100%{opacity:1;transform:translateY(0)}}
+
+.s-intro .lockup{animation:lockOut .5s var(--e-soft) calc(var(--t0) + var(--dur) - .5s) forwards}
+@keyframes lockOut{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(.955)}
+}
+
+/* ===========================================================================
+   ٢ · العبارة — على لوح داكن
+   =========================================================================== */
+.say{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;
+  display:flex;flex-direction:column;align-items:center;text-align:center}
+.eyebrow{display:flex;align-items:center;gap:18px;font-family:"Subha UI",sans-serif;font-size:21px;
+  letter-spacing:.42em;text-indent:.42em;color:var(--muted);opacity:0}
+.eyebrow i{font-style:normal;color:var(--gold);letter-spacing:0;text-indent:0}
+.say-line{font-family:"Subha AR",serif;font-weight:700;font-size:118px;line-height:1.5;
+  color:var(--fg);clip-path:inset(0 0 0 100%);padding:0 .1em}
+.say-line.l1{margin-top:64px}
+.say-line.l2{color:var(--gold-hi)}
+.say-rule{width:120px;height:1px;background:var(--gold);margin-top:60px;transform:scaleX(0);opacity:.9}
+
+.s-say .eyebrow{animation:riseIn .8s var(--e-out) calc(var(--t0) + .45s) both,
+                          softOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-say .l1{animation:lineWipe 1s var(--e-soft) calc(var(--t0) + .68s) both,
+                      softOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-say .l2{animation:lineWipe 1s var(--e-soft) calc(var(--t0) + 1.02s) both,
+                      softOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-say .say-rule{animation:ruleIn .8s var(--e-out) calc(var(--t0) + 1.6s) both,
+                           softOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+@keyframes lineWipe{
+  0%{clip-path:inset(0 0 0 100%);transform:translateY(14px)}
+  100%{clip-path:inset(0 0 0 0%);transform:translateY(0)}
+}
+@keyframes ruleIn{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+@keyframes softOut{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-26px)}}
+
+/* ===========================================================================
+   ٣ · فاصل «أقسامنا»
+   =========================================================================== */
+.bridge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center}
+.bridge-ar{font-family:"Subha AR",serif;font-weight:700;font-size:104px;line-height:1.4;
+  color:var(--fg);margin-top:40px;opacity:0}
+.bridge-lat{font-family:"Subha UI",sans-serif;font-size:21px;letter-spacing:.46em;text-indent:.46em;
+  color:var(--muted);margin-top:22px;opacity:0}
+.s-bridge .diamond{animation:diamondPop .6s var(--e-pop) calc(var(--t0) + .1s) both,
+                             softOut .4s var(--e-soft) calc(var(--t0) + var(--dur) - .4s) forwards}
+.s-bridge .bridge-ar{animation:riseIn .65s var(--e-out) calc(var(--t0) + .24s) both,
+                               softOut .4s var(--e-soft) calc(var(--t0) + var(--dur) - .4s) forwards}
+.s-bridge .bridge-lat{animation:riseIn .65s var(--e-out) calc(var(--t0) + .4s) both,
+                                softOut .4s var(--e-soft) calc(var(--t0) + var(--dur) - .4s) forwards}
+
+/* ===========================================================================
+   بطاقة القسم — هيكل مشترك لكل الأقسام الخمسة
+   =========================================================================== */
+.card{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:264px 100px 206px;text-align:center}
+
+.head{display:flex;align-items:center;gap:28px;width:640px;opacity:0}
+.idx{font-family:"Subha AR",serif;font-size:36px;color:var(--gold)}
+.hrule{flex:1;height:1px;background:var(--line)}
+.lat{font-family:"Subha UI",sans-serif;font-size:19px;letter-spacing:.42em;text-indent:.42em;color:var(--muted)}
+
+.motif{position:relative;width:100%;height:520px;margin:66px 0 72px;
+  display:flex;align-items:center;justify-content:center;opacity:0}
+
+.title{font-family:"Subha AR",serif;font-weight:700;font-size:148px;line-height:1.3;
+  color:var(--fg);padding:0 .1em;clip-path:inset(0 0 0 100%)}
+.uline{width:170px;height:2px;background:var(--gold);margin-top:30px;transform:scaleX(0)}
+.desc{margin-top:42px;font-size:39px;line-height:1.75;color:var(--muted);max-width:780px;opacity:0}
+
+.s-card .head  {animation:slideIn .75s var(--e-out) calc(var(--t0) + .18s) both, cardOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-card .motif {animation:motifIn .9s  var(--e-out) calc(var(--t0) + .30s) both, cardOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-card .title {animation:lineWipe .85s var(--e-soft) calc(var(--t0) + .62s) both, cardOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-card .uline {animation:ruleIn .6s   var(--e-out) calc(var(--t0) + 1.05s) both, cardOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-card .desc  {animation:riseIn .8s   var(--e-out) calc(var(--t0) + 1.18s) both, cardOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+@keyframes slideIn{0%{opacity:0;transform:translateX(-34px)}100%{opacity:1;transform:translateX(0)}}
+@keyframes motifIn{0%{opacity:0;transform:translateY(26px) scale(.96)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes cardOut{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-34px)}}
+
+@keyframes sway{from{transform:rotate(-2.4deg)}to{transform:rotate(2.4deg)}}
+
+/* ------------------------- ٠١ · السُّبَح ------------------------- */
+.motif-misbaha .sway{position:relative;width:500px;height:500px;transform-origin:50% 6%;
+  animation:sway 4.6s ease-in-out infinite alternate;animation-delay:-1.2s}
+.loop{position:absolute;inset:0}
+.loop b{position:absolute;left:50%;top:50%;width:28px;height:28px;margin:-14px 0 0 -14px;
+  border-radius:50%;background:var(--c);
+  transform:rotate(var(--a)) translateY(-216px) scale(0)}
+.loop b.div{width:37px;height:37px;margin:-18.5px 0 0 -18.5px;background:var(--gold)}
+.s-card .loop b{animation:beadPop .5s var(--e-pop) calc(var(--t0) + .45s + var(--i) * .034s) both}
+@keyframes beadPop{
+  0%{transform:rotate(var(--a)) translateY(-216px) scale(0);opacity:0}
+  100%{transform:rotate(var(--a)) translateY(-216px) scale(1);opacity:1}
+}
+.motif-misbaha .shahid{position:absolute;left:50%;top:50%;width:36px;height:66px;
+  border-radius:50% / 34%;background:var(--b5);
+  transform:translate(-50%,-50%) translateY(-244px) scale(0);transform-origin:50% 100%}
+.s-card .shahid{animation:shahidIn .6s var(--e-pop) calc(var(--t0) + 1.6s) both}
+@keyframes shahidIn{
+  0%{transform:translate(-50%,-50%) translateY(-244px) scale(0);opacity:0}
+  100%{transform:translate(-50%,-50%) translateY(-244px) scale(1);opacity:1}
+}
+.minitassel{position:absolute;left:50%;top:50%;width:110px;height:230px;
+  transform:translate(-50%,0) translateY(-212px)}
+.minitassel i{position:absolute;left:50%;top:0;width:3.5px;border-radius:2px;background:var(--c);
+  height:var(--h);transform-origin:50% 0;transform:translateX(-50%) rotate(var(--r)) scaleY(0)}
+.s-card .minitassel i{animation:fanIn .55s var(--e-out) calc(var(--t0) + 1.78s + var(--j) * .028s) both}
+@keyframes fanIn{
+  0%{transform:translateX(-50%) rotate(var(--r)) scaleY(0)}
+  100%{transform:translateX(-50%) rotate(var(--r)) scaleY(1)}
+}
+
+/* ------------------------- ٠٢ · الكركوشات ------------------------- */
+.motif-tassels{gap:108px;align-items:flex-start!important;padding-top:26px}
+.tassel{position:relative;width:118px;display:flex;flex-direction:column;align-items:center;
+  transform-origin:50% 0;animation:sway 4.2s ease-in-out infinite alternate;
+  animation-delay:calc(var(--i) * -1.35s)}
+.tassel .ring{width:36px;height:36px;border:3.5px solid var(--c);border-radius:50%;transform:scale(0)}
+.tassel .knot{width:30px;height:30px;border-radius:50%;background:var(--c);margin-top:-7px;transform:scale(0)}
+.tassel .cap{width:46px;height:62px;margin-top:2px;border-radius:8px 8px 22px 22px;
+  background:linear-gradient(180deg,var(--c) 0%,color-mix(in srgb,var(--c) 58%,#000) 100%);
+  transform:scaleY(0);transform-origin:50% 0}
+.tassel .fan{position:relative;width:140px;height:270px;margin-top:-2px}
+.tassel .fan i{position:absolute;left:50%;top:0;width:4px;border-radius:3px;background:var(--c);
+  height:var(--h);transform-origin:50% 0;transform:translateX(-50%) rotate(var(--r)) scaleY(0)}
+.s-card .tassel .ring{animation:popIn .5s var(--e-pop) calc(var(--t0) + .45s + var(--i) * .13s) both}
+.s-card .tassel .knot{animation:popIn .5s var(--e-pop) calc(var(--t0) + .55s + var(--i) * .13s) both}
+.s-card .tassel .cap {animation:capIn .55s var(--e-out) calc(var(--t0) + .64s + var(--i) * .13s) both}
+.s-card .tassel .fan i{animation:fanIn .6s var(--e-out)
+  calc(var(--t0) + .86s + var(--i) * .13s + var(--j) * .022s) both}
+@keyframes popIn{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes capIn{0%{transform:scaleY(0)}100%{transform:scaleY(1)}}
+
+/* ------------------------- ٠٣ · التعليقات ------------------------- */
+.motif-charms{align-items:flex-start!important;padding-top:30px}
+.rail-line{position:absolute;top:30px;left:50%;width:560px;height:1px;background:var(--line);
+  transform:translateX(-50%) scaleX(0)}
+.s-card .rail-line{animation:railDraw .8s var(--e-out) calc(var(--t0) + .4s) both}
+@keyframes railDraw{0%{transform:translateX(-50%) scaleX(0)}100%{transform:translateX(-50%) scaleX(1)}}
+.charms{position:absolute;top:30px;left:50%;transform:translateX(-50%);display:flex;gap:132px;direction:ltr}
+.charm{position:relative;width:92px;display:flex;flex-direction:column;align-items:center;
+  transform-origin:50% 0;animation:sway 3.9s ease-in-out infinite alternate;
+  animation-delay:calc(var(--i) * -1.05s)}
+.charm .chain{width:2.5px;height:var(--len);background:var(--c);transform-origin:50% 0;transform:scaleY(0)}
+.charm .cbead{width:16px;height:16px;border-radius:50%;background:var(--c);transform:scale(0)}
+.charm .shape{margin-top:14px;width:66px;height:66px;background:var(--c)}
+.charm .sh-diamond{transform:rotate(45deg) scale(0);width:60px;height:60px}
+.charm .sh-drop{border-radius:50% 50% 50% 2px;transform:rotate(45deg) scale(0)}
+.charm .sh-moon{border-radius:50%;transform:scale(0);
+  -webkit-mask:radial-gradient(circle 34px at 74% 30%,transparent 98%,#000 100%);
+  mask:radial-gradient(circle 34px at 74% 30%,transparent 98%,#000 100%)}
+.s-card .charm .chain{animation:chainIn .7s var(--e-out) calc(var(--t0) + .62s + var(--i) * .14s) both}
+.s-card .charm .cbead{animation:popIn .45s var(--e-pop) calc(var(--t0) + 1.0s + var(--i) * .14s) both}
+.s-card .charm .sh-diamond{animation:shapeInD .6s var(--e-pop) calc(var(--t0) + 1.12s + var(--i) * .14s) both}
+.s-card .charm .sh-drop{animation:shapeInD .6s var(--e-pop) calc(var(--t0) + 1.12s + var(--i) * .14s) both}
+.s-card .charm .sh-moon{animation:popIn .6s var(--e-pop) calc(var(--t0) + 1.12s + var(--i) * .14s) both}
+@keyframes chainIn{0%{transform:scaleY(0)}100%{transform:scaleY(1)}}
+@keyframes shapeInD{0%{transform:rotate(-20deg) scale(0);opacity:0}100%{transform:rotate(45deg) scale(1);opacity:1}}
+
+/* ------------------------- ٠٤ · المحفظات ------------------------- */
+.motif-case{flex-direction:column}
+.casesvg{width:500px;height:360px;overflow:visible}
+.casesvg rect,.casesvg path,.casesvg circle{
+  fill:none;stroke:var(--fg);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:1;stroke-dashoffset:1}
+.casesvg .body,.casesvg .flap{fill:var(--paper)}
+.casesvg .stitch{stroke:var(--gold);stroke-width:3;stroke-dasharray:.02 .022}
+.casesvg .clasp,.casesvg .d6{stroke:var(--gold)}
+.casesvg .flap{transform-box:fill-box;transform-origin:50% 100%}
+.s-card .casesvg .body  {animation:draw 1.0s var(--e-soft) calc(var(--t0) + .45s) both}
+.s-card .casesvg .flap  {animation:draw .85s var(--e-soft) calc(var(--t0) + .70s) both,
+                                   flapOpen .9s var(--e-out) calc(var(--t0) + 1.5s) both}
+.s-card .casesvg .d3    {animation:draw .7s linear calc(var(--t0) + 1.05s) both}
+.s-card .casesvg .d4    {animation:draw .7s linear calc(var(--t0) + 1.18s) both}
+.s-card .casesvg .clasp {animation:draw .6s var(--e-out) calc(var(--t0) + 1.35s) both}
+.s-card .casesvg .d6    {animation:draw .45s var(--e-out) calc(var(--t0) + 1.5s) both}
+@keyframes draw{0%{stroke-dashoffset:1;opacity:0}8%{opacity:1}100%{stroke-dashoffset:0;opacity:1}}
+@keyframes flapOpen{0%{transform:rotate(0) translateY(0)}100%{transform:rotate(-5deg) translateY(-12px)}}
+
+.peek{position:absolute;top:144px;left:50%;transform:translateX(-50%);display:flex;gap:12px;direction:ltr}
+.peek i{width:24px;height:24px;border-radius:50%;background:var(--c);
+  transform:translateY(60px) scale(.4);opacity:0}
+.s-card .peek i{animation:peekUp .8s var(--e-pop) calc(var(--t0) + 1.75s + var(--i) * .07s) both}
+@keyframes peekUp{0%{transform:translateY(60px) scale(.4);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
+
+/* ------------------------- الإهداء ------------------------- */
+.s-gift .idx{font-family:"Subha AR",serif;font-size:30px}
+.motif-gift{flex-direction:column}
+.giftsvg{width:500px;height:384px;overflow:visible}
+.giftsvg rect,.giftsvg path{fill:none;stroke:var(--fg);stroke-width:4;stroke-linecap:round;
+  stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
+.giftsvg .ribbon,.giftsvg .bow,.giftsvg .g3{stroke:var(--gold);stroke-width:4.5}
+.giftsvg .lid{transform-box:fill-box;transform-origin:50% 100%}
+.s-card .giftsvg .box    {animation:draw 1.0s var(--e-soft) calc(var(--t0) + .45s) both}
+.s-card .giftsvg .g5     {animation:draw .6s var(--e-out) calc(var(--t0) + .95s) both}
+.s-card .giftsvg .g6     {animation:draw .6s var(--e-out) calc(var(--t0) + 1.08s) both}
+.s-card .giftsvg .g1     {animation:draw .7s var(--e-soft) calc(var(--t0) + 1.22s) both}
+.s-card .giftsvg .g3     {animation:draw .3s linear calc(var(--t0) + 1.5s) both}
+.s-card .giftsvg .bow    {animation:draw .9s var(--e-out) calc(var(--t0) + 1.6s) both}
+.s-card .giftsvg .lid    {animation:lidLift 1s var(--e-pop) calc(var(--t0) + 2.1s) both}
+@keyframes lidLift{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(-26px) rotate(-3.5deg)}}
+
+.sparks{position:absolute;inset:0;pointer-events:none}
+.sparks i{position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);background:var(--gold-hi);
+  transform:translate(-50%,-50%) translate(var(--x),var(--y)) rotate(45deg) scale(0);opacity:0}
+.s-card .sparks i{animation:sparkle 1.5s var(--e-out) calc(var(--t0) + 1.9s + var(--i) * .11s) both}
+@keyframes sparkle{
+  0%{transform:translate(-50%,-50%) translate(var(--x),var(--y)) rotate(0deg) scale(0);opacity:0}
+  35%{transform:translate(-50%,-50%) translate(var(--x),var(--y)) rotate(45deg) scale(1);opacity:1}
+  100%{transform:translate(-50%,-50%) translate(var(--x),var(--y)) rotate(90deg) scale(.55);opacity:.35}
+}
+
+/* ===========================================================================
+   ٩ · الختام
+   =========================================================================== */
+.s-out .mark{width:720px}
+.s-out .tag{margin-top:52px}
+.cta{position:relative;margin-top:84px;display:inline-flex;align-items:center;justify-content:center;
+  padding:28px 70px;border:1px solid var(--gold);overflow:hidden;opacity:0}
+.cta b{position:relative;z-index:1;font-family:"Subha AR",serif;font-weight:700;font-size:46px;color:var(--gold)}
+.cta-fill{position:absolute;inset:0;background:var(--gold);transform-origin:100% 50%;transform:scaleX(0)}
+
+.s-out .mark{animation:markWipe 1.15s var(--e-soft) calc(var(--t0) + .38s) both}
+.s-out .diamond{animation:diamondPop .7s var(--e-pop) calc(var(--t0) + .88s) both}
+.s-out .tag{animation:riseIn .85s var(--e-out) calc(var(--t0) + 1.05s) both}
+.s-out .cta{animation:riseIn .7s var(--e-out) calc(var(--t0) + 1.4s) both}
+.s-out .cta-fill{animation:ruleIn .75s var(--e-soft) calc(var(--t0) + 1.95s) both}
+.s-out .cta b{animation:ctaInk .5s var(--e-soft) calc(var(--t0) + 2.15s) both}
+@keyframes ctaInk{0%{color:var(--gold)}100%{color:var(--ink)}}
+
+/* معاينة في المتصفح: افتح index.html?fit لتصغير المسرح حتى يناسب النافذة */
