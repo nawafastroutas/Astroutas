@@ -1,0 +1,121 @@
+/* ===========================================================================
+   الإهداء · GIFTING — مقطع طولي مستقل ١٠٨٠×١٩٢٠ · ١٦٫٢ ثانية
+
+   يرث من scene.css: الهوية، الخطوط، هيكل البطاقة (head/motif/title/uline/desc)،
+   وكل الحركات المشتركة — بما فيها حركة رسم علبة الهدية. وهذا الملف لا يضيف
+   إلا ما يخصّ هذا المقطع: الخلفية الداكنة الدائمة، ومشهدا الافتتاح والختام،
+   ورسمَي «بطاقة العبارة» و«التوصيل».
+
+   الخط الزمني:  افتتاح ٠٫٠ | عبارة ٣٫٤ | تغليف ٦٫٦ | توصيل ١٠٫٢ | ختام ١٣٫٤ | النهاية ١٦٫٢
+   =========================================================================== */
+
+/* ---------- داكن من أول ثانية لآخرها: الإهداء يُقدَّم كهدية لا كقسم ---------- */
+.stage--gift{
+  background:var(--ink);
+  --fg:var(--paper); --muted:#B3A28D; --line:rgba(247,242,234,.26);
+}
+.stage--gift .paper{
+  background:radial-gradient(124% 72% at 50% 26%, #1C1814 0%, var(--ink) 54%, var(--ink-deep) 100%);
+}
+.stage--gift .grain{mix-blend-mode:overlay;opacity:.34}
+
+/* ===========================================================================
+   ١ · الافتتاح
+   =========================================================================== */
+.opener{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center;text-align:center}
+.badge{font-family:"Subha AR",serif;font-weight:700;font-size:34px;color:var(--gold);
+  padding:14px 46px;border:1px solid var(--gold);border-radius:999px;opacity:0}
+.opener-ar{font-family:"Subha AR",serif;font-weight:700;font-size:172px;line-height:1.34;
+  color:var(--fg);margin-top:40px;clip-path:inset(0 0 0 100%);padding:0 .08em}
+.opener-lat{font-family:"Subha UI",sans-serif;font-size:22px;letter-spacing:.48em;
+  text-indent:.48em;color:var(--muted);margin-top:14px;opacity:0}
+.opener-rule{width:130px;height:1px;background:var(--gold);margin-top:54px;transform:scaleX(0)}
+.opener-sub{font-size:40px;line-height:1.7;color:var(--muted);margin-top:46px;opacity:0}
+
+.s-open .badge     {animation:popIn .6s var(--e-pop) calc(var(--t0) + .22s) both, softOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-open .opener-ar {animation:lineWipe 1s var(--e-soft) calc(var(--t0) + .5s) both, softOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-open .opener-lat{animation:riseIn .7s var(--e-out) calc(var(--t0) + 1.0s) both, softOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-open .opener-rule{animation:ruleIn .7s var(--e-out) calc(var(--t0) + 1.3s) both, softOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-open .opener-sub{animation:riseIn .8s var(--e-out) calc(var(--t0) + 1.5s) both, softOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+/* ومضات خلف العنوان — نفس حركة sparkle في scene.css لكن بتوقيت هذا المشهد */
+.s-open .sparks i{animation:sparkle 1.6s var(--e-out) calc(var(--t0) + .55s + var(--i) * .1s) both}
+
+/* ===========================================================================
+   ٢ · بطاقة العبارة
+   =========================================================================== */
+.motif-note{perspective:900px}
+.note{position:relative;width:492px;height:314px;border:1px solid var(--gold);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:0 46px;transform:rotate(-2.2deg);background:rgba(185,149,92,.05)}
+.note-line{font-family:"Subha AR",serif;font-weight:700;font-size:52px;line-height:1.5;white-space:nowrap;
+  color:var(--fg);clip-path:inset(0 0 0 100%);padding:0 .08em}
+.note-rule{width:90px;height:1px;background:var(--gold);margin-top:26px;transform:scaleX(0)}
+.scribble{display:flex;flex-direction:column;align-items:flex-end;gap:16px;
+  width:100%;margin-top:40px}
+.scribble i{display:block;width:var(--w);height:3px;border-radius:2px;
+  background:var(--muted);opacity:.5;transform-origin:100% 50%;transform:scaleX(0)}
+.note-seal{position:absolute;bottom:-17px;left:46px;width:34px;height:34px;
+  background:var(--gold);transform:rotate(45deg) scale(0)}
+
+.s-card .note      {animation:noteIn .8s var(--e-pop) calc(var(--t0) + .4s) both}
+.s-card .note-line {animation:lineWipe .8s var(--e-soft) calc(var(--t0) + .8s) both}
+.s-card .note-rule {animation:ruleIn .5s var(--e-out) calc(var(--t0) + 1.15s) both}
+.s-card .scribble i{animation:scribbleIn .5s var(--e-out) calc(var(--t0) + 1.3s + var(--i) * .11s) both}
+.s-card .note-seal {animation:sealIn .6s var(--e-pop) calc(var(--t0) + 1.7s) both}
+@keyframes noteIn{
+  0%{opacity:0;transform:rotate(-9deg) translateY(30px) scale(.9)}
+  100%{opacity:1;transform:rotate(-2.2deg) translateY(0) scale(1)}
+}
+@keyframes scribbleIn{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+@keyframes sealIn{0%{transform:rotate(0) scale(0)}100%{transform:rotate(45deg) scale(1)}}
+
+/* ===========================================================================
+   ٤ · التوصيل المباشر
+   المسار المرسوم والطرد المتحرّك يتشاركان نفس الإحداثيات (٤٤٠×٢١٠)، فيمشي
+   الطرد على الخط تمامًا عبر offset-path بدل تحريكه يدويًا.
+   =========================================================================== */
+.motif-ship{align-items:center}
+.track{position:relative;width:440px;height:210px;transform:scale(1.2)}
+.shipsvg{width:440px;height:210px;overflow:visible}
+.shipsvg .route{fill:none;stroke:var(--gold);stroke-width:3;stroke-linecap:round;
+  stroke-dasharray:.022 .026;stroke-dashoffset:1}
+.pin{position:absolute;border-radius:50%;transform:translate(-50%,-50%) scale(0)}
+.pin-a{left:46px;top:164px;width:22px;height:22px;background:var(--muted)}
+.pin-b{left:396px;top:128px;width:34px;height:34px;background:transparent;
+  border:3px solid var(--gold);border-radius:0;
+  transform:translate(-50%,-50%) rotate(45deg) scale(0)}
+.parcel{position:absolute;width:34px;height:34px;border-radius:6px;
+  background:var(--paper);box-shadow:0 0 0 1px rgba(20,17,14,.9) inset;
+  offset-path:path("M46 164 C 150 40, 300 40, 396 128");
+  offset-rotate:0deg;offset-distance:0%;offset-anchor:50% 50%;opacity:0}
+.parcel::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(var(--gold),var(--gold)) center/100% 3px no-repeat,
+             linear-gradient(var(--gold),var(--gold)) center/3px 100% no-repeat}
+
+.s-card .route   {animation:draw .9s var(--e-soft) calc(var(--t0) + .45s) both}
+.s-card .pin-a   {animation:popIn .5s var(--e-pop) calc(var(--t0) + .4s) both}
+.s-card .pin-b   {animation:pinIn .6s var(--e-pop) calc(var(--t0) + 1.98s) both}
+.s-card .parcel  {animation:travel 1.5s var(--e-soft) calc(var(--t0) + .72s) both}
+@keyframes pinIn{
+  0%{transform:translate(-50%,-50%) rotate(0) scale(0);opacity:0}
+  100%{transform:translate(-50%,-50%) rotate(45deg) scale(1);opacity:1}
+}
+@keyframes travel{
+  0%{offset-distance:0%;opacity:0;transform:scale(.7)}
+  10%{opacity:1;transform:scale(1)}
+  84%{opacity:1;transform:scale(1)}
+  100%{offset-distance:100%;opacity:0;transform:scale(.55)}
+}
+
+/* ===========================================================================
+   ٥ · الختام
+   =========================================================================== */
+.s-end .mark{width:700px}
+.s-end .tag{margin-top:50px}
+.s-end .mark    {animation:markWipe 1.05s var(--e-soft) calc(var(--t0) + .3s) both}
+.s-end .diamond {animation:diamondPop .65s var(--e-pop) calc(var(--t0) + .78s) both}
+.s-end .tag     {animation:riseIn .8s var(--e-out) calc(var(--t0) + .95s) both}
+.s-end .cta     {animation:riseIn .65s var(--e-out) calc(var(--t0) + 1.25s) both}
+.s-end .cta-fill{animation:ruleIn .7s var(--e-soft) calc(var(--t0) + 1.75s) both}
+.s-end .cta b   {animation:ctaInk .45s var(--e-soft) calc(var(--t0) + 1.95s) both}

@@ -6,9 +6,10 @@
    ونلتقط الصورة. النتيجة لا تعتمد على سرعة الجهاز إطلاقًا: نفس الإطار
    بالبكسل في كل تشغيل.
 
-   التشغيل:  node render.mjs            (٣٠ إطارًا/ث، ٣٠٫٦ ثانية)
-             node render.mjs --fps 60   (أنعم، ملف أكبر)
-             node render.mjs --keep     (يُبقي ملفات الإطارات)
+   التشغيل:  node render.mjs                     المقطع الرئيسي (٣٠٫٦ ثانية)
+             node render.mjs --page gift.html    مقطع الإهداء (١٦٫٢ ثانية)
+             node render.mjs --fps 60            أنعم، ملف أكبر
+             node render.mjs --keep              يُبقي ملفات الإطارات
    =========================================================================== */
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 import { spawn } from 'node:child_process';
@@ -24,12 +25,21 @@ const arg = (name, fallback) => {
   const i = process.argv.indexOf('--' + name);
   return i > -1 && process.argv[i + 1] ? process.argv[i + 1] : fallback;
 };
+// كل صفحة ومدّتها وآخِر ملف لها. المدّة هنا يجب أن تطابق نهاية الخط الزمني في CSS.
+const PAGES = {
+  'index.html': { duration: 30.6, out: 'subha-motion' },
+  'gift.html':  { duration: 16.2, out: 'subha-gifting' }
+};
+
+const PAGE = arg('page', 'index.html');
+if (!PAGES[PAGE]) throw new Error(`صفحة غير معروفة: ${PAGE} — المتاح: ${Object.keys(PAGES).join(', ')}`);
+
 const FPS      = Number(arg('fps', 30));
-const DURATION = Number(arg('duration', 30.6));      // يجب أن يطابق نهاية الخط الزمني في scene.css
+const DURATION = Number(arg('duration', PAGES[PAGE].duration));
 const KEEP     = process.argv.includes('--keep');
 const FRAMES   = Math.round(DURATION * FPS);
 const FRAMEDIR = path.join(HERE, '.frames');
-const OUT      = path.join(HERE, 'output', `subha-motion-${W}x${H}.mp4`);
+const OUT      = path.join(HERE, 'output', `${PAGES[PAGE].out}-${W}x${H}.mp4`);
 
 const run = (cmd, args) => new Promise((ok, no) => {
   const p = spawn(cmd, args, { stdio: ['ignore', 'ignore', 'inherit'] });
@@ -37,7 +47,7 @@ const run = (cmd, args) => new Promise((ok, no) => {
   p.on('close', c => (c === 0 ? ok() : no(new Error(`${cmd} خرج بالرمز ${c}`))));
 });
 
-console.log(`▸ ${FRAMES} إطارًا · ${FPS} إطار/ث · ${DURATION}s · ${W}×${H}`);
+console.log(`▸ ${PAGE} · ${FRAMES} إطارًا · ${FPS} إطار/ث · ${DURATION}s · ${W}×${H}`);
 
 await rm(FRAMEDIR, { recursive: true, force: true });
 await mkdir(FRAMEDIR, { recursive: true });
@@ -52,7 +62,7 @@ const page = await browser.newPage({
 });
 
 page.on('pageerror', e => console.error('خطأ في الصفحة:', e.message));
-await page.goto('file://' + path.join(HERE, 'index.html'), { waitUntil: 'load' });
+await page.goto('file://' + path.join(HERE, PAGE), { waitUntil: 'load' });
 
 // ننتظر الخطوط والصور قبل أي التقاط، وإلا ظهرت إطارات بلا نص أو بلا شعار
 await page.evaluate(() => document.fonts.ready);
@@ -107,7 +117,7 @@ await run('ffmpeg', [
 await run('ffmpeg', [
   '-y', '-loglevel', 'error',
   '-i', path.join(FRAMEDIR, String(FRAMES - 1).padStart(5, '0') + '.png'),
-  path.join(HERE, 'output', 'poster.png')
+  path.join(HERE, 'output', `${PAGES[PAGE].out}-poster.png`)
 ]);
 
 if (!KEEP) await rm(FRAMEDIR, { recursive: true, force: true });

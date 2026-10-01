@@ -7,13 +7,14 @@ import { fileURLToPath } from 'node:url';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 // تصاعديًا دائمًا: المتصفح يتخلّص من الحركات المنتهية، فالقفز للخلف لا يعيدها.
 // render.mjs يتقدّم للأمام دائمًا، وهذا يحاكيه.
+const PAGE = process.env.PREVIEW_PAGE || 'index.html';
 const times = process.argv.slice(2).map(Number).sort((a, b) => a - b);
 const out = process.env.PREVIEW_DIR || path.join(HERE, '.preview');
 await mkdir(out, { recursive: true });
 const b = await chromium.launch({ args: ['--force-color-profile=srgb', '--font-render-hinting=none'] });
 const p = await b.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
 p.on('pageerror', e => console.error('PAGEERROR:', e.message));
-await p.goto('file://' + path.join(HERE, 'index.html'), { waitUntil: 'load' });
+await p.goto('file://' + path.join(HERE, PAGE), { waitUntil: 'load' });
 await p.evaluate(() => document.fonts.ready);
 await p.waitForTimeout(500);
 await p.evaluate(() => document.getAnimations().forEach(a => a.pause()));

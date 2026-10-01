@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>الإهداء · SUBHA — موشن جرافيك</title>
+<meta name="description" content="مقطع طولي ١٠٨٠×١٩٢٠ للتعريف بخدمة الإهداء الجديدة.">
+<!-- scene.css يحمل الهوية وهيكل البطاقة وكل الحركات المشتركة؛
+     gift.css لا يضيف إلا ما يخصّ هذا المقطع -->
+<link rel="stylesheet" href="scene.css">
+<link rel="stylesheet" href="gift.css">
+</head>
+<body>
+
+<div class="stage stage--gift" id="stage">
+  <div class="paper"></div>
+  <div class="grain"></div>
+
+  <!-- ====================== ١ · الافتتاح ====================== -->
+  <section class="scene s-open" style="--t0:0s;--dur:3.4s">
+    <div class="opener">
+      <div class="sparks" id="openSparks"></div>
+      <span class="badge">جديد</span>
+      <h1 class="opener-ar">الإهداء</h1>
+      <span class="opener-lat">GIFTING</span>
+      <span class="opener-rule"></span>
+      <p class="opener-sub">خدمةٌ جديدة من سبحة</p>
+    </div>
+  </section>
+
+  <!-- ====================== ٢ · عبارة الإهداء ====================== -->
+  <section class="scene s-card" style="--t0:3.4s;--dur:3.2s">
+    <div class="card">
+      <div class="head"><span class="idx">٠١</span><span class="hrule"></span><span class="lat">THE MESSAGE</span></div>
+      <div class="motif motif-note">
+        <div class="note">
+          <span class="note-line">إلى من يستحقّ</span>
+          <span class="note-rule"></span>
+          <span class="scribble"><i style="--w:84%;--i:0"></i><i style="--w:62%;--i:1"></i><i style="--w:74%;--i:2"></i></span>
+          <span class="note-seal"></span>
+        </div>
+      </div>
+      <h2 class="title">عبارةُ إهداء</h2>
+      <span class="uline"></span>
+      <p class="desc">اخترها من عباراتٍ معروفة، أو اكتبها بكلماتك أنت.</p>
+    </div>
+  </section>
+
+  <!-- ====================== ٣ · التغليف والعلبة ====================== -->
+  <section class="scene s-card" style="--t0:6.6s;--dur:3.6s">
+    <div class="card">
+      <div class="head"><span class="idx">٠٢</span><span class="hrule"></span><span class="lat">THE BOX</span></div>
+      <div class="motif motif-gift">
+        <div class="sparks" id="giftSparks"></div>
+        <svg viewBox="0 0 440 340" class="giftsvg" aria-hidden="true">
+          <g class="lid">
+            <rect class="g1" x="92" y="112" width="256" height="46" rx="10"/>
+            <path class="g2 bow" d="M220 112 C220 78 182 66 170 84 C160 99 190 112 220 112 C250 112 280 99 270 84 C258 66 220 78 220 112Z"/>
+            <path class="g3" d="M220 112 V96"/>
+          </g>
+          <rect class="g4 box" x="108" y="166" width="224" height="140" rx="12"/>
+          <path class="g5 ribbon" d="M220 166 V306"/>
+          <path class="g6 ribbon" d="M108 214 H332"/>
+        </svg>
+      </div>
+      <h2 class="title">تغليفٌ وعلبة</h2>
+      <span class="uline"></span>
+      <p class="desc">علبةُ إهداءٍ خاصة، لا كالتغليف المعتاد.</p>
+    </div>
+  </section>
+
+  <!-- ====================== ٤ · التوصيل المباشر ====================== -->
+  <section class="scene s-card" style="--t0:10.2s;--dur:3.2s">
+    <div class="card">
+      <div class="head"><span class="idx">٠٣</span><span class="hrule"></span><span class="lat">DIRECT DELIVERY</span></div>
+      <div class="motif motif-ship">
+        <div class="track">
+          <svg viewBox="0 0 440 210" class="shipsvg" aria-hidden="true">
+            <path class="route" d="M46 164 C 150 40, 300 40, 396 128"/>
+          </svg>
+          <span class="pin pin-a"></span>
+          <span class="pin pin-b"></span>
+          <span class="parcel"></span>
+        </div>
+      </div>
+      <h2 class="title">توصيلٌ مباشر</h2>
+      <span class="uline"></span>
+      <p class="desc">ترسلها إلى عنوان من تُهديه، مباشرةً.</p>
+    </div>
+  </section>
+
+  <!-- ====================== ٥ · الختام ====================== -->
+  <section class="scene s-end" style="--t0:13.4s;--dur:2.8s">
+    <div class="lockup out">
+      <img class="mark" src="brand/mark-cream.png" alt="سبحة SUBHA">
+      <span class="diamond"></span>
+      <img class="tag" src="brand/tagline-gold.png" alt="هوية عُمانية بتفاصيل راقية">
+      <span class="cta"><span class="cta-fill"></span><b>أهدِها الآن</b></span>
+    </div>
+  </section>
+
+  <div class="frame"><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i></div>
+  <div class="topline"><span>SUBHA</span><em>·</em><span>OMAN</span></div>
+  <div class="rail" id="rail"></div>
+</div>
+
+<script src="gift.js"></script>
+</body>
+</html>
