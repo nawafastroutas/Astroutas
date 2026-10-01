@@ -5,7 +5,7 @@
 
   /* شريط التقدّم: خرزة لكل مشهد من المشاهد الأربعة */
   var rail = document.getElementById('rail');
-  [[0, 3.4], [3.4, 3.2], [6.6, 3.6], [10.2, 3.2]].forEach(function (w, i) {
+  [[0, 3.4], [3.4, 3.2], [6.6, 3.6], [10.2, 3.6]].forEach(function (w, i) {
     var b = document.createElement('i');
     v(b, '--i', String(i));
     v(b, '--rt', w[0] + 's');

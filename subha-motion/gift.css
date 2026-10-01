@@ -72,40 +72,60 @@
 
 /* ===========================================================================
    ٤ · التوصيل المباشر
-   المسار المرسوم والطرد المتحرّك يتشاركان نفس الإحداثيات (٤٤٠×٢١٠)، فيمشي
-   الطرد على الخط تمامًا عبر offset-path بدل تحريكه يدويًا.
+   نقطتان معلَّمتان: «منك» يمينًا و«إليه» يسارًا — فالحركة تمشي مع اتجاه
+   القراءة لا ضدّه. والطرد يسير على نفس المنحنى المرسوم تمامًا، لأن
+   offset-path يأخذ المسار نفسه الذي يرسمه <path class="route">؛ فلو عُدِّلت
+   انحناءة الخط وجب تعديل المسارين معًا وإلا انحرف الطرد عن خطّه.
    =========================================================================== */
 .motif-ship{align-items:center}
-.track{position:relative;width:440px;height:210px;transform:scale(1.2)}
-.shipsvg{width:440px;height:210px;overflow:visible}
+.track{position:relative;width:560px;height:330px;transform:scale(1.26)}
+.shipsvg{position:absolute;inset:0;width:560px;height:330px;overflow:visible}
 .shipsvg .route{fill:none;stroke:var(--gold);stroke-width:3;stroke-linecap:round;
-  stroke-dasharray:.022 .026;stroke-dashoffset:1}
-.pin{position:absolute;border-radius:50%;transform:translate(-50%,-50%) scale(0)}
-.pin-a{left:46px;top:164px;width:22px;height:22px;background:var(--muted)}
-.pin-b{left:396px;top:128px;width:34px;height:34px;background:transparent;
-  border:3px solid var(--gold);border-radius:0;
-  transform:translate(-50%,-50%) rotate(45deg) scale(0)}
-.parcel{position:absolute;width:34px;height:34px;border-radius:6px;
-  background:var(--paper);box-shadow:0 0 0 1px rgba(20,17,14,.9) inset;
-  offset-path:path("M46 164 C 150 40, 300 40, 396 128");
-  offset-rotate:0deg;offset-distance:0%;offset-anchor:50% 50%;opacity:0}
-.parcel::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(var(--gold),var(--gold)) center/100% 3px no-repeat,
-             linear-gradient(var(--gold),var(--gold)) center/3px 100% no-repeat}
+  stroke-dasharray:.02 .024;stroke-dashoffset:1}
 
-.s-card .route   {animation:draw .9s var(--e-soft) calc(var(--t0) + .45s) both}
-.s-card .pin-a   {animation:popIn .5s var(--e-pop) calc(var(--t0) + .4s) both}
-.s-card .pin-b   {animation:pinIn .6s var(--e-pop) calc(var(--t0) + 1.98s) both}
-.s-card .parcel  {animation:travel 1.5s var(--e-soft) calc(var(--t0) + .72s) both}
-@keyframes pinIn{
+.node{position:absolute;top:232px;transform:translate(-50%,-50%) scale(0)}
+.orig{left:512px;width:26px;height:26px;border-radius:50%;
+  border:3px solid var(--muted);background:var(--ink)}
+.dest{left:56px;width:40px;height:40px;border:3px solid var(--gold);background:transparent;
+  transform:translate(-50%,-50%) rotate(45deg) scale(0)}
+.dest .pulse{position:absolute;inset:-3px;border:3px solid var(--gold);opacity:0}
+
+.lbl{position:absolute;top:288px;transform:translateX(-50%);
+  font-family:"Subha AR",serif;font-size:30px;color:var(--muted);opacity:0}
+.lbl-from{left:512px}
+.lbl-to{left:56px;color:var(--gold)}
+
+/* الطرد: نفس علبة المشهد السابق مصغّرة، لا مربّع مجرّد */
+.parcel{position:absolute;left:0;top:0;width:52px;height:52px;overflow:visible;
+  offset-path:path("M512 232 C 420 64, 148 64, 56 232");
+  offset-rotate:0deg;offset-distance:0%;offset-anchor:50% 50%;opacity:0}
+.parcel .pbox{fill:var(--ink);stroke:var(--fg);stroke-width:2.6}
+.parcel .prb{fill:none;stroke:var(--gold);stroke-width:2.2;stroke-linejoin:round}
+
+.s-card .orig   {animation:popIn .5s var(--e-pop) calc(var(--t0) + .35s) both}
+.s-card .dest   {animation:destIn .6s var(--e-pop) calc(var(--t0) + .5s) both,
+                           destFill .45s var(--e-out) calc(var(--t0) + 2.3s) forwards}
+.s-card .pulse  {animation:pulseOut .9s var(--e-out) calc(var(--t0) + 2.3s) both}
+.s-card .route  {animation:draw .9s var(--e-soft) calc(var(--t0) + .45s) both}
+.s-card .lbl-from{animation:riseIn .55s var(--e-out) calc(var(--t0) + .55s) both}
+.s-card .lbl-to  {animation:riseIn .55s var(--e-out) calc(var(--t0) + 2.35s) both}
+.s-card .parcel {animation:travel 1.6s var(--e-soft) calc(var(--t0) + .75s) both}
+
+@keyframes destIn{
   0%{transform:translate(-50%,-50%) rotate(0) scale(0);opacity:0}
   100%{transform:translate(-50%,-50%) rotate(45deg) scale(1);opacity:1}
 }
+@keyframes destFill{0%{background:transparent}100%{background:var(--gold)}}
+@keyframes pulseOut{
+  0%{opacity:.9;transform:scale(1)}
+  100%{opacity:0;transform:scale(2.6)}
+}
+/* يصل الطرد فيذوب في العلامة الذهبية بدل أن يتراكب معها */
 @keyframes travel{
-  0%{offset-distance:0%;opacity:0;transform:scale(.7)}
-  10%{opacity:1;transform:scale(1)}
-  84%{opacity:1;transform:scale(1)}
-  100%{offset-distance:100%;opacity:0;transform:scale(.55)}
+  0%{offset-distance:0%;opacity:0;transform:scale(.6)}
+  9%{opacity:1;transform:scale(1)}
+  86%{offset-distance:88%;opacity:1;transform:scale(1)}
+  100%{offset-distance:100%;opacity:0;transform:scale(.5)}
 }
 
 /* ===========================================================================

@@ -7,7 +7,7 @@
    بالبكسل في كل تشغيل.
 
    التشغيل:  node render.mjs                     المقطع الرئيسي (٣٠٫٦ ثانية)
-             node render.mjs --page gift.html    مقطع الإهداء (١٦٫٢ ثانية)
+             node render.mjs --page gift.html    مقطع الإهداء (١٦٫٦ ثانية)
              node render.mjs --fps 60            أنعم، ملف أكبر
              node render.mjs --keep              يُبقي ملفات الإطارات
    =========================================================================== */
@@ -28,7 +28,7 @@ const arg = (name, fallback) => {
 // كل صفحة ومدّتها وآخِر ملف لها. المدّة هنا يجب أن تطابق نهاية الخط الزمني في CSS.
 const PAGES = {
   'index.html': { duration: 30.6, out: 'subha-motion' },
-  'gift.html':  { duration: 16.2, out: 'subha-gifting' }
+  'gift.html':  { duration: 16.6, out: 'subha-gifting' }
 };
 
 const PAGE = arg('page', 'index.html');
