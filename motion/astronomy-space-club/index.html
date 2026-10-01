@@ -5,176 +5,60 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>نادي الفلك والفضاء — موشن جرافيك</title>
 <!--
-  موشن جرافيك (٢٠ ثانية) لشعار نادي الفلك والفضاء — كلية التربية بالرستاق.
-  نفس محرّك motion/literature-culture-club (render(t) واحدة، بلا CSS animations).
+  موشن جرافيك (٢٠ ثانية) — نادي الفلك والفضاء، كلية التربية بالرستاق.
 
-  الشعار مُعاد بناؤه كمتجه من الصورة الأصلية:
-  - العلامة: حلقة (مدار) بتدرّج فيروزي→بنفسجي، بفتحة يملؤها ذيل مثلث (نجم/مذنّب)
-    + حلقة داخلية صغيرة + خطّا سرعة أعلى اليسار.
-  - العربي: Tajawal Medium — الإنجليزي: Barlow Medium.
-  الإحداثيات داخل #lock بمقياس 660×228 (مطابق لنسب الشعار الأصلي 940×325).
+  الشعار ليس إعادة رسم تقريبية: `logo-paths.js` مسارات متجهية مُستخرَجة من
+  الشعار الأصلي نفسه (تتبّع على دقّة ×8 + مطابقة تدرّج العلامة بأقل مربّعات)،
+  لذلك كل حرف وكل منحنى مطابق للأصل، ويبقى حادًّا عند أي دقّة.
 
-  ?t=12.5  يجمّد الصفحة عند لحظة معيّنة (للمعاينة).
+  الفكرة: من عمق الفضاء — نجوم، كوكب بحلقة، مذنّب — يرسم المذنّب مسار الشعار
+  بذيله المضيء، ثم ينفجر الضوء ليتحوّل المشهد من ليل إلى أبيض الهوية.
+
+  كل الحركة دالة واحدة: render(t). لا CSS animations — لذلك التصدير
+  إطارًا بإطار (render.js) مطابق تمامًا لما يظهر في المتصفح.
+  ?t=12.5 يجمّد لحظة معيّنة للمعاينة.
 -->
 <style>
-  @font-face { font-family: 'Tajawal'; font-weight: 500; src: url(fonts/Tajawal-Medium.ttf) format('truetype'); }
-  @font-face { font-family: 'Tajawal'; font-weight: 700; src: url(fonts/Tajawal-Bold.ttf) format('truetype'); }
-  @font-face { font-family: 'Barlow';  font-weight: 500; src: url(fonts/Barlow-Medium.ttf) format('truetype'); }
-
-  :root {
-    --purple: #3C1B63;
-    --teal:   #0B7A9E;
-    --paper:  #F6FAFB;
-  }
+  :root { --paper: #F7FAFB; --teal: #027194; --deep: #3C1B63; }
   html, body { margin: 0; height: 100%; overflow: hidden; background: var(--paper); }
-  #stage { position: fixed; inset: 0; overflow: hidden;
-           background: radial-gradient(120% 95% at 50% 46%, #FFFFFF 0%, #F6FAFB 48%, #ECF3F5 100%); }
-  #grain { position: absolute; inset: 0; opacity: .05; mix-blend-mode: multiply; pointer-events: none; }
-  #fx    { position: absolute; inset: 0; }
-  #svg   { position: absolute; inset: 0; }
-  .ar    { font-family: 'Tajawal', sans-serif; }
-  .en    { font-family: 'Barlow', sans-serif; }
+  #stage { position: fixed; inset: 0; overflow: hidden; background: var(--paper); }
+  #bg, #fg { position: absolute; inset: 0; }
+  #svg { position: absolute; inset: 0; }
 </style>
 </head>
 <body>
 <div id="stage">
-  <div id="grain"></div>
-  <canvas id="fx"></canvas>
-  <svg id="svg" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <!-- lattice: spreads out from the first word, and later clears a hole behind the logo -->
-      <radialGradient id="gReveal" gradientUnits="userSpaceOnUse">
-        <stop offset="0"   stop-color="#fff"/>
-        <stop offset=".78" stop-color="#fff"/>
-        <stop offset="1"   stop-color="#000"/>
-      </radialGradient>
-      <mask id="mReveal" maskUnits="userSpaceOnUse" x="-5000" y="-5000" width="10000" height="10000">
-        <rect x="-5000" y="-5000" width="10000" height="10000" fill="url(#gReveal)"/>
-      </mask>
-      <radialGradient id="gHole" gradientUnits="userSpaceOnUse">
-        <stop offset="0"   stop-color="#000"/>
-        <stop offset=".42" stop-color="#000"/>
-        <stop offset="1"   stop-color="#fff"/>
-      </radialGradient>
-      <mask id="mHole" maskUnits="userSpaceOnUse" x="-5000" y="-5000" width="10000" height="10000">
-        <rect x="-5000" y="-5000" width="10000" height="10000" fill="url(#gHole)"/>
-      </mask>
-
-      <!-- camera motion blur (screen space) -->
-      <filter id="fMotion" filterUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
-        <feGaussianBlur id="fMotionBlur" stdDeviation="0 0"/>
-      </filter>
-      <filter id="fW0" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0"/></filter>
-      <filter id="fW1" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0"/></filter>
-      <filter id="fW2" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0"/></filter>
-
-      <clipPath id="cWord" clipPathUnits="userSpaceOnUse"><rect x="-300" y="-120" width="600" height="156"/></clipPath>
-
-      <!-- small four-point star / sparkle, centred on the origin -->
-      <path id="starShape" d="M0 -14.2 Q3.49 -5.96 8.3 0 Q3.49 5.96 0 14.2 Q-3.49 5.96 -8.3 0 Q-3.49 -5.96 0 -14.2Z"/>
-
-      <!-- title wipes: Arabic reveals right→left, English left→right -->
-      <linearGradient id="gAr" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#fff"/>
-      </linearGradient>
-      <mask id="mAr" maskUnits="userSpaceOnUse" x="-40" y="10" width="540" height="90">
-        <rect x="-40" y="10" width="540" height="90" fill="url(#gAr)"/>
-      </mask>
-      <linearGradient id="gEn" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/>
-      </linearGradient>
-      <mask id="mEn" maskUnits="userSpaceOnUse" x="0" y="80" width="660" height="55">
-        <rect x="0" y="80" width="660" height="55" fill="url(#gEn)"/>
-      </mask>
-
-      <!-- comet mark: gradient ring + tail -->
-      <linearGradient id="gRing" gradientUnits="userSpaceOnUse" x1="481" y1="32" x2="571" y2="122">
-        <stop offset="0" stop-color="var(--teal)"/>
-        <stop offset="1" stop-color="var(--purple)"/>
-      </linearGradient>
-
-      <!-- sheen across the finished logo -->
-      <filter id="fWhite"><feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0"/></filter>
-      <mask id="mLogo" maskUnits="userSpaceOnUse" x="0" y="0" width="660" height="228">
-        <use href="#lockupArt" filter="url(#fWhite)"/>
-      </mask>
-      <linearGradient id="gSheen" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0"  stop-color="#fff" stop-opacity="0"/>
-        <stop offset=".5" stop-color="#fff" stop-opacity=".75"/>
-        <stop offset="1"  stop-color="#fff" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-
-    <g id="screen">
-      <g id="cam">
-        <g mask="url(#mReveal)"><g mask="url(#mHole)"><g id="lattice"></g></g></g>
-
-        <g id="words"></g>
-
-        <g id="lock" transform="translate(-526 -77)">
-          <g id="ripples"></g>
-          <g id="burst"></g>
-          <g id="lockupArt">
-            <!-- thin guide traced just before the ring is inked -->
-            <path id="gdRing" pathLength="1" fill="none" stroke="url(#gRing)" stroke-width=".4" opacity="0"
-                  d="M551.3 98.2 A33 33 0 1 1 551.3 55.8"/>
-            <!-- two short speed-line dashes, upper-left of the ring -->
-            <g id="speedLines" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" opacity="0">
-              <line x1="490" y1="53" x2="478" y2="45"/>
-              <line x1="478" y1="65" x2="466" y2="59"/>
-            </g>
-            <path id="arcRing" pathLength="1" fill="none" stroke="url(#gRing)" stroke-width="15" stroke-linecap="butt"
-                  d="M551.3 98.2 A33 33 0 1 1 551.3 55.8"/>
-            <path id="tail" fill="url(#gRing)"
-                  d="M557.0 103.0 L599 77 L557.0 51.0 L545.5 60.6 L545.5 93.4Z"/>
-            <g transform="translate(526 77)"><circle id="ring2" r="9" fill="none" stroke="#fff" stroke-width="2.6"/></g>
-
-            <g id="tAr" mask="url(#mAr)">
-              <text class="ar" x="163.6" y="65.29" font-size="36.70" font-weight="500" fill="var(--teal-text, #0E7391)"
-                    direction="rtl" text-anchor="end">نادي الفلك والفضاء</text>
-            </g>
-            <g id="tEn" mask="url(#mEn)">
-              <text class="en" x="60.37" y="112.11" font-size="35.30" font-weight="500"
-                    fill="var(--teal-text, #0E7391)">Astronomy &amp; Space Club</text>
-            </g>
-            <rect id="rule" x="60.37" y="135.5" width="539.1" height="1.6" fill="var(--teal-text, #0E7391)"/>
-            <g id="tBotEn">
-              <text class="en" x="60.37" y="172.34" font-size="24.72" font-weight="500" fill="var(--teal-text, #0E7391)">Rustaq College of Education</text>
-              <rect x="366" y="165.3" width="8" height="2.2" fill="var(--teal-text, #0E7391)"/>
-            </g>
-            <g id="tBotAr">
-              <text class="ar" x="377" y="172.34" font-size="26.19" font-weight="500" fill="var(--teal-text, #0E7391)"
-                    direction="rtl" text-anchor="end">كلية التربية بالرستاق</text>
-            </g>
-          </g>
-          <rect id="sheen" x="0" y="0" width="660" height="228" fill="url(#gSheen)" mask="url(#mLogo)" opacity="0"/>
-        </g>
-      </g>
-    </g>
-  </svg>
+  <canvas id="bg"></canvas>
+  <svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg>
+  <canvas id="fg"></canvas>
 </div>
 
+<script src="logo-paths.js"></script>
 <script>
 (() => {
   'use strict';
 
   const DURATION = 20;
-  const PURPLE = '#3C1B63', TEAL = '#0B7A9E', TEXT = '#0E7391', TEAL_TEXT = '#4E93A8';
   const NS = 'http://www.w3.org/2000/svg';
+  const L = window.LOGO;
+
+  // brand
+  const TEAL = '#027194', DEEP = '#3C1B63', PAPER = '#F7FAFB';
+  const SPACE_TOP = [6, 13, 30], SPACE_BOT = [3, 7, 18];   // deep-space gradient
+  const STAR_COL = [226, 240, 248];
 
   // ---------- helpers ----------
   const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
-  const lerp  = (a, b, t) => a + (b - a) * t;
-  const prog  = (t, a, b) => clamp((t - a) / (b - a));
-  const lerpLog = (a, b, t) => Math.exp(lerp(Math.log(a), Math.log(b), t));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const prog = (t, a, b) => clamp((t - a) / (b - a));
   const E = {
-    outExpo:   x => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x),
-    outCubic:  x => 1 - Math.pow(1 - x, 3),
-    inCubic:   x => x * x * x,
-    inOutCubic:x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+    outCubic: x => 1 - Math.pow(1 - x, 3),
+    inCubic: x => x * x * x,
+    outQuint: x => 1 - Math.pow(1 - x, 5),
+    inOutCubic: x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
     inOutSine: x => -(Math.cos(Math.PI * x) - 1) / 2,
-    outSine:   x => Math.sin(x * Math.PI / 2),
-    outBack:   (x, s = 1.9) => 1 + (s + 1) * Math.pow(x - 1, 3) + s * Math.pow(x - 1, 2),
+    outBack: (x, s = 1.7) => 1 + (s + 1) * Math.pow(x - 1, 3) + s * Math.pow(x - 1, 2),
+    outExpo: x => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x),
   };
   const $ = id => document.getElementById(id);
   const el = (tag, attrs, parent) => {
@@ -183,332 +67,365 @@
     if (parent) parent.appendChild(n);
     return n;
   };
-  const set = (n, attrs) => { for (const k in attrs) n.setAttribute(k, attrs[k]); };
-  // deterministic RNG so every render is identical
-  let seed = 7;
+  const set = (n, a) => { for (const k in a) n.setAttribute(k, a[k]); };
+  let seed = 20260101;
   const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
 
   // ---------- layout ----------
-  let W, H, PORTRAIT, S_WORD, S_MARK, S_LOCK;
-  const LOCK_W = 539.1, LOCK_H = 143.5;            // lockup content size, world units
-  const P_LOCK = { x: -196.05, y: 31.25 };         // centre of the full lockup, world units
-  const CELLS  = [{ x: 570, y: 59 }, { x: 380, y: -59 }, { x: 190, y: 59 }];   // where the words live
-  const ORIGIN = { x: 0, y: 0 };                  // the ring's centre in world space
+  // The logo lives in its own coordinate space (the source artwork's 940x325 pixels).
+  let W, H, PORTRAIT, S_MARK, S_LOCK;
+  const MARK_C = { x: (L.mark.bbox[0] + L.mark.bbox[2]) / 2, y: (L.mark.bbox[1] + L.mark.bbox[3]) / 2 };
+  const LOCK = { x0: 86, y0: 50, x1: 854, y1: 254 };
+  const LOCK_C = { x: (LOCK.x0 + LOCK.x1) / 2, y: (LOCK.y0 + LOCK.y1) / 2 };
+  const LOCK_W = LOCK.x1 - LOCK.x0, LOCK_H = LOCK.y1 - LOCK.y0;
+  const MARK_W = L.mark.bbox[2] - L.mark.bbox[0], MARK_H = L.mark.bbox[3] - L.mark.bbox[1];
 
   function layout() {
     W = window.innerWidth; H = window.innerHeight;
     PORTRAIT = H > W;
-    const m = Math.min(W, H);
-    S_WORD = m / 360;
-    S_MARK = m * 0.52 / 114;
-    S_LOCK = PORTRAIT ? W * 0.84 / LOCK_W : Math.min(W * 0.64 / LOCK_W, H * 0.34 / LOCK_H);
+    S_MARK = Math.min(W * 0.46 / MARK_W, H * 0.34 / MARK_H);
+    S_LOCK = PORTRAIT ? W * 0.82 / LOCK_W : Math.min(W * 0.66 / LOCK_W, H * 0.32 / LOCK_H);
+    set($('svg'), { width: W, height: H, viewBox: `0 0 ${W} ${H}` });
+    for (const id of ['bg', 'fg']) { const c = $(id); c.width = W; c.height = H; }
+  }
+
+  // ---------- scene build ----------
+  const STARS = [], DUST = [];
+  const CONSTELLATION = [          // a small "telescope" asterism, in unit screen coords
+    [.30, .30], [.38, .24], [.46, .28], [.53, .21], [.60, .27], [.66, .20],
+  ];
+  let consLines, consDots, planetG, ring1, ring2, moonG, wordsG, trailPath, trailGlow,
+      markG, markFill, lockG, tArG, tEnG, ruleClip, botG, sheen, sheenMask, cometSVG;
+
+  function build() {
     const svg = $('svg');
-    set(svg, { width: W, height: H, viewBox: `0 0 ${W} ${H}` });
-    set($('fMotion'), { width: W, height: H });
-    const fx = $('fx'); fx.width = W; fx.height = H;
-  }
+    const defs = el('defs', {}, svg);
 
-  // ---------- camera ----------
-  // world -> screen:  screen = (W/2, H/2) + s * (world - P)
-  function camera(t) {
-    let P, s;
-    const [c1, c2, c3] = CELLS;
-    if (t < 2.4) {
-      P = c1; s = S_WORD * lerp(0.9, 1, E.outSine(prog(t, 0, 2.4)));
-    } else if (t < 4.4) {
-      const k = E.inOutCubic(prog(t, 2.4, 3.3));
-      P = { x: lerp(c1.x, c2.x, k), y: lerp(c1.y, c2.y, k) }; s = S_WORD;
-    } else if (t < 6.45) {
-      const k = E.inOutCubic(prog(t, 4.4, 5.3));
-      P = { x: lerp(c2.x, c3.x, k), y: lerp(c2.y, c3.y, k) }; s = S_WORD;
-    } else if (t < 8.4) {
-      const k = E.inOutCubic(prog(t, 6.45, 8.4));
-      P = { x: lerp(c3.x, ORIGIN.x, k), y: lerp(c3.y, ORIGIN.y, k) };
-      s = lerpLog(S_WORD, S_MARK, k);
-    } else if (t < 9.9) {
-      P = ORIGIN; s = S_MARK * lerp(1, 1.025, E.inOutSine(prog(t, 8.4, 9.9)));
-    } else if (t < 11.2) {
-      const k = E.inOutCubic(prog(t, 9.9, 11.2));
-      P = { x: lerp(ORIGIN.x, P_LOCK.x, k), y: lerp(ORIGIN.y, P_LOCK.y, k) };
-      s = lerpLog(S_MARK * 1.025, S_LOCK, k);
-    } else {
-      P = P_LOCK; s = S_LOCK * lerp(1, 1.045, E.inOutSine(prog(t, 11.2, 20)));
+    // mark gradient (fitted from the original artwork)
+    const g = L.mark.grad;
+    const lg = el('linearGradient', { id: 'gm', gradientUnits: 'userSpaceOnUse',
+      x1: g.p1[0], y1: g.p1[1], x2: g.p2[0], y2: g.p2[1] }, defs);
+    for (const s of g.stops) el('stop', { offset: s.off, 'stop-color': s.col }, lg);
+
+    // title wipes
+    const gAr = el('linearGradient', { id: 'gAr', gradientUnits: 'userSpaceOnUse', x1: 0, y1: 0, x2: 1, y2: 0 }, defs);
+    el('stop', { offset: 0, 'stop-color': '#000' }, gAr); el('stop', { offset: 1, 'stop-color': '#fff' }, gAr);
+    const mAr = el('mask', { id: 'mAr', maskUnits: 'userSpaceOnUse', x: 200, y: 40, width: 480, height: 90 }, defs);
+    el('rect', { x: 200, y: 40, width: 480, height: 90, fill: 'url(#gAr)' }, mAr);
+    const gEn = el('linearGradient', { id: 'gEn', gradientUnits: 'userSpaceOnUse', x1: 0, y1: 0, x2: 1, y2: 0 }, defs);
+    el('stop', { offset: 0, 'stop-color': '#fff' }, gEn); el('stop', { offset: 1, 'stop-color': '#000' }, gEn);
+    const mEn = el('mask', { id: 'mEn', maskUnits: 'userSpaceOnUse', x: 60, y: 110, width: 600, height: 80 }, defs);
+    el('rect', { x: 60, y: 110, width: 600, height: 80, fill: 'url(#gEn)' }, mEn);
+
+    // rule reveal
+    const cp = el('clipPath', { id: 'cRule', clipPathUnits: 'userSpaceOnUse' }, defs);
+    ruleClip = el('rect', { x: 86, y: 188, width: 0, height: 12 }, cp);
+
+    // sheen over the finished lockup
+    const white = el('filter', { id: 'fWhite' }, defs);
+    el('feColorMatrix', { type: 'matrix', values: '0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0' }, white);
+    sheenMask = el('mask', { id: 'mLogo', maskUnits: 'userSpaceOnUse', x: 60, y: 30, width: 820, height: 250 }, defs);
+    const gSh = el('linearGradient', { id: 'gSheen', gradientUnits: 'userSpaceOnUse', x1: 0, y1: 0, x2: 1, y2: 0 }, defs);
+    el('stop', { offset: 0, 'stop-color': '#fff', 'stop-opacity': 0 }, gSh);
+    el('stop', { offset: .5, 'stop-color': '#fff', 'stop-opacity': .8 }, gSh);
+    el('stop', { offset: 1, 'stop-color': '#fff', 'stop-opacity': 0 }, gSh);
+
+    // ---- scene layer (screen coordinates) ----
+    const scene = el('g', { id: 'scene' }, svg);
+    consLines = el('g', { stroke: '#7FD3E8', 'stroke-width': 1, fill: 'none', opacity: 0 }, scene);
+    CONSTELLATION.slice(0, -1).forEach(() => el('line', { x1: 0, y1: 0, x2: 0, y2: 0, pathLength: 1,
+      'stroke-dasharray': '1 1', 'stroke-dashoffset': 1 }, consLines));
+    consDots = el('g', { fill: '#DFF3FA', opacity: 0 }, scene);
+    CONSTELLATION.forEach(() => el('circle', { r: 2.4, cx: 0, cy: 0 }, consDots));
+
+    planetG = el('g', { opacity: 0 }, scene);
+    ring2 = el('ellipse', { rx: 118, ry: 30, fill: 'none', stroke: '#5FA9C4', 'stroke-width': 1.6, opacity: .55 }, planetG);
+    el('circle', { r: 54, fill: 'url(#gm)', opacity: .95 }, planetG);
+    ring1 = el('ellipse', { rx: 118, ry: 30, fill: 'none', stroke: '#9BD7E8', 'stroke-width': 2.2 }, planetG);
+    moonG = el('circle', { r: 6, fill: '#CFE9F2' }, planetG);
+
+    wordsG = el('g', { id: 'words' }, scene);
+
+    // ---- logo layer (artwork coordinates, transformed per frame) ----
+    lockG = el('g', { id: 'lock' }, svg);
+    trailGlow = el('path', { d: L.mark.d, fill: 'none', stroke: '#8FE6FF', 'stroke-width': 7,
+      'stroke-linecap': 'round', opacity: 0, pathLength: 1 }, lockG);
+    trailPath = el('path', { d: L.mark.d, fill: 'none', stroke: '#EAFBFF', 'stroke-width': 2.2,
+      'stroke-linecap': 'round', opacity: 0, pathLength: 1 }, lockG);
+    markG = el('g', {}, lockG);
+    markFill = el('path', { d: L.mark.d, 'fill-rule': 'evenodd', fill: 'url(#gm)', opacity: 0 }, markG);
+    tArG = el('g', { mask: 'url(#mAr)' }, lockG);
+    el('path', { d: L.arTitle.d, 'fill-rule': 'evenodd', fill: TEAL }, tArG);
+    tEnG = el('g', { mask: 'url(#mEn)' }, lockG);
+    el('path', { d: L.enTitle.d, 'fill-rule': 'evenodd', fill: TEAL }, tEnG);
+    el('path', { d: L.rule.d, fill: TEAL, 'clip-path': 'url(#cRule)' }, lockG);
+    botG = el('g', { opacity: 0 }, lockG);
+    for (const k of ['botEn', 'dash', 'botAr'])
+      el('path', { d: L[k].d, 'fill-rule': 'evenodd', fill: TEAL }, botG);
+    // the sheen needs the finished art as a mask
+    el('path', { d: [L.mark.d, L.arTitle.d, L.enTitle.d, L.rule.d, L.botEn.d, L.dash.d, L.botAr.d].join(' '),
+      'fill-rule': 'evenodd', fill: '#fff' }, sheenMask);
+    sheen = el('rect', { x: 60, y: 30, width: 820, height: 250, fill: 'url(#gSheen)',
+      mask: 'url(#mLogo)', opacity: 0 }, lockG);
+
+    // starfield + dust
+    for (let i = 0; i < 420; i++) {
+      const d = rnd();
+      STARS.push({ x: rnd(), y: rnd(), d, r: .5 + d * 1.7, a: .25 + d * .75,
+                   ph: rnd() * 6.283, sp: .6 + rnd() * 1.8, flare: rnd() < .06 });
     }
-    return { x: P.x, y: P.y, s };
+    for (let i = 0; i < 40; i++)
+      DUST.push({ x: rnd(), y: rnd(), r: 1 + rnd() * 2.4, a: .05 + rnd() * .12,
+                  vy: 4 + rnd() * 10, ph: rnd() * 6.283 });
   }
 
-  // same concave 4-point star as #starShape, as path data at (x, y) and scale k
-  function starPath(x, y, k) {
-    const p = (a, b) => `${(x + a * k).toFixed(2)} ${(y + b * k).toFixed(2)}`;
-    return `M${p(0, -14.2)} Q${p(3.49, -5.96)} ${p(8.3, 0)} Q${p(3.49, 5.96)} ${p(0, 14.2)} ` +
-           `Q${p(-3.49, 5.96)} ${p(-8.3, 0)} Q${p(-3.49, -5.96)} ${p(0, -14.2)}Z`;
+  // ---------- words ----------
+  const WORDS = [
+    { ar: 'نرصد',  en: 'WE OBSERVE',  tin: 1.25, tout: 3.15 },
+    { ar: 'نكتشف', en: 'WE DISCOVER', tin: 3.55, tout: 5.55 },
+    { ar: 'نحلم',  en: 'WE DREAM',    tin: 5.85, tout: 7.85 },
+  ];
+  function buildWords() {
+    WORDS.forEach(w => {
+      const g = el('g', { opacity: 0 }, wordsG);
+      const t = el('text', { x: 0, y: 0, 'text-anchor': 'middle', direction: 'rtl',
+        fill: '#ECF7FB', style: "font-family:'Tajawal',sans-serif", 'font-weight': 700 }, g);
+      t.textContent = w.ar;
+      const line = el('line', { x1: 0, y1: 0, x2: 0, y2: 0, stroke: '#4FA9C6', 'stroke-width': 1 }, g);
+      const cap = el('text', { x: 0, y: 0, 'text-anchor': 'middle', fill: '#7CC3DA',
+        style: "font-family:'Barlow',sans-serif", 'font-weight': 500 }, g);
+      cap.textContent = w.en;
+      w.n = { g, t, line, cap };
+    });
   }
 
-  // ---------- build: lattice (a soft starfield of circles + sparkles) ----------
-  const LATTICE = [];
-  function buildLattice() {
-    const g = $('lattice');
-    const circles = el('g', { fill: 'none', stroke: TEAL, 'stroke-opacity': .5 }, g);
-    const stars = el('g', { fill: 'none', stroke: PURPLE, 'stroke-opacity': .3 }, g);
-    for (let i = -8; i <= 10; i++) {
-      for (let j = -10; j <= 10; j++) {
-        const cx = 47.5 + 95 * i, cy = 29.5 + 59 * j;
-        LATTICE.push({ n: el('circle', { cx, cy, r: 41.25,
-                       'vector-effect': 'non-scaling-stroke', 'stroke-width': 1.25 }, circles), cx, cy });
-        el('path', { d: starPath(95 * i, 59 * j, .5),
-                     'vector-effect': 'non-scaling-stroke', 'stroke-width': 1.1 }, stars);
+  // ---------- canvas painting ----------
+  function paintBg(t, darkA) {
+    const c = $('bg').getContext('2d');
+    c.clearRect(0, 0, W, H);
+    if (darkA <= 0.001) return;
+    c.globalAlpha = darkA;
+    // deep-space gradient
+    const bgGrad = c.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, `rgb(${SPACE_TOP})`);
+    bgGrad.addColorStop(1, `rgb(${SPACE_BOT})`);
+    c.fillStyle = bgGrad; c.fillRect(0, 0, W, H);
+
+    // nebulae
+    const M = Math.max(W, H);
+    const neb = [
+      [.26 + .03 * Math.sin(t * .17), .34 + .02 * Math.cos(t * .13), .52, [11, 122, 158], .30],
+      [.78 + .02 * Math.cos(t * .11), .68 + .03 * Math.sin(t * .15), .48, [60, 27, 99], .34],
+      [.58, .18, .34, [40, 90, 150], .18],
+    ];
+    for (const [nx, ny, nr, col, a] of neb) {
+      const x = nx * W, y = ny * H, r = nr * M;
+      const rg = c.createRadialGradient(x, y, 0, x, y, r);
+      rg.addColorStop(0, `rgba(${col},${a})`); rg.addColorStop(1, `rgba(${col},0)`);
+      c.fillStyle = rg; c.fillRect(0, 0, W, H);
+    }
+
+    // stars (slow parallax drift + twinkle)
+    const driftX = -t * 7, driftY = -t * 2.5;
+    for (const s of STARS) {
+      const par = .3 + s.d * .9;
+      let x = (s.x * W + driftX * par) % W; if (x < 0) x += W;
+      let y = (s.y * H + driftY * par) % H; if (y < 0) y += H;
+      const tw = .55 + .45 * Math.sin(t * s.sp + s.ph);
+      const a = s.a * tw * clamp(prog(t, 0, 1.1) + s.d * .2);
+      c.fillStyle = `rgba(${STAR_COL},${a})`;
+      c.beginPath(); c.arc(x, y, s.r, 0, 6.283); c.fill();
+      if (s.flare) {                                  // little cross flare on the brightest
+        c.strokeStyle = `rgba(${STAR_COL},${a * .5})`; c.lineWidth = .8;
+        const f = s.r * 5;
+        c.beginPath(); c.moveTo(x - f, y); c.lineTo(x + f, y); c.moveTo(x, y - f); c.lineTo(x, y + f); c.stroke();
+      }
+    }
+    c.globalAlpha = 1;
+  }
+
+  // the quick shooting star behind the third word
+  function paintShootingStar(t) {
+    const k = prog(t, 6.05, 7.25);
+    if (k <= 0 || k >= 1) return;
+    const c = $('bg').getContext('2d');
+    const x0 = -.1 * W, y0 = .18 * H, x1 = 1.1 * W, y1 = .52 * H;
+    const x = lerp(x0, x1, E.inOutSine(k)), y = lerp(y0, y1, E.inOutSine(k));
+    const fade = Math.sin(Math.PI * k);
+    const len = 230;
+    const dx = (x1 - x0), dy = (y1 - y0), m = Math.hypot(dx, dy);
+    const tx = x - dx / m * len, ty = y - dy / m * len;
+    const lg = c.createLinearGradient(x, y, tx, ty);
+    lg.addColorStop(0, `rgba(230,250,255,${.9 * fade})`);
+    lg.addColorStop(1, 'rgba(230,250,255,0)');
+    c.strokeStyle = lg; c.lineWidth = 2.4; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(x, y); c.lineTo(tx, ty); c.stroke();
+    const rg = c.createRadialGradient(x, y, 0, x, y, 26);
+    rg.addColorStop(0, `rgba(240,252,255,${.85 * fade})`); rg.addColorStop(1, 'rgba(240,252,255,0)');
+    c.fillStyle = rg; c.beginPath(); c.arc(x, y, 26, 0, 6.283); c.fill();
+  }
+
+  // comet head glow while it draws the logo, drawn in screen space
+  function paintComet(t, pt, on) {
+    if (!on || !pt) return;
+    const c = $('bg').getContext('2d');
+    for (const [r, a] of [[90, .18], [42, .35], [16, .85]]) {
+      const rg = c.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, r);
+      rg.addColorStop(0, `rgba(190,245,255,${a})`); rg.addColorStop(1, 'rgba(190,245,255,0)');
+      c.fillStyle = rg; c.beginPath(); c.arc(pt.x, pt.y, r, 0, 6.283); c.fill();
+    }
+  }
+
+  function paintFg(t, darkA) {
+    const c = $('fg').getContext('2d');
+    c.clearRect(0, 0, W, H);
+    // the light burst: a white bloom that washes the night away
+    const bk = prog(t, 12.2, 13.05);
+    if (bk > 0 && bk < 1 && markPt) {
+      const peak = Math.sin(Math.PI * Math.pow(bk, .55));
+      const r = lerp(30, Math.hypot(W, H) * .95, E.outQuint(bk));
+      const rg = c.createRadialGradient(markPt.x, markPt.y, 0, markPt.x, markPt.y, r);
+      rg.addColorStop(0, `rgba(255,255,255,${Math.min(1, 1.25 * peak)})`);
+      rg.addColorStop(.5, `rgba(248,253,255,${.9 * peak})`);
+      rg.addColorStop(1, `rgba(240,250,255,${.12 * peak})`);
+      c.fillStyle = rg; c.fillRect(0, 0, W, H);
+      // a brief full-frame wash at the very peak, so the night never reads grey
+      const w = Math.pow(Math.max(0, 1 - Math.abs(t - 12.62) / .3), 2);
+      if (w > 0) { c.fillStyle = `rgba(255,255,255,${(.95 * w).toFixed(3)})`; c.fillRect(0, 0, W, H); }
+    }
+    // daylight dust once the page is light
+    if (darkA < .5) {
+      const a0 = (1 - darkA * 2);
+      for (const d of DUST) {
+        let y = (d.y * H - d.vy * t) % H; if (y < 0) y += H;
+        const x = d.x * W + Math.sin(t * .5 + d.ph) * 12;
+        c.fillStyle = `rgba(60,110,140,${d.a * a0 * (.6 + .4 * Math.sin(t + d.ph))})`;
+        c.beginPath(); c.arc(x, y, d.r, 0, 6.283); c.fill();
       }
     }
   }
 
-  // ---------- build: words ----------
-  const WORDS = [
-    { ar: 'نرصد',   en: 'WE OBSERVE',  tin: 0.75, tout: 2.2 },
-    { ar: 'نكتشف',  en: 'WE DISCOVER', tin: 3.05, tout: 4.2 },
-    { ar: 'نحلم',   en: 'WE DREAM',    tin: 5.05, tout: 6.25 },
-  ];
-  function buildWords() {
-    const root = $('words');
-    WORDS.forEach((w, i) => {
-      const c = CELLS[i];
-      const g = el('g', { transform: `translate(${c.x} ${c.y})` }, root);
-      const all = el('g', {}, g);
-      const clip = el('g', { 'clip-path': 'url(#cWord)' }, all);
-      const move = el('g', { filter: `url(#fW${i})` }, clip);
-      const t = el('text', { class: 'ar', x: 0, y: 0, 'font-size': 76, 'font-weight': 700, fill: PURPLE,
-                             'text-anchor': 'middle', direction: 'rtl' }, move);
-      t.textContent = w.ar;
-      const sep = el('g', { transform: 'translate(0 50)' }, all);
-      const l1 = el('line', { x1: -7, y1: 0, x2: -7, y2: 0, stroke: TEAL, 'stroke-width': .9, 'stroke-linecap': 'round' }, sep);
-      const l2 = el('line', { x1: 7,  y1: 0, x2: 7,  y2: 0, stroke: TEAL, 'stroke-width': .9, 'stroke-linecap': 'round' }, sep);
-      const d  = el('use', { href: '#starShape', fill: TEAL }, sep);
-      const cap = el('text', { class: 'en', x: 0, y: 74, 'font-size': 10, 'font-weight': 500, fill: TEAL_TEXT,
-                               'text-anchor': 'middle' }, all);
-      cap.textContent = w.en;
-      w.nodes = { all, move, blur: $(`fW${i}`).firstElementChild, l1, l2, d, cap };
-    });
-  }
+  // ---------- frame ----------
+  let markPt = null;            // comet head in screen coords (for the burst centre)
+  let trailLen = 0;
 
-  // ---------- build: star burst + ripples ----------
-  const BURST = [];
-  const RINGS = [];
-  const RING_C = { x: 526, y: 77 };
-  function buildBurst() {
-    const g = $('burst');
-    for (let i = 0; i < 14; i++) {
-      const a = (i / 14) * Math.PI * 2 + 0.2;
-      const n = el('use', { href: '#starShape', fill: i % 2 ? PURPLE : TEAL, opacity: 0 }, g);
-      BURST.push({ n, a, dist: 62 + rnd() * 46, sc: .16 + rnd() * .14, spin: (rnd() - .5) * 200 });
-    }
-    const r = $('ripples');
-    const rings = [[8.36, TEAL, 150], [8.5, PURPLE, 120], [16.0, TEAL, 95], [16.18, PURPLE, 78]];
-    for (const [t0, col, rmax] of rings) {
-      RINGS.push({ t0, rmax, n: el('circle', { cx: RING_C.x, cy: RING_C.y, r: 0, fill: 'none', stroke: col,
-                                               'stroke-width': .8, opacity: 0 }, r) });
-    }
-  }
-
-  // ---------- particles & soft colour blobs (canvas) ----------
-  const PARTS = [];
-  function buildParticles() {
-    for (let i = 0; i < 46; i++) {
-      const d = .15 + rnd() * .85;
-      PARTS.push({
-        x: rnd(), y: rnd(), d,
-        size: 3 + d * 9,
-        col: rnd() < .55 ? [11, 122, 158] : [60, 27, 99],
-        a: .10 + d * .32,
-        rot: rnd() * Math.PI, spin: (rnd() - .5) * .8,
-        vy: 8 + d * 18, ph: rnd() * Math.PI * 2,
-      });
-    }
-  }
-  function drawFx(t, cam, fade) {
-    const cv = $('fx'), c = cv.getContext('2d');
-    c.clearRect(0, 0, W, H);
-    // where the world origin sits on screen — particles follow it with parallax
-    const ox = W / 2 - cam.s * cam.x, oy = H / 2 - cam.s * cam.y;
-    const c0 = camera(0);
-    const ox0 = W / 2 - c0.s * c0.x, oy0 = H / 2 - c0.s * c0.y;
-    const inA = E.outCubic(prog(t, 0, 1.6)) * fade;
-
-    // two slow colour blobs
-    const blobs = [
-      [.22 + .05 * Math.sin(t * .25), .28 + .04 * Math.cos(t * .2), .55, [60, 27, 99], .075],
-      [.80 + .04 * Math.cos(t * .22), .74 + .05 * Math.sin(t * .18), .6,  [11, 122, 158], .11],
-    ];
-    for (const [bx, by, br, col, a] of blobs) {
-      const x = bx * W + (ox - ox0) * .06, y = by * H + (oy - oy0) * .06, r = br * Math.max(W, H);
-      const g = c.createRadialGradient(x, y, 0, x, y, r);
-      g.addColorStop(0, `rgba(${col},${a * inA})`); g.addColorStop(1, `rgba(${col},0)`);
-      c.fillStyle = g; c.fillRect(0, 0, W, H);
-    }
-
-    const zoom = cam.s / c0.s;
-    for (const p of PARTS) {
-      const par = p.d * .45;
-      let x = p.x * (W + 200) + (ox - ox0) * par;
-      let y = p.y * (H + 200) + (oy - oy0) * par - p.vy * t;
-      // gentle zoom parallax around screen centre
-      const zf = Math.pow(zoom, p.d * .35);
-      x = W / 2 + (x - W / 2) * zf; y = H / 2 + (y - H / 2) * zf;
-      x = ((x + 100) % (W + 200) + (W + 200)) % (W + 200) - 100;
-      y = ((y + 100) % (H + 200) + (H + 200)) % (H + 200) - 100;
-      const tw = .65 + .35 * Math.sin(t * 1.3 + p.ph);
-      const a = p.a * tw * inA;
-      if (a < .004) continue;
-      const sz = p.size * Math.pow(zf, .5);
-      c.save(); c.translate(x, y); c.rotate(p.rot + p.spin * t);
-      c.fillStyle = `rgba(${p.col},${a})`;
-      c.beginPath();
-      c.moveTo(0, -sz); c.quadraticCurveTo(sz * .25, -sz * .25, sz * .58, 0);
-      c.quadraticCurveTo(sz * .25, sz * .25, 0, sz); c.quadraticCurveTo(-sz * .25, sz * .25, -sz * .58, 0);
-      c.quadraticCurveTo(-sz * .25, -sz * .25, 0, -sz); c.fill();
-      c.restore();
-    }
-  }
-
-  function buildGrain() {
-    const cv = document.createElement('canvas'); cv.width = cv.height = 256;
-    const c = cv.getContext('2d'), img = c.createImageData(256, 256);
-    for (let i = 0; i < img.data.length; i += 4) {
-      const v = 128 + (rnd() - .5) * 255;
-      img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255;
-    }
-    c.putImageData(img, 0, 0);
-    $('grain').style.backgroundImage = `url(${cv.toDataURL()})`;
-  }
-
-  // ---------- the frame ----------
   function render(t) {
     t = clamp(t, 0, DURATION);
-    const cam = camera(t);
-    const fade = 1 - E.inOutSine(prog(t, 19.25, 20));
+    const endFade = 1 - E.inOutSine(prog(t, 19.3, 20));
+    const darkA = (1 - E.inOutSine(prog(t, 12.4, 12.95)));          // night -> day
 
-    set($('cam'), { transform: `translate(${W / 2} ${H / 2}) scale(${cam.s}) translate(${-cam.x} ${-cam.y})` });
+    // ---- logo transform: the mark alone, then the whole lockup ----
+    const k = E.inOutCubic(prog(t, 13.05, 14.35));
+    const ax = lerp(MARK_C.x, LOCK_C.x, k), ay = lerp(MARK_C.y, LOCK_C.y, k);
+    const breathe = 1 + .012 * Math.sin((t - 14) * .5) * clamp(prog(t, 14.4, 15.4));
+    const s = lerp(S_MARK, S_LOCK * breathe, k);
+    set(lockG, { transform: `translate(${W / 2} ${H / 2}) scale(${s}) translate(${-ax} ${-ay})` });
+    lockG.setAttribute('opacity', endFade.toFixed(3));
 
-    // motion blur from camera velocity (px per frame at 60 fps)
-    const dt = 1 / 60, prev = camera(Math.max(0, t - dt));
-    const vx = Math.abs((W / 2 - cam.s * cam.x) - (W / 2 - prev.s * prev.x));
-    const vy = Math.abs((H / 2 - cam.s * cam.y) - (H / 2 - prev.s * prev.y));
-    const bx = Math.min(vx * .2, 6), by = Math.min(vy * .2, 6);
-    if (bx > .15 || by > .15) {
-      $('fMotionBlur').setAttribute('stdDeviation', `${bx.toFixed(2)} ${by.toFixed(2)}`);
-      $('screen').setAttribute('filter', 'url(#fMotion)');
-    } else {
-      $('screen').removeAttribute('filter');
+    // ---- the comet draws the mark ----
+    const draw = prog(t, 9.4, 11.75);                // how much of the outline is traced
+    const drawn = E.inOutSine(draw);
+    if (draw > 0 && draw < 1) {
+      if (!trailLen) trailLen = trailPath.getTotalLength();
+      const p = trailPath.getPointAtLength(drawn * trailLen);
+      // artwork -> screen
+      markPt = { x: W / 2 + s * (p.x - ax), y: H / 2 + s * (p.y - ay) };
+    } else if (draw >= 1 && !markPt) markPt = { x: W / 2, y: H / 2 };
+    const trailA = draw > 0 ? (1 - E.inCubic(prog(t, 11.6, 12.4))) : 0;
+    for (const [n, w] of [[trailGlow, .55], [trailPath, 1]]) {
+      set(n, { 'stroke-dasharray': '1 1', 'stroke-dashoffset': (1 - drawn).toFixed(4),
+               opacity: (trailA * w * endFade).toFixed(3) });
     }
+    // mark fills in as the trail fades
+    markFill.setAttribute('opacity', (E.outCubic(prog(t, 11.5, 12.3)) * endFade).toFixed(3));
 
-    // lattice: grows out from the first word, dims for the logo, clears a hole behind it
-    const c1 = CELLS[0];
-    const rr = Math.max(1, lerp(0, 1500, E.outCubic(prog(t, 0, 3.2))));
-    set($('gReveal'), { cx: c1.x, cy: c1.y, r: rr });
-    let la = 1;
-    la = lerp(la, .5, E.inOutSine(prog(t, 6.9, 8.4)));
-    la = lerp(la, .42, E.inOutSine(prog(t, 9.9, 11.2)));
-    $('lattice').setAttribute('opacity', (la * fade).toFixed(3));
-    for (const c of LATTICE) {
-      const d = Math.hypot(c.cx - c1.x, (c.cy - c1.y) * 1.3);
-      c.n.setAttribute('opacity', (.62 + .38 * Math.sin(d * .012 - t * 1.6)).toFixed(3));
-    }
-    const hk1 = E.inOutCubic(prog(t, 6.45, 8.4)), hk2 = E.inOutCubic(prog(t, 9.9, 11.2));
-    const hx = t < 9.9 ? cam.x : lerp(ORIGIN.x, P_LOCK.x, hk2);
-    const hy = t < 9.9 ? cam.y : lerp(ORIGIN.y, P_LOCK.y, hk2);
-    const hrx = lerp(lerp(170, 118, hk1), 340, hk2), hry = lerp(lerp(104, 78, hk1), 128, hk2);
-    set($('gHole'), { cx: hx, cy: hy, r: hrx,
-                      gradientTransform: `translate(${hx} ${hy}) scale(1 ${hry / hrx}) translate(${-hx} ${-hy})` });
+    // ---- titles ----
+    const arK = E.inOutCubic(prog(t, 13.95, 15.25));
+    const arEdge = lerp(660, 215, arK);
+    set($('gAr'), { x1: arEdge, x2: arEdge + 40 });
+    tArG.setAttribute('opacity', (clamp(prog(t, 13.9, 14.1)) * endFade).toFixed(3));
+    const enK = E.inOutCubic(prog(t, 14.25, 15.55));
+    const enEdge = lerp(70, 660, enK);
+    set($('gEn'), { x1: enEdge - 40, x2: enEdge });
+    tEnG.setAttribute('opacity', (clamp(prog(t, 14.2, 14.4)) * endFade).toFixed(3));
+    const rw = 768 * E.inOutCubic(prog(t, 14.9, 15.9));
+    set(ruleClip, { x: 854 - rw, width: Math.max(0, rw) });
+    botG.setAttribute('opacity', (E.outCubic(prog(t, 15.35, 16.15)) * endFade).toFixed(3));
 
-    // words
-    for (const w of WORDS) {
-      const N = w.nodes;
-      const pin = prog(t, w.tin, w.tin + .9), pout = E.inCubic(prog(t, w.tout, w.tout + .45));
-      const vis = (t >= w.tin - .01 && t <= w.tout + .5);
-      N.all.setAttribute('display', vis ? 'inline' : 'none');
-      if (!vis) continue;
-      const alpha = E.outCubic(prog(t, w.tin, w.tin + .45)) * (1 - pout);
-      set(N.all, { opacity: alpha.toFixed(3), transform: `translate(0 ${(-4 - 18 * pout).toFixed(2)})` });
-      set(N.move, { transform: `translate(0 ${(62 * (1 - E.outExpo(pin))).toFixed(2)})` });
-      N.blur.setAttribute('stdDeviation', (4.5 * (1 - E.outCubic(pin)) + 4 * pout).toFixed(2));
-      const L = 40 * E.outExpo(prog(t, w.tin + .2, w.tin + 1.2));
-      set(N.l1, { x2: -7 - L }); set(N.l2, { x2: 7 + L });
-      const ds = .36 * clamp(E.outBack(prog(t, w.tin + .15, w.tin + .75)), 0, 2);
-      set(N.d, { transform: `rotate(${(90 * (1 - E.outCubic(prog(t, w.tin + .15, w.tin + .75)))).toFixed(1)}) scale(${ds.toFixed(3)})` });
-      const ca = E.outCubic(prog(t, w.tin + .25, w.tin + 1.0));
-      const ls = lerp(.95, .42, E.outExpo(prog(t, w.tin + .25, w.tin + 1.4))) * 10;
-      set(N.cap, { opacity: ca.toFixed(3), 'letter-spacing': ls.toFixed(2), x: (ls / 2).toFixed(2) });
-    }
-
-    // logo mark: a thin guide traces the ring, then the ring is inked over it,
-    // the tail slides out of the gap, and the inner ring pops
-    const gk = E.outCubic(prog(t, 6.45, 7.0));
-    set($('gdRing'), { 'stroke-dasharray': '1 1', 'stroke-dashoffset': (1 - gk).toFixed(4) });
-    $('gdRing').setAttribute('opacity', (.85 * prog(t, 6.45, 6.6) * (1 - E.inOutSine(prog(t, 7.5, 7.9)))).toFixed(3));
-    const rk = E.inOutCubic(prog(t, 6.7, 7.85));
-    set($('arcRing'), { 'stroke-dasharray': '1 1', 'stroke-dashoffset': (1 - rk).toFixed(4),
-                        display: rk > 0 ? 'inline' : 'none' });
-    const slK = E.outCubic(prog(t, 6.55, 6.9)) * (1 - E.inOutSine(prog(t, 7.9, 8.3)));
-    $('speedLines').setAttribute('opacity', (.7 * slK).toFixed(3));
-    const tailK = prog(t, 7.55, 8.15);
-    set($('tail'), { opacity: E.outCubic(tailK).toFixed(3),
-                     transform: `translate(${(14 * (1 - E.outExpo(tailK))).toFixed(2)} 0)` });
-    // inner ring pops
-    const dk = prog(t, 8.25, 8.95);
-    const dsc = dk <= 0 ? 0 : E.outBack(dk, 2.4);
-    set($('ring2').parentNode, { transform: `translate(526 77) rotate(${(-90 * (1 - E.outCubic(dk))).toFixed(2)}) scale(${Math.max(0, dsc).toFixed(4)})` });
-    // burst of little sparkles
-    for (const b of BURST) {
-      const k = prog(t, 8.3, 9.35);
-      if (k <= 0 || k >= 1) { b.n.setAttribute('opacity', 0); continue; }
-      const dd = b.dist * E.outExpo(k);
-      const x = RING_C.x + Math.cos(b.a) * dd, y = RING_C.y + Math.sin(b.a) * dd * .8;
-      set(b.n, { opacity: (1 - E.inCubic(k)).toFixed(3),
-                 transform: `translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${(b.spin * k).toFixed(1)}) scale(${(b.sc * (1 - .5 * k)).toFixed(3)})` });
-    }
-    for (const r of RINGS) {
-      const k = prog(t, r.t0, r.t0 + 1.5);
-      if (k <= 0 || k >= 1) { r.n.setAttribute('opacity', 0); continue; }
-      set(r.n, { r: (12 + (r.rmax - 12) * E.outCubic(k)).toFixed(2), opacity: (.55 * (1 - k)).toFixed(3) });
-    }
-
-    // titles
-    const arK = E.inOutCubic(prog(t, 10.45, 11.75));
-    const arEdge = lerp(460, -40, arK);
-    set($('gAr'), { x1: arEdge, x2: arEdge + 34 });
-    $('tAr').setAttribute('transform', `translate(0 ${(5 * (1 - E.outCubic(prog(t, 10.45, 11.6)))).toFixed(2)})`);
-    const enK = E.inOutCubic(prog(t, 10.75, 12.05));
-    const enEdge = lerp(40, 640, enK);
-    set($('gEn'), { x1: enEdge - 34, x2: enEdge });
-    $('tEn').setAttribute('transform', `translate(0 ${(5 * (1 - E.outCubic(prog(t, 10.75, 11.9)))).toFixed(2)})`);
-    const ruleW = 539.1 * E.inOutCubic(prog(t, 11.25, 12.35));
-    set($('rule'), { x: 599.5 - ruleW, width: Math.max(0, ruleW) });
-    const be = E.outCubic(prog(t, 11.7, 12.7)), ba = E.outCubic(prog(t, 11.85, 12.85));
-    set($('tBotEn'), { opacity: be.toFixed(3), transform: `translate(${(-10 * (1 - be)).toFixed(2)} 0)` });
-    set($('tBotAr'), { opacity: ba.toFixed(3), transform: `translate(${(10 * (1 - ba)).toFixed(2)} 0)` });
-
-    // sheen
-    const sk = prog(t, 13.35, 14.65);
+    // ---- sheen ----
+    const sk = prog(t, 16.4, 17.7);
     if (sk > 0 && sk < 1) {
-      const cx = lerp(20, 660, E.inOutSine(sk));
-      set($('gSheen'), { x1: cx - 46, x2: cx + 46, gradientTransform: `rotate(-24 ${cx} 110)` });
-      $('sheen').setAttribute('opacity', 1);
-    } else {
-      $('sheen').setAttribute('opacity', 0);
+      const cx = lerp(40, 900, E.inOutSine(sk));
+      set($('gSheen'), { x1: cx - 70, x2: cx + 70, gradientTransform: `rotate(-20 ${cx} 150)` });
+      sheen.setAttribute('opacity', endFade.toFixed(3));
+    } else sheen.setAttribute('opacity', 0);
+
+    // ---- words ----
+    const base = Math.min(W, H);
+    for (const w of WORDS) {
+      const { g, t: txt, line, cap } = w.n;
+      const vis = t > w.tin - .05 && t < w.tout + .6;
+      g.setAttribute('display', vis ? 'inline' : 'none');
+      if (!vis) continue;
+      const inK = E.outQuint(prog(t, w.tin, w.tin + .85));
+      const outK = E.inCubic(prog(t, w.tout, w.tout + .55));
+      const a = clamp(prog(t, w.tin, w.tin + .45)) * (1 - outK);
+      const y = H * .52 + (1 - inK) * base * .05 - outK * base * .04;
+      set(g, { opacity: a.toFixed(3), transform: `translate(${W / 2} ${y})` });
+      const fs = base * .115;
+      set(txt, { 'font-size': fs, y: 0, 'letter-spacing': (1 - inK) * fs * .06 });
+      const halfW = base * .075 * inK;
+      set(line, { x1: -halfW, x2: halfW, y1: fs * .42, y2: fs * .42, opacity: inK.toFixed(3) });
+      set(cap, { 'font-size': base * .0165, y: fs * .78,
+                 'letter-spacing': lerp(base * .012, base * .006, E.outExpo(prog(t, w.tin + .2, w.tin + 1.3))),
+                 opacity: E.outCubic(prog(t, w.tin + .25, w.tin + 1)).toFixed(3) });
     }
 
-    // end: gentle fade back to paper so the clip loops cleanly
-    $('lock').setAttribute('opacity', fade.toFixed(3));
-    drawFx(t, cam, fade);
+    // ---- constellation (with the first word) ----
+    const cK = prog(t, 1.45, 3.0), cOut = 1 - E.inCubic(prog(t, 3.0, 3.5));
+    consDots.setAttribute('opacity', (E.outCubic(prog(t, 1.35, 2.1)) * cOut).toFixed(3));
+    consLines.setAttribute('opacity', (0.75 * cOut).toFixed(3));
+    CONSTELLATION.forEach((pt, i) => {
+      const x = pt[0] * W, y = pt[1] * H;
+      set(consDots.children[i], { cx: x, cy: y, r: (1.8 + (i % 2) * 1.1) * (base / 900) });
+      if (i < CONSTELLATION.length - 1) {
+        const n = CONSTELLATION[i + 1];
+        const seg = clamp((cK * (CONSTELLATION.length - 1)) - i);
+        set(consLines.children[i], { x1: x, y1: y, x2: n[0] * W, y2: n[1] * H,
+          'stroke-dashoffset': (1 - E.outCubic(seg)).toFixed(3) });
+      }
+    });
+
+    // ---- ringed planet (with the second word) ----
+    const pK = prog(t, 3.45, 6.2);
+    const pA = E.outCubic(prog(t, 3.45, 4.3)) * (1 - E.inCubic(prog(t, 5.5, 6.2)));
+    planetG.setAttribute('opacity', (pA * .9).toFixed(3));
+    if (pA > 0) {
+      const px = lerp(-.12, .42, pK) * W, py = H * (PORTRAIT ? .26 : .255);
+      const ps = base / 1000;
+      set(planetG, { transform: `translate(${px} ${py}) scale(${ps}) rotate(-16)` });
+      const ma = pK * 6.283 * 1.3;
+      set(moonG, { cx: Math.cos(ma) * 118, cy: Math.sin(ma) * 30 });
+      // the moon passes behind the planet on the far side
+      moonG.setAttribute('opacity', Math.sin(ma) < 0 ? .45 : 1);
+      set(ring1, { opacity: (.9 * E.outCubic(prog(t, 3.6, 4.6))).toFixed(2) });
+      set(ring2, { opacity: (.5 * E.outCubic(prog(t, 3.7, 4.8))).toFixed(2) });
+    }
+
+    // ---- canvas layers ----
+    paintBg(t, darkA);
+    paintShootingStar(t);
+    paintComet(t, markPt, draw > 0 && draw < 1);
+    paintFg(t, darkA);
   }
 
   // ---------- boot ----------
   window.DURATION = DURATION;
   window.ready = (async () => {
-    layout();
-    buildGrain(); buildLattice(); buildWords(); buildBurst(); buildParticles();
+    layout(); build(); buildWords();
     await Promise.all([
-      document.fonts.load("700 76px 'Tajawal'", 'نرصد نكتشف نحلم'),
-      document.fonts.load("500 36px 'Tajawal'", 'نادي الفلك والفضاء كلية التربية بالرستاق'),
-      document.fonts.load("500 35px 'Barlow'", 'Astronomy & Space Club Rustaq College of Education'),
+      document.fonts.load("700 80px 'Tajawal'", 'نرصد نكتشف نحلم'),
+      document.fonts.load("500 20px 'Barlow'", 'WE OBSERVE DISCOVER DREAM'),
     ]);
     await document.fonts.ready;
     window.render = render;
@@ -516,11 +433,15 @@
     if (q.has('capture')) return;
     if (q.has('t')) { render(parseFloat(q.get('t'))); return; }
     const t0 = performance.now();
-    const loop = now => { render(((now - t0) / 1000) % (DURATION + 0.6)); requestAnimationFrame(loop); };
+    const loop = now => { render(((now - t0) / 1000) % (DURATION + .6)); requestAnimationFrame(loop); };
     requestAnimationFrame(loop);
-    window.addEventListener('resize', () => { location.reload(); });
+    window.addEventListener('resize', () => location.reload());
   })();
 })();
 </script>
+<style>
+  @font-face { font-family: 'Tajawal'; font-weight: 700; src: url(fonts/Tajawal-Bold.ttf) format('truetype'); }
+  @font-face { font-family: 'Barlow';  font-weight: 500; src: url(fonts/Barlow-Medium.ttf) format('truetype'); }
+</style>
 </body>
 </html>
