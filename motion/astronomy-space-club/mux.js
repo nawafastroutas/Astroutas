@@ -12,7 +12,7 @@ const [video, audio, out] = process.argv.slice(2);
 if (!out) { console.error('usage: node mux.js <video.mp4> <audio.wav> <out.mp4>'); process.exit(1); }
 
 // pass 1: measure (ffmpeg prints the loudnorm report as JSON on stderr)
-const target = 'I=-16:TP=-1.5:LRA=11';
+const target = 'I=-19:TP=-1.5:LRA=16';   // effects, not music: keep it quiet and dynamic
 const report = spawnSync(FFMPEG, ['-hide_banner', '-i', audio, '-af', `loudnorm=${target}:print_format=json`, '-f', 'null', '-'],
                          { encoding: 'utf8' }).stderr;
 const m = JSON.parse(report.match(/\{[^{}]*\}/g).pop());

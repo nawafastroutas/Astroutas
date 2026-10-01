@@ -1,17 +1,21 @@
 #!/usr/bin/env node
 /*
- * Procedural soundtrack for the 20 s astronomy motion graphic.
- * No samples, no dependencies — every sound is synthesised here and placed on
- * the same timeline as index.html:
+ * Sound design for the 20 s astronomy motion graphic — effects only, no music:
+ * no notes, no chords, no melody. Everything here is filtered noise, sub sweeps
+ * and transients, placed on the same timeline as index.html:
  *
- *   0.0          sub drone + airy shimmer: deep space
- *   1.25 / 3.55 / 5.85   a bell per word (نرصد · نكتشف · نحلم), rising D–F#–A
- *   6.05 → 7.25  soft noise sweep with the shooting star
- *   8.30 → 12.2  riser: the comet approaches and traces the logo (arpeggio + noise)
- *   12.2         impact + white-noise bloom — the light burst
- *   13.0         warm resolving chord (D add9) as the lockup lands
- *   14.0 → 16.2  sparkle arpeggio while the titles write on
- *   16.4         shimmer with the sheen; soft pad tail to the end
+ *   0.0  → 12.6   space bed: slow low rumble + faint high "air", with distant twinkles
+ *   1.25 / 3.55 / 5.85   a soft swish as each word appears
+ *   1.45 → 3.0    tiny ticks as the constellation lines connect
+ *   3.45 → 6.2    a very low pass-by as the ringed planet drifts across
+ *   6.05 → 7.3    the shooting star: fast whoosh, left to right
+ *   8.25 → 9.5    the comet approaches
+ *   9.4  → 11.8   sizzle of the glowing tail tracing the logo, with sparkles
+ *   11.7 → 12.2   pre-burst riser
+ *   12.2          the light burst: sub drop + white-noise bloom
+ *   13.0 → 16.2   the lockup: settle whoosh, two title swishes, rule zip, soft tick
+ *   16.4 → 17.7   the sheen: a thin high shimmer
+ *   17.7 → 20     the air fades out
  *
  *   node synth.js out/soundtrack.wav
  */
@@ -22,13 +26,9 @@ const SR = 48000, DUR = 20, N = SR * DUR;
 const dryL = new Float32Array(N), dryR = new Float32Array(N);
 const sendL = new Float32Array(N), sendR = new Float32Array(N);
 
-let seed = 31337;
+let seed = 90210;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
-const hz = m => 440 * Math.pow(2, (m - 69) / 12);
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
-const NOTE = { D1: 26, D2: 38, A2: 45, D3: 50, E3: 52, Fs3: 54, A3: 57, B3: 59,
-               D4: 62, E4: 64, Fs4: 66, A4: 69, B4: 71, D5: 74, E5: 76, Fs5: 78,
-               A5: 81, B5: 83, D6: 86, Fs6: 90, A6: 93, D7: 98 };
 
 function out(n, v, pan, send) {
   if (n < 0 || n >= N) return;
@@ -45,71 +45,17 @@ function highpass(fc) {
   let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
   return x => { const y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2; x2 = x1; x1 = x; y2 = y1; y1 = y; return y; };
 }
-
-// ---------- instruments ----------
-
-// deep, slowly beating sub — the "weight" of space
-function drone(midi, t0, t1, amp, { att = 4, rel = 3 } = {}) {
-  const n0 = Math.round(t0 * SR), n1 = Math.round(t1 * SR), f = hz(midi);
-  const partials = [[1, 1], [2, .28], [3, .12], [4, .05]];
-  const det = [-4, 4];
-  for (const cents of det) {
-    const ff = f * Math.pow(2, cents / 1200);
-    const ph = partials.map(() => rnd() * 6.283);
-    for (let n = n0; n < n1 && n < N; n++) {
-      const t = (n - n0) / SR, left = (n1 - n) / SR;
-      const env = Math.pow(clamp(t / att), 1.6) * clamp(left / rel);
-      let v = 0;
-      partials.forEach(([h, a], i) => { v += a * Math.sin(ph[i] + 6.283185 * ff * h * t); });
-      out(n, v * env * amp * (.9 + .1 * Math.sin(t * .7 + cents)), cents < 0 ? -.25 : .25, .18);
-    }
-  }
+// one-pole low-pass
+function lowpass(fc) {
+  const a = 1 - Math.exp(-2 * Math.PI * fc / SR);
+  let y = 0;
+  return x => (y += a * (x - y));
 }
 
-// wide additive pad
-function pad(midis, t0, t1, amp, { att = 3, rel = 3, send = .7, bright = 2.4 } = {}) {
-  const n0 = Math.round(t0 * SR), n1 = Math.round(t1 * SR);
-  for (const m of midis) {
-    for (const [cents, pan] of [[-6, -.5], [6, .5]]) {
-      const f = hz(m) * Math.pow(2, cents / 1200), H = 9;
-      const hA = [], ph = [];
-      for (let h = 1; h <= H; h++) { hA.push((1 / h) * Math.exp(-(h - 1) / bright)); ph.push(rnd() * 6.283); }
-      for (let n = n0; n < n1 && n < N; n++) {
-        const t = (n - n0) / SR, left = (n1 - n) / SR;
-        const env = Math.pow(clamp(t / att), 2) * clamp(left / rel) * (.86 + .14 * Math.sin(t * .9 + m));
-        let v = 0;
-        for (let h = 0; h < H; h++) v += hA[h] * Math.sin(ph[h] + 6.283185 * f * (h + 1) * t);
-        out(n, v * env * amp, pan, send);
-      }
-    }
-  }
-}
+// ---------- effect generators ----------
 
-// struck bell / chime (inharmonic partials)
-function bell(t0, midi, amp, pan, { dur = 4.5, send = .72 } = {}) {
-  const f = hz(midi), n0 = Math.round(t0 * SR), len = Math.round(dur * SR);
-  const parts = [[1, 1, 1], [2.01, .5, .55], [2.76, .34, .42], [4.07, .2, .3], [5.43, .12, .22], [8.1, .06, .14]];
-  const hp = highpass(Math.min(120, f * .6));
-  for (let n = 0; n < len; n++) {
-    const t = n / SR;
-    let v = 0;
-    for (const [r, a, d] of parts) v += a * Math.exp(-t / (dur * d * .4)) * Math.sin(6.283185 * f * r * t);
-    out(n0 + n, hp(v) * amp * clamp(t / .004) * clamp((len - n) / (SR * .5)), pan, send);
-  }
-}
-
-// airy shimmer: sparse high bells drifting across the stereo field
-function shimmer(t0, t1, amp, scale) {
-  let t = t0;
-  while (t < t1) {
-    const m = scale[Math.floor(rnd() * scale.length)];
-    bell(t, m, amp * (.5 + rnd() * .6), rnd() * 2 - 1, { dur: 2.4 + rnd() * 2, send: .85 });
-    t += .18 + rnd() * .5;
-  }
-}
-
-// band-passed noise with a swept centre; env peaks at `peak` (0..1 of its length)
-function sweep(t0, t1, amp, f0, f1, pan0, pan1, { q = 1.1, peak = .55, send = .55 } = {}) {
+// state-variable band-pass noise with a swept centre frequency
+function noiseSweep(t0, t1, amp, f0, f1, pan0, pan1, { q = 1.0, attack = .25, curve = 2, send = .5, shape = null } = {}) {
   const n0 = Math.round(t0 * SR), n1 = Math.round(t1 * SR), len = n1 - n0;
   let low = 0, band = 0;
   for (let i = 0; i < len; i++) {
@@ -118,120 +64,138 @@ function sweep(t0, t1, amp, f0, f1, pan0, pan1, { q = 1.1, peak = .55, send = .5
     const F = 2 * Math.sin(Math.PI * Math.min(fc, SR / 6) / SR);
     const w = rnd() * 2 - 1;
     low += F * band; const high = w - low - q * band; band += F * high;
-    const env = x < peak ? Math.pow(x / peak, 2.2) : Math.pow((1 - x) / (1 - peak), 1.5);
+    const env = shape ? shape(x)
+      : (x < attack ? Math.pow(x / attack, curve) : Math.pow((1 - x) / (1 - attack), 1.4));
     out(n0 + i, band * amp * env, pan0 + (pan1 - pan0) * x, send);
   }
 }
 
-// the comet: rising noise + a glissando pair that tightens as it traces
-function riser(t0, t1, amp) {
+// the deep space bed: slow low rumble plus a faint high hiss
+function spaceBed(t0, t1, amp) {
+  const n0 = Math.round(t0 * SR), n1 = Math.round(t1 * SR), len = n1 - n0;
+  const lpL = lowpass(90), lpR = lowpass(80);
+  const hpL = highpass(5200), hpR = highpass(6000);
+  const bandL = lowpass(380), bandR = lowpass(420);
+  const hp2L = highpass(150), hp2R = highpass(170);
+  for (let i = 0; i < len; i++) {
+    const t = i / SR;
+    const env = clamp(t / 2.2) * clamp((len - i) / (SR * 1.6));
+    const slow = .7 + .3 * Math.sin(t * .23) * Math.sin(t * .11 + 1.3);
+    const nL = rnd() * 2 - 1, nR = rnd() * 2 - 1;
+    const rumble = [lpL(nL) * 3.2, lpR(nR) * 3.2];
+    const mid = [hp2L(bandL(nL)) * 1.4, hp2R(bandR(nR)) * 1.4];
+    const air = [hpL(nL) * .5, hpR(nR) * .5];
+    out(n0 + i, (rumble[0] + mid[0] * .3 + air[0] * .22) * amp * env * slow, -.5, .3);
+    out(n0 + i, (rumble[1] + mid[1] * .3 + air[1] * .22) * amp * env * slow, .5, .3);
+  }
+}
+
+// a short filtered click — used for stars twinkling and small UI accents
+function tick(t0, amp, pan, fc, { dur = .055, send = .6 } = {}) {
+  const n0 = Math.round(t0 * SR), len = Math.round(dur * SR);
+  let low = 0, band = 0;
+  const F = 2 * Math.sin(Math.PI * Math.min(fc, SR / 6) / SR);
+  for (let i = 0; i < len; i++) {
+    const w = rnd() * 2 - 1;
+    low += F * band; const high = w - low - .35 * band; band += F * high;
+    const env = Math.exp(-i / (SR * dur * .22));
+    out(n0 + i, band * amp * env, pan, send);
+  }
+}
+
+// the sizzle of the comet's tail while it draws the logo
+function sizzle(t0, t1, amp) {
   const n0 = Math.round(t0 * SR), n1 = Math.round(t1 * SR), len = n1 - n0;
   let low = 0, band = 0;
   for (let i = 0; i < len; i++) {
     const x = i / len;
-    const fc = 260 * Math.pow(26, x);
-    const F = 2 * Math.sin(Math.PI * Math.min(fc, SR / 6) / SR);
+    const fc = 2400 + 1600 * Math.sin(x * 7.5) + 900 * Math.sin(x * 23.1);
+    const F = 2 * Math.sin(Math.PI * Math.min(Math.max(fc, 300), SR / 6) / SR);
     const w = rnd() * 2 - 1;
-    low += F * band; const high = w - low - 0.75 * band; band += F * high;
-    out(n0 + i, band * amp * Math.pow(x, 2.1), Math.sin(x * 9) * .5, .5);
-  }
-  for (const [m, pan] of [[NOTE.D4, -.35], [NOTE.A4, .35]]) {
-    let ph = 0;
-    for (let n = n0; n < n1; n++) {
-      const x = (n - n0) / len;
-      ph += 6.283185 * hz(m + 14 * x * x) / SR;
-      out(n, Math.sin(ph) * amp * .22 * Math.pow(x, 2.6) * clamp((n1 - n) / (SR * .03)), pan, .6);
-    }
+    low += F * band; const high = w - low - .8 * band; band += F * high;
+    const flutter = .62 + .38 * Math.sin(x * 61) * Math.sin(x * 17);
+    const env = Math.min(1, x / .08) * Math.min(1, (1 - x) / .12) * flutter;
+    out(n0 + i, band * amp * env, Math.sin(x * 5.5) * .55, .55);
   }
 }
 
-// the light burst: sub drop + bright noise bloom
-function impact(t0, amp) {
-  const n0 = Math.round(t0 * SR), len = Math.round(3.2 * SR);
-  let ph = 0, lp = 0, hpN = highpass(900);
-  for (let n = 0; n < len; n++) {
-    const t = n / SR;
-    const f = 44 + 90 * Math.exp(-t / .09);
+// the light burst: a falling sub, a white bloom, and a low tail
+function burst(t0, amp) {
+  const n0 = Math.round(t0 * SR), len = Math.round(3.4 * SR);
+  let ph = 0, lp = 0;
+  const hpN = highpass(700), lpTail = lowpass(220);
+  for (let i = 0; i < len; i++) {
+    const t = i / SR;
+    const f = 95 * Math.exp(-t / .22) + 34;                 // sub drop
     ph += 6.283185 * f / SR;
-    const body = Math.sin(ph) * Math.exp(-t / .6);
-    lp += .05 * ((rnd() * 2 - 1) - lp);
-    const thump = lp * 5 * Math.exp(-t / .07);
-    const bloom = hpN(rnd() * 2 - 1) * Math.exp(-t / .42) * .5;     // white bloom with the flash
-    out(n0 + n, (body + thump) * amp * clamp(t / .003) * clamp((len - n) / (SR * .6)), 0, .22);
-    out(n0 + n, bloom * amp * .9, (rnd() - .5) * .6, .8);
+    const sub = Math.sin(ph) * Math.exp(-t / .55);
+    lp += .07 * ((rnd() * 2 - 1) - lp);
+    const thump = lp * 4.5 * Math.exp(-t / .055);
+    const bloom = hpN(rnd() * 2 - 1) * Math.exp(-t / .40) * .55;
+    const tail = lpTail(rnd() * 2 - 1) * Math.exp(-t / .7) * .6;
+    const g = clamp(t / .002) * clamp((len - i) / (SR * .7));
+    out(n0 + i, (sub + thump + tail) * amp * g, 0, .25);
+    out(n0 + i, bloom * amp * .95 * g, (rnd() - .5) * .7, .85);
   }
 }
 
-// soft plucked sparkle (Karplus–Strong), used for the title arpeggio
-function pluck(t0, midi, amp, pan, { g = .994, bright = .4, dur = 3, send = .55 } = {}) {
-  const f = hz(midi), n0 = Math.round(t0 * SR), len = Math.round(dur * SR);
-  const D = SR / f - .5, P = Math.round(SR / f), SIZE = 8192, y = new Float32Array(SIZE);
-  let lp = 0; const hp = highpass(Math.min(140, f * .5));
-  for (let n = 0; n < len; n++) {
-    let ex = 0;
-    if (n < P) { lp += bright * ((rnd() * 2 - 1) - lp); ex = lp; }
-    let fb = 0;
-    const rp = n - D;
-    if (rp >= 1) {
-      const i0 = Math.floor(rp), fr = rp - i0;
-      const a = y[i0 & (SIZE - 1)] * (1 - fr) + y[(i0 + 1) & (SIZE - 1)] * fr;
-      const b = y[(i0 - 1) & (SIZE - 1)] * (1 - fr) + y[i0 & (SIZE - 1)] * fr;
-      fb = g * .5 * (a + b);
-    }
-    const v = ex + fb;
-    y[n & (SIZE - 1)] = v;
-    out(n0 + n, hp(v) * amp * clamp((len - n) / (SR * .5)), pan, send);
+// ---------- the cue sheet ----------
+
+// space bed through the night half, then a quieter "air" once the screen turns white
+spaceBed(0, 12.9, .17);
+noiseSweep(12.9, 19.6, .05, 2600, 1500, -.4, .4, { q: .7, attack: .12, send: .5,
+  shape: x => Math.min(1, x / .12) * Math.min(1, (1 - x) / .35) });
+
+// distant twinkles — sparse, quiet, scattered
+{
+  let t = .9;
+  while (t < 8.4) {
+    tick(t, .03 + rnd() * .03, rnd() * 2 - 1, 4200 + rnd() * 4200, { dur: .07, send: .8 });
+    t += .35 + rnd() * .9;
   }
 }
 
-// ---------- the score ----------
-// deep space bed
-drone(NOTE.D2, 0, 20, .07, { att: 3, rel: 2.6 });
-drone(NOTE.D1, 0, 20, .03, { att: 4, rel: 2.6 });
-pad([NOTE.D3, NOTE.A3, NOTE.E4], .3, 13.0, .016, { att: 4, rel: 2, bright: 2.0 });
-shimmer(.6, 8.6, .013, [NOTE.D6, NOTE.E5, NOTE.Fs6, NOTE.A5, NOTE.A6, NOTE.D7]);
+// a swish as each word lands
+for (const t of [1.25, 3.55, 5.85]) {
+  noiseSweep(t - .12, t + .45, .10, 420, 2100, -.35, .35, { q: .9, attack: .18 });
+  tick(t, .05, 0, 2600, { dur: .09 });
+}
 
-// one bell per word — D, F#, A rising
-bell(1.25, NOTE.D5, .20, -.18, { dur: 5 });
-bell(1.27, NOTE.D4, .10, .12, { dur: 5 });
-bell(3.55, NOTE.Fs5, .20, .20, { dur: 5 });
-bell(3.57, NOTE.Fs4, .10, -.14, { dur: 5 });
-bell(5.85, NOTE.A5, .20, -.12, { dur: 5 });
-bell(5.87, NOTE.A4, .10, .18, { dur: 5 });
+// the constellation connecting, line by line
+for (let i = 0; i < 5; i++) tick(1.5 + i * .31, .035, -.45 + i * .22, 5200 + i * 500, { dur: .06 });
+
+// the ringed planet drifting past — felt more than heard
+noiseSweep(3.5, 6.3, .11, 52, 128, -.8, .45, { q: .6, attack: .4, send: .2 });
 
 // the shooting star
-sweep(6.05, 7.3, .10, 900, 5200, -.75, .75, { peak: .5, q: .9 });
+noiseSweep(6.05, 7.3, .14, 900, 5600, -.85, .85, { q: .8, attack: .42 });
+tick(6.6, .055, -.1, 7200, { dur: .12 });
 
-// the comet: approach, then it traces the logo
-sweep(8.25, 9.5, .09, 300, 1500, .6, -.3, { peak: .62 });
-riser(9.3, 12.22, .17);
-// a quiet arpeggio under the tracing
-[[9.6, NOTE.D5], [9.95, NOTE.E5], [10.3, NOTE.Fs5], [10.65, NOTE.A5],
- [11.0, NOTE.B5], [11.35, NOTE.A5], [11.7, NOTE.Fs5]].forEach(([t, m], i) =>
-  bell(t, m, .035 + i * .004, (i % 2 ? .4 : -.4), { dur: 2.6 }));
+// the comet approaches, then its tail sizzles along the logo
+noiseSweep(8.25, 9.55, .12, 240, 1900, .7, -.2, { q: .85, attack: .62 });
+sizzle(9.4, 11.85, .10);
+{
+  let t = 9.6;
+  while (t < 11.7) { tick(t, .026 + rnd() * .022, rnd() * 2 - 1, 5000 + rnd() * 4000, { dur: .05 }); t += .11 + rnd() * .22; }
+}
 
-// the light burst
-impact(12.2, .55);
-bell(12.24, NOTE.D6, .085, .1, { dur: 5 });
+// riser into the light, then the burst itself
+noiseSweep(11.55, 12.21, .17, 400, 9000, -.3, .3, { q: .7, attack: .96, curve: 2.4 });
+burst(12.2, .30);
 
-// the lockup lands: warm D add9
-pad([NOTE.D3, NOTE.A3, NOTE.D4, NOTE.E4, NOTE.Fs4, NOTE.A4], 12.9, 20, .021, { att: .6, rel: 3.2, bright: 2.6 });
-drone(NOTE.D2, 12.8, 20, .055, { att: .5, rel: 3 });
-[[12.95, NOTE.D4, -.45], [13.05, NOTE.A4, -.15], [13.15, NOTE.D5, .15], [13.25, NOTE.Fs5, .45]]
-  .forEach(([t, m, p]) => pluck(t, m, .14, p, { dur: 5, bright: .34 }));
+// the lockup assembling
+noiseSweep(13.0, 13.75, .075, 1800, 420, .25, -.1, { q: .8, attack: .2, send: .4 });   // mark settles
+noiseSweep(13.9, 14.45, .07, 700, 2300, .6, -.5, { q: .9, attack: .2 });              // Arabic wipes right→left
+noiseSweep(14.2, 14.8, .062, 700, 2300, -.6, .5, { q: .9, attack: .2 });               // English wipes left→right
+noiseSweep(14.9, 15.9, .055, 2600, 1700, .45, -.45, { q: .6, attack: .25, send: .45 });// the rule draws
+tick(15.45, .05, .2, 3200, { dur: .09 });                                             // the college line
+tick(15.55, .035, -.2, 2600, { dur: .08 });
 
-// sparkles while the titles write on
-[[14.05, NOTE.A5], [14.35, NOTE.D6], [14.7, NOTE.Fs5], [15.05, NOTE.A5],
- [15.4, NOTE.D6], [15.8, NOTE.E5], [16.15, NOTE.Fs6]].forEach(([t, m], i) =>
-  bell(t, m, .03, i % 2 ? .45 : -.45, { dur: 3 }));
-
-// the sheen
-sweep(16.35, 17.8, .05, 2200, 7000, -.5, .5, { peak: .45, q: .8 });
-shimmer(16.4, 19.0, .009, [NOTE.D6, NOTE.Fs6, NOTE.A6, NOTE.D7]);
-bell(17.0, NOTE.D5, .05, 0, { dur: 4.5 });
+// the sheen sweeping across the finished logo
+noiseSweep(16.4, 17.75, .06, 3200, 9500, -.6, .6, { q: .7, attack: .4, send: .7 });
 
 // ---------- reverb (Freeverb), kept out of the low end ----------
-function freeverb(inL, inR, { room = .89, damp = .3, spread = 23 } = {}) {
+function freeverb(inL, inR, { room = .86, damp = .35, spread = 23 } = {}) {
   const k = SR / 44100;
   const combT = [1116, 1188, 1277, 1356, 1422, 1491, 1557, 1617], apT = [556, 441, 341, 225];
   const mk = sp => ({
@@ -263,30 +227,30 @@ function freeverb(inL, inR, { room = .89, damp = .3, spread = 23 } = {}) {
   return [run(inL, mk(0)), run(inR, mk(spread))];
 }
 
-for (const buf of [sendL, sendR]) { const hp = highpass(200); for (let n = 0; n < N; n++) buf[n] = hp(buf[n]); }
+for (const buf of [sendL, sendR]) { const hp = highpass(220); for (let n = 0; n < N; n++) buf[n] = hp(buf[n]); }
 const [wetL, wetR] = freeverb(sendL, sendR);
-for (const buf of [wetL, wetR]) { const hp = highpass(130); for (let n = 0; n < N; n++) buf[n] = hp(buf[n]); }
+for (const buf of [wetL, wetR]) { const hp = highpass(150); for (let n = 0; n < N; n++) buf[n] = hp(buf[n]); }
 
 const L = new Float32Array(N), R = new Float32Array(N);
-const hpL = highpass(28), hpR = highpass(28);
+const hpL = highpass(26), hpR = highpass(26);
 for (let n = 0; n < N; n++) {
-  L[n] = hpL(dryL[n] + wetL[n] * 1.7);
-  R[n] = hpR(dryR[n] + wetR[n] * 1.7);
+  L[n] = hpL(dryL[n] + wetL[n] * 1.5);
+  R[n] = hpR(dryR[n] + wetR[n] * 1.5);
 }
 
-// master: fades, normalise, gentle soft-clip
+// master: fades, normalise to leave headroom, gentle soft-clip
 let peak = 0;
 for (let n = 0; n < N; n++) {
   const t = n / SR;
-  const g = clamp(t / .06) * clamp((DUR - t) / 1.2);
+  const g = clamp(t / .08) * clamp((DUR - t) / 1.4);
   L[n] *= g; R[n] *= g;
   peak = Math.max(peak, Math.abs(L[n]), Math.abs(R[n]));
 }
-const gain = .92 / peak;
+const gain = .9 / peak;
 let sum = 0;
 const pcm = Buffer.alloc(N * 4);
 for (let n = 0; n < N; n++) {
-  const l = Math.tanh(L[n] * gain * 1.4) / Math.tanh(1.4), r = Math.tanh(R[n] * gain * 1.4) / Math.tanh(1.4);
+  const l = Math.tanh(L[n] * gain * 1.3) / Math.tanh(1.3), r = Math.tanh(R[n] * gain * 1.3) / Math.tanh(1.3);
   sum += l * l + r * r;
   pcm.writeInt16LE(Math.round(clamp(l, -1, 1) * 32767), n * 4);
   pcm.writeInt16LE(Math.round(clamp(r, -1, 1) * 32767), n * 4 + 2);
