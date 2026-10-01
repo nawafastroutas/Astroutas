@@ -3965,6 +3965,7 @@ html:not(.js) .splash {
         <a href="#home" class="active">الرئيسية</a>
         <a href="#categories">المتجر</a>
         <a href="#categories">الأقسام</a>
+        <a href="#gift">الإهداء</a>
         <a href="#story">عن سبحة</a>
         <a href="#contact">تواصل معنا</a>
       </nav>
@@ -4153,6 +4154,24 @@ html:not(.js) .splash {
       </div>
     </section>
 
+    <section class="section" id="gift">
+      <div class="container">
+        <div class="gift-banner">
+          <div class="gift-banner-copy">
+            <span class="eyebrow"><i data-lucide="gift"></i> الإهداء</span>
+            <h2>أهدِ سبحة لمن تحب</h2>
+            <p>اختر المنتج، فعّل خيار «أرسلها هدية» عند إتمام الطلب، واكتب اسم المُهدى إليه ورقمه. ترسلها باسمك أو بدون اسم، ونحن نوصلها له.</p>
+            <a class="btn btn-primary" href="#categories">اختر الهدية <i data-lucide="arrow-left"></i></a>
+          </div>
+          <ol class="gift-steps">
+            <li><b>اختر المنتج</b><small>من أي قسم، واضغط «أهدِ هذا المنتج»</small></li>
+            <li><b>بيانات المُهدى إليه</b><small>الاسم والرقم، ورسالة على بطاقة إن أردت</small></li>
+            <li><b>باسمك أو بدون اسم</b><small>أنت تحدد هل تظهر هويتك للمُهدى إليه</small></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="story">
       <div class="container story">
         <div class="story-visual">
@@ -4269,6 +4288,23 @@ html:not(.js) .splash {
         <div class="form-grid">
           <div class="form-field"><label>الاسم الكامل</label><input required name="name" placeholder="اكتب الاسم"></div>
           <div class="form-field"><label>رقم الهاتف</label><input required name="phone" inputmode="tel" placeholder="9xxxxxxx"></div>
+          <div class="form-field span-2 gift-box">
+            <label class="gift-switch"><input type="checkbox" name="isGift" id="giftToggle"><span class="gift-switch-ui" aria-hidden="true"></span><span><b>🎁 أرسلها هدية</b><small>نوصّل الطلب لشخص تحبه، باسمك أو بدون اسمك</small></span></label>
+            <div class="gift-fields" id="giftFields" hidden>
+              <div class="form-grid">
+                <div class="form-field"><label>اسم المُهدى إليه</label><input name="recipientName" placeholder="اسم الشخص"></div>
+                <div class="form-field"><label>رقم المُهدى إليه</label><input name="recipientPhone" inputmode="tel" placeholder="9xxxxxxx"></div>
+                <div class="form-field span-2"><label>هل تظهر هويتك للمُهدى إليه؟</label>
+                  <div class="gift-identity">
+                    <label><input type="radio" name="showIdentity" value="yes" checked> نعم، أظهر اسمي</label>
+                    <label><input type="radio" name="showIdentity" value="no"> لا، هدية بدون اسم</label>
+                  </div>
+                </div>
+                <div class="form-field span-2"><label>رسالة الإهداء (اختياري)</label><textarea name="giftMessage" maxlength="300" placeholder="تُكتب على بطاقة مع الهدية"></textarea></div>
+              </div>
+              <p class="gift-hint">العنوان التالي هو عنوان توصيل الهدية. اسمك ورقمك أعلاه للتواصل معك فقط.</p>
+            </div>
+          </div>
           <div class="form-field"><label>المحافظة</label>
             <select required name="governorate">
               <option value="">اختر المحافظة</option><option>مسقط</option><option>شمال الباطنة</option><option>جنوب الباطنة</option><option>الداخلية</option><option>شمال الشرقية</option><option>جنوب الشرقية</option><option>الظاهرة</option><option>البريمي</option><option>الوسطى</option><option>ظفار</option><option>مسندم</option>
@@ -5000,6 +5036,7 @@ html:not(.js) .splash {
         <div class="modal-price">${money(p.price)} <small style="font-size:.8rem">ر.ع</small></div>
         <div class="modal-actions">
           <button class="btn btn-primary" data-modal-add="${p.id}"><i data-lucide="shopping-bag"></i> أضف للسلة</button>
+          <button class="btn btn-outline" data-modal-gift="${p.id}"><i data-lucide="gift"></i> أهدِ هذا المنتج</button>
           <button class="btn btn-outline" data-modal-whatsapp="${p.id}"><i data-lucide="message-circle"></i> اسأل عبر واتساب</button>
         </div>`;
       $("#modalProductArt").innerHTML=productMedia(p);
@@ -5117,6 +5154,7 @@ ${lines}
       الاسم: ${escapeHtml(c.name||"")}<br>الهاتف: ${escapeHtml(c.phone||"")}<br>
       المحافظة: ${escapeHtml(c.governorate||"")} — الولاية: ${escapeHtml(c.wilayat||"")}<br>
       العنوان: ${escapeHtml(c.address||"")}<br>الملاحظات: ${escapeHtml(c.notes||"لا توجد")}</div>
+      ${window.subbhaGift?window.subbhaGift.invoiceHtml(order):""}
       <table><thead><tr><th>#</th><th>المنتج</th><th>الكمية</th><th>السعر</th><th>المجموع</th></tr></thead><tbody>${items}</tbody></table>
       ${customNotes?`<div class="box"><strong>ملاحظات التصاميم الخاصة</strong>${customNotes}</div>`:""}
       <div class="total">الإجمالي: ${money(order.total)} ر.ع</div>
@@ -6579,7 +6617,7 @@ ${lines}
       color:var(--brown);
       background:#fffaf5;
     }
-</style></head><body><div class="head"><div><div class="logo">سبحة</div><div class="en">SUBBHA</div></div><div><h2>فاتورة طلب</h2><p>#${String(order.id).slice(-6)}</p><p class="muted">${new Date(order.date||Date.now()).toLocaleString('ar-OM')}</p></div></div><h3>بيانات العميل</h3><p>الاسم: ${escapeHtml(order.customer?.name||'—')}<br>الهاتف: ${escapeHtml(order.customer?.phone||'—')}<br>العنوان: ${escapeHtml(order.customer?.address||'—')}</p><table><thead><tr><th>#</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>المجموع</th></tr></thead><tbody>${rows}</tbody></table><div class="total">الإجمالي: ${moneySafe(order.total)} ر.ع</div><p>طريقة الدفع: ${escapeHtml(order.payment||'—')}</p><p class="muted">تم تجهيز الموقع للدفع الإلكتروني عبر بنك مسقط، وسيتم تفعيل الرابط بعد إضافة بيانات البنك.</p><script>window.print()<\/script></body></html>`);
+</style></head><body><div class="head"><div><div class="logo">سبحة</div><div class="en">SUBBHA</div></div><div><h2>فاتورة طلب</h2><p>#${String(order.id).slice(-6)}</p><p class="muted">${new Date(order.date||Date.now()).toLocaleString('ar-OM')}</p></div></div><h3>بيانات العميل</h3><p>الاسم: ${escapeHtml(order.customer?.name||'—')}<br>الهاتف: ${escapeHtml(order.customer?.phone||'—')}<br>العنوان: ${escapeHtml(order.customer?.address||'—')}</p>${window.subbhaGift?window.subbhaGift.invoiceHtml(order):''}<table><thead><tr><th>#</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>المجموع</th></tr></thead><tbody>${rows}</tbody></table><div class="total">الإجمالي: ${moneySafe(order.total)} ر.ع</div><p>طريقة الدفع: ${escapeHtml(order.payment||'—')}</p><p class="muted">تم تجهيز الموقع للدفع الإلكتروني عبر بنك مسقط، وسيتم تفعيل الرابط بعد إضافة بيانات البنك.</p><script>window.print()<\/script></body></html>`);
     w.document.close();
   }
   window.subbhaPaymentConfig={provider:'Bank Muscat',merchantId:'',terminalId:'',secretKey:'',returnUrl:location.href.split('#')[0]+'#payment-return',status:'prepared_only'};
@@ -6590,7 +6628,7 @@ ${lines}
   // Extend admin tables with invoice export and payment status.
   window.ordersTable=function(list){
     if(!list.length)return `<div class="empty-state"><h3>لا توجد طلبات بعد</h3></div>`;
-    return `<table class="admin-table"><thead><tr><th>رقم</th><th>العميل</th><th>الهاتف</th><th>الإجمالي</th><th>الدفع</th><th>الحالة</th><th>فاتورة</th><th>الإجراء</th></tr></thead><tbody>${list.map(o=>`<tr><td>#${String(o.id).slice(-6)}</td><td>${escapeHtml(o.customer?.name||'—')}</td><td>${escapeHtml(o.customer?.phone||'—')}</td><td>${moneySafe(o.total)} ر.ع</td><td>${escapeHtml(o.payment||'—')}</td><td><span class="status ${o.status==='مكتمل'?'done':o.status==='ملغي'?'cancel':'new'}">${escapeHtml(o.status||'جديد')}</span></td><td><div class="invoice-actions"><button class="btn btn-soft" data-export-invoice="${o.id}">تصدير PDF</button></div></td><td><select data-order-status="${o.id}"><option ${o.status==='جديد'?'selected':''}>جديد</option><option ${o.status==='قيد التجهيز'?'selected':''}>قيد التجهيز</option><option ${o.status==='مكتمل'?'selected':''}>مكتمل</option><option ${o.status==='ملغي'?'selected':''}>ملغي</option></select></td></tr>`).join('')}</tbody></table>`;
+    return `<table class="admin-table"><thead><tr><th>رقم</th><th>العميل</th><th>الهاتف</th><th>الإجمالي</th><th>الدفع</th><th>الحالة</th><th>فاتورة</th><th>الإجراء</th></tr></thead><tbody>${list.map(o=>`<tr><td>#${String(o.id).slice(-6)}</td><td>${escapeHtml(o.customer?.name||'—')}${window.subbhaGift?window.subbhaGift.adminTag(o):''}</td><td>${escapeHtml(o.customer?.phone||'—')}</td><td>${moneySafe(o.total)} ر.ع</td><td>${escapeHtml(o.payment||'—')}</td><td><span class="status ${o.status==='مكتمل'?'done':o.status==='ملغي'?'cancel':'new'}">${escapeHtml(o.status||'جديد')}</span></td><td><div class="invoice-actions"><button class="btn btn-soft" data-export-invoice="${o.id}">تصدير PDF</button></div></td><td><select data-order-status="${o.id}"><option ${o.status==='جديد'?'selected':''}>جديد</option><option ${o.status==='قيد التجهيز'?'selected':''}>قيد التجهيز</option><option ${o.status==='مكتمل'?'selected':''}>مكتمل</option><option ${o.status==='ملغي'?'selected':''}>ملغي</option></select></td></tr>`).join('')}</tbody></table>`;
   };
   // Admin login uses Firebase email/password. No visible PIN or demo code.
   window.openAdminLogin=function(){
@@ -6970,6 +7008,8 @@ ${lines}
 
     const fd=new FormData(form);
     const customer=Object.fromEntries(fd.entries());
+    const gift=window.subbhaGift?window.subbhaGift.extract(customer):null;
+    if(gift===false)return;
     const summary=cartPriceSummary();
     const orderItems=cart.map(i=>{
       const p=products.find(x=>x.id===i.id);
@@ -6997,7 +7037,8 @@ ${lines}
       couponPercent:summary.couponPercent,
       couponDiscount:summary.couponDiscount,
       total:summary.total,
-      status:'جديد'
+      status:'جديد',
+      gift:gift||null
     };
 
     // نحضّر نسخة مستقلة حتى لا يظهر الكود مستخدماً محلياً قبل تأكيد السحابة.
@@ -7066,7 +7107,7 @@ ${lines}
 🏘️ *الولاية:* ${c.wilayat}
 🏠 *العنوان:* ${c.address}
 📝 *الملاحظات:* ${c.notes||'لا توجد'}
-╰────────────────
+╰────────────────${window.subbhaGift?window.subbhaGift.whatsappBlock(order):''}
 
 🔖 *رقم الطلب:* #${orderNumber}
 
@@ -7078,6 +7119,7 @@ ${lines}
     saveLocal();
     renderCart();
     form.reset();
+    window.subbhaGift?.reset();
     const couponInput=document.querySelector('#checkoutCouponCode');if(couponInput)couponInput.value='';
     const couponMsg=document.querySelector('#checkoutCouponMessage');if(couponMsg){couponMsg.textContent='الكود صالح للاستخدام مرة واحدة فقط.';couponMsg.style.color=''}
     updateCheckoutDiscountSummary();
@@ -7679,6 +7721,109 @@ ${lines}
   try{renderProducts();}catch(e){}
   if(isPending()) setCloudStatus('saved');
   let tries=0;const timer=setInterval(()=>{tries++;if(connectCategoryFirebase()||tries>40)clearInterval(timer);},500);
+})();
+</script>
+
+<style id="subbha-gift-style">
+  .gift-box{border:1px dashed rgba(122,75,42,.35);border-radius:18px;padding:14px 16px;background:#fffaf3}
+  .gift-box .gift-switch{display:flex;align-items:center;gap:12px;cursor:pointer;margin:0;position:relative}
+  .gift-box .gift-switch input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+  .gift-switch-ui{flex:0 0 44px;height:26px;border-radius:999px;background:#d9cbb8;position:relative;transition:background .2s}
+  .gift-switch-ui:after{content:"";position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:right .2s}
+  .gift-switch input:checked + .gift-switch-ui{background:var(--green)}
+  .gift-switch input:checked + .gift-switch-ui:after{right:21px}
+  .gift-switch input:focus-visible + .gift-switch-ui{outline:2px solid var(--gold);outline-offset:2px}
+  .gift-box .gift-switch b{display:block;color:var(--green)}
+  .gift-box .gift-switch small{display:block;color:var(--muted);font-size:.72rem;margin-top:2px;font-weight:500}
+  .gift-fields{margin-top:14px}
+  .gift-box .gift-identity{display:flex;flex-wrap:wrap;gap:10px}
+  .gift-box .gift-identity label{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(91,70,54,.14);border-radius:12px;background:#fff;cursor:pointer;font-weight:700;font-size:.8rem;margin:0}
+  .gift-box .gift-identity label:has(input:checked){border-color:var(--green);background:#f3ece2}
+  .gift-box .gift-identity input{width:auto!important;min-width:0!important;height:auto!important;margin:0!important;padding:0!important;box-shadow:none!important;accent-color:var(--green)}
+  .gift-hint{margin:10px 0 0;font-size:.74rem;color:var(--muted);line-height:1.8}
+  .order-gift-tag{margin-top:6px;padding:6px 9px;border-radius:10px;background:#fbf1e3;color:#7a4b2a;font-size:.7rem;line-height:1.7;max-width:260px}
+  .order-gift-tag.anon b:last-of-type{color:#b73b3b}
+  .gift-banner{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:center;padding:clamp(22px,4vw,42px);border-radius:28px;background:linear-gradient(135deg,#5e1a26,#8f3443);color:#fff;box-shadow:0 22px 48px rgba(94,26,38,.18)}
+  .gift-banner .eyebrow{background:rgba(255,255,255,.12)!important;color:#fff!important;border-color:rgba(255,255,255,.2)!important}
+  .gift-banner h2{font-family:"Noto Naskh Arabic",serif;font-size:clamp(1.8rem,4vw,2.6rem);margin:12px 0;color:#fff}
+  .gift-banner p{line-height:2;color:rgba(255,255,255,.82);margin:0 0 18px}
+  .gift-banner .btn-primary{background:#f8f1e6!important;color:#5e1a26!important}
+  .gift-steps{list-style:none;margin:0;padding:0;display:grid;gap:12px;counter-reset:gift}
+  .gift-steps li{counter-increment:gift;display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center;padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16)}
+  .gift-steps li:before{content:counter(gift);grid-row:span 2;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#f8f1e6;color:#5e1a26;font-weight:900}
+  .gift-steps b{color:#fff}
+  .gift-steps small{color:rgba(255,255,255,.72);font-size:.76rem}
+  @media(max-width:800px){.gift-banner{grid-template-columns:1fr}}
+</style>
+<script id="subbha-gift-addon">
+(function(){
+  const GIFT_KEYS=['isGift','recipientName','recipientPhone','showIdentity','giftMessage'];
+  const LABELS=[['name','الاسم الكامل','اسمك (المُرسل)'],['phone','رقم الهاتف','رقم هاتفك']];
+  const form=()=>document.querySelector('#checkoutForm');
+
+  function sync(){
+    const f=form();if(!f)return;
+    const on=!!f.elements.isGift?.checked;
+    const box=f.querySelector('#giftFields');if(box)box.hidden=!on;
+    ['recipientName','recipientPhone'].forEach(n=>{if(f.elements[n])f.elements[n].required=on;});
+    LABELS.forEach(([n,off,onLabel])=>{
+      const label=f.elements[n]?.closest('.form-field')?.querySelector('label');
+      if(label)label.textContent=on?onLabel:off;
+    });
+    const heading=f.querySelector('h2');if(heading)heading.textContent=on?'بيانات الهدية والتوصيل':'بيانات التوصيل';
+  }
+  function setGift(on){const f=form();if(f?.elements.isGift){f.elements.isGift.checked=on;sync();}}
+
+  function extract(customer){
+    const gift=customer.isGift==='on'?{
+      recipientName:String(customer.recipientName||'').trim(),
+      recipientPhone:String(customer.recipientPhone||'').replace(/[^\d+]/g,''),
+      showSenderIdentity:customer.showIdentity!=='no',
+      message:String(customer.giftMessage||'').trim()
+    }:null;
+    GIFT_KEYS.forEach(k=>delete customer[k]);
+    if(gift&&(!gift.recipientName||gift.recipientPhone.replace(/\D/g,'').length<8)){
+      toast('اكتب اسم المُهدى إليه ورقمه بشكل صحيح','alert-circle');
+      return false;
+    }
+    return gift;
+  }
+
+  function whatsappBlock(order){
+    const g=order?.gift;if(!g)return '';
+    return `
+
+╭─ 🎁 *طلب إهداء*
+🎀 *المُهدى إليه:* ${g.recipientName}
+📱 *رقم المُهدى إليه:* ${g.recipientPhone}
+${g.showSenderIdentity?'👤 *هوية المُرسل:* تظهر للمُهدى إليه':'🙈 *هوية المُرسل:* مخفية — لا يُذكر اسم المُرسل للمُهدى إليه'}
+💌 *رسالة الإهداء:* ${g.message||'لا توجد'}
+📦 التوصيل للمُهدى إليه على العنوان أعلاه
+╰────────────────`;
+  }
+
+  function adminTag(o){
+    const g=o?.gift;if(!g)return '';
+    return `<div class="order-gift-tag ${g.showSenderIdentity?'':'anon'}">🎁 هدية إلى <b>${escapeHtml(g.recipientName||'')}</b> — ${escapeHtml(g.recipientPhone||'')}<br>${g.showSenderIdentity?'باسم المُرسل':'<b>بدون إظهار اسم المُرسل</b>'}${g.message?`<br>💌 ${escapeHtml(g.message)}`:''}</div>`;
+  }
+
+  function invoiceHtml(order){
+    const g=order?.gift;if(!g)return '';
+    return `<div class="box"><strong>🎁 طلب إهداء</strong><br>المُهدى إليه: ${escapeHtml(g.recipientName||'')}<br>رقم المُهدى إليه: ${escapeHtml(g.recipientPhone||'')}<br>هوية المُرسل: ${g.showSenderIdentity?'تظهر للمُهدى إليه':'مخفية (هدية بدون اسم)'}${g.message?`<br>رسالة الإهداء: ${escapeHtml(g.message)}`:''}</div>`;
+  }
+
+  document.addEventListener('change',e=>{if(e.target.id==='giftToggle')sync();});
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-modal-gift]');if(!btn)return;
+    e.preventDefault();
+    const id=Number(btn.dataset.modalGift);
+    if(!cart.some(i=>i.id===id))addToCart(id);
+    setGift(true);
+    closeProduct();
+    document.querySelector('#checkoutBtn')?.click();
+  });
+
+  window.subbhaGift={extract,whatsappBlock,adminTag,invoiceHtml,reset:()=>setGift(false)};
 })();
 </script>
 
