@@ -4,3 +4,4 @@ dist/
 *.log
 subha-motion/.frames/
 subha-motion/.preview/
+subha-motion/audio/*.wav

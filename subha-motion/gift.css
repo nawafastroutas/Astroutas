@@ -6,7 +6,7 @@
    إلا ما يخصّ هذا المقطع: الخلفية الداكنة الدائمة، ومشهدا الافتتاح والختام،
    ورسمَي «بطاقة العبارة» و«التوصيل».
 
-   الخط الزمني:  افتتاح ٠٫٠ | عبارة ٣٫٤ | تغليف ٦٫٦ | توصيل ١٠٫٢ | ختام ١٣٫٤ | النهاية ١٦٫٢
+   الخط الزمني:  افتتاح ٠٫٠ | عبارة ٣٫٤ | تغليف ٦٫٦ | ختام ١٠٫٢ | النهاية ١٣٫٠
    =========================================================================== */
 
 /* ---------- داكن من أول ثانية لآخرها: الإهداء يُقدَّم كهدية لا كقسم ---------- */
@@ -71,65 +71,7 @@
 @keyframes sealIn{0%{transform:rotate(0) scale(0)}100%{transform:rotate(45deg) scale(1)}}
 
 /* ===========================================================================
-   ٤ · التوصيل المباشر
-   نقطتان معلَّمتان: «منك» يمينًا و«إليه» يسارًا — فالحركة تمشي مع اتجاه
-   القراءة لا ضدّه. والطرد يسير على نفس المنحنى المرسوم تمامًا، لأن
-   offset-path يأخذ المسار نفسه الذي يرسمه <path class="route">؛ فلو عُدِّلت
-   انحناءة الخط وجب تعديل المسارين معًا وإلا انحرف الطرد عن خطّه.
-   =========================================================================== */
-.motif-ship{align-items:center}
-.track{position:relative;width:560px;height:330px;transform:scale(1.26)}
-.shipsvg{position:absolute;inset:0;width:560px;height:330px;overflow:visible}
-.shipsvg .route{fill:none;stroke:var(--gold);stroke-width:3;stroke-linecap:round;
-  stroke-dasharray:.02 .024;stroke-dashoffset:1}
-
-.node{position:absolute;top:232px;transform:translate(-50%,-50%) scale(0)}
-.orig{left:512px;width:26px;height:26px;border-radius:50%;
-  border:3px solid var(--muted);background:var(--ink)}
-.dest{left:56px;width:40px;height:40px;border:3px solid var(--gold);background:transparent;
-  transform:translate(-50%,-50%) rotate(45deg) scale(0)}
-.dest .pulse{position:absolute;inset:-3px;border:3px solid var(--gold);opacity:0}
-
-.lbl{position:absolute;top:288px;transform:translateX(-50%);
-  font-family:"Subha AR",serif;font-size:30px;color:var(--muted);opacity:0}
-.lbl-from{left:512px}
-.lbl-to{left:56px;color:var(--gold)}
-
-/* الطرد: نفس علبة المشهد السابق مصغّرة، لا مربّع مجرّد */
-.parcel{position:absolute;left:0;top:0;width:52px;height:52px;overflow:visible;
-  offset-path:path("M512 232 C 420 64, 148 64, 56 232");
-  offset-rotate:0deg;offset-distance:0%;offset-anchor:50% 50%;opacity:0}
-.parcel .pbox{fill:var(--ink);stroke:var(--fg);stroke-width:2.6}
-.parcel .prb{fill:none;stroke:var(--gold);stroke-width:2.2;stroke-linejoin:round}
-
-.s-card .orig   {animation:popIn .5s var(--e-pop) calc(var(--t0) + .35s) both}
-.s-card .dest   {animation:destIn .6s var(--e-pop) calc(var(--t0) + .5s) both,
-                           destFill .45s var(--e-out) calc(var(--t0) + 2.3s) forwards}
-.s-card .pulse  {animation:pulseOut .9s var(--e-out) calc(var(--t0) + 2.3s) both}
-.s-card .route  {animation:draw .9s var(--e-soft) calc(var(--t0) + .45s) both}
-.s-card .lbl-from{animation:riseIn .55s var(--e-out) calc(var(--t0) + .55s) both}
-.s-card .lbl-to  {animation:riseIn .55s var(--e-out) calc(var(--t0) + 2.35s) both}
-.s-card .parcel {animation:travel 1.6s var(--e-soft) calc(var(--t0) + .75s) both}
-
-@keyframes destIn{
-  0%{transform:translate(-50%,-50%) rotate(0) scale(0);opacity:0}
-  100%{transform:translate(-50%,-50%) rotate(45deg) scale(1);opacity:1}
-}
-@keyframes destFill{0%{background:transparent}100%{background:var(--gold)}}
-@keyframes pulseOut{
-  0%{opacity:.9;transform:scale(1)}
-  100%{opacity:0;transform:scale(2.6)}
-}
-/* يصل الطرد فيذوب في العلامة الذهبية بدل أن يتراكب معها */
-@keyframes travel{
-  0%{offset-distance:0%;opacity:0;transform:scale(.6)}
-  9%{opacity:1;transform:scale(1)}
-  86%{offset-distance:88%;opacity:1;transform:scale(1)}
-  100%{offset-distance:100%;opacity:0;transform:scale(.5)}
-}
-
-/* ===========================================================================
-   ٥ · الختام
+   ٤ · الختام
    =========================================================================== */
 .s-end .mark{width:700px}
 .s-end .tag{margin-top:50px}

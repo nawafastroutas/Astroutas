@@ -7,9 +7,10 @@
    بالبكسل في كل تشغيل.
 
    التشغيل:  node render.mjs                     المقطع الرئيسي (٣٠٫٦ ثانية)
-             node render.mjs --page gift.html    مقطع الإهداء (١٦٫٦ ثانية)
+             node render.mjs --page gift.html    مقطع الإهداء (١٣٫٠ ثانية)
              node render.mjs --fps 60            أنعم، ملف أكبر
              node render.mjs --keep              يُبقي ملفات الإطارات
+             node render.mjs --no-audio          بلا مؤثرات (فيديو صامت)
    =========================================================================== */
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 import { spawn } from 'node:child_process';
@@ -28,7 +29,7 @@ const arg = (name, fallback) => {
 // كل صفحة ومدّتها وآخِر ملف لها. المدّة هنا يجب أن تطابق نهاية الخط الزمني في CSS.
 const PAGES = {
   'index.html': { duration: 30.6, out: 'subha-motion' },
-  'gift.html':  { duration: 16.6, out: 'subha-gifting' }
+  'gift.html':  { duration: 13.0, out: 'subha-gifting' }
 };
 
 const PAGE = arg('page', 'index.html');
@@ -37,6 +38,7 @@ if (!PAGES[PAGE]) throw new Error(`صفحة غير معروفة: ${PAGE} — ا�
 const FPS      = Number(arg('fps', 30));
 const DURATION = Number(arg('duration', PAGES[PAGE].duration));
 const KEEP     = process.argv.includes('--keep');
+const AUDIO    = !process.argv.includes('--no-audio');
 const FRAMES   = Math.round(DURATION * FPS);
 const FRAMEDIR = path.join(HERE, '.frames');
 const OUT      = path.join(HERE, 'output', `${PAGES[PAGE].out}-${W}x${H}.mp4`);
@@ -102,6 +104,8 @@ await browser.close();
 const got = (await readdir(FRAMEDIR)).length;
 if (got !== FRAMES) throw new Error(`التُقط ${got} إطارًا والمتوقع ${FRAMES}`);
 
+const SILENT = OUT.replace(/\.mp4$/, '.silent.mp4');
+
 console.log('▸ ترميز H.264 …');
 await run('ffmpeg', [
   '-y', '-loglevel', 'error',
@@ -110,8 +114,24 @@ await run('ffmpeg', [
   '-c:v', 'libx264', '-preset', 'slow', '-crf', '18',
   '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-level', '4.2',
   '-movflags', '+faststart',
-  OUT
+  AUDIO ? SILENT : OUT
 ]);
+
+// مؤثرات الانتقال: تُولَّد تركيبيًا عند كل بناء، فلا ملفات صوت في المستودع
+if (AUDIO) {
+  const WAV = path.join(HERE, 'audio', `${PAGES[PAGE].out}.wav`);
+  console.log('▸ توليد مؤثرات الانتقال …');
+  await run('python3', [path.join(HERE, 'audio', 'build-audio.py'), PAGE, WAV]);
+  console.log('▸ دمج الصوت …');
+  await run('ffmpeg', [
+    '-y', '-loglevel', 'error',
+    '-i', SILENT, '-i', WAV,
+    '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-ac', '2',
+    '-shortest', '-movflags', '+faststart',
+    OUT
+  ]);
+  await rm(SILENT, { force: true });
+}
 
 // صورة الغلاف (آخر لقطة مكتملة للشعار)
 await run('ffmpeg', [
