@@ -28,9 +28,17 @@
   /* ألوان سياقية — تُقلب في المشاهد الداكنة */
   --fg:var(--ink); --muted:var(--taupe); --line:rgba(124,107,93,.32);
 
-  --e-out:cubic-bezier(.16,.84,.32,1);
-  --e-soft:cubic-bezier(.33,0,.1,1);
-  --e-pop:cubic-bezier(.34,1.46,.48,1);
+  /* ── منحنيات من سكِل motion-design (references/easing-tokens.md) ──
+     الدخول والخروج  → عائلة ease-out
+     التحوّل والانتقال → عائلة ease-in-out
+     التقدّم الزمني    → linear
+     الارتداد مسموح به في السكِل للاستعارة الفيزيائية وحدها، لا للظهور المجرّد. */
+  --ease-out-cubic:cubic-bezier(.215,.61,.355,1);
+  --ease-out-quart:cubic-bezier(.165,.84,.44,1);
+  --ease-out-quint:cubic-bezier(.23,1,.32,1);
+  --ease-in-out-cubic:cubic-bezier(.645,.045,.355,1);
+  --ease-in-out-quart:cubic-bezier(.77,0,.175,1);
+  --ease-out-back:cubic-bezier(.34,1.26,.5,1);
 }
 .scene--ink{--fg:var(--paper); --muted:#B3A28D; --line:rgba(247,242,234,.26)}
 
@@ -59,7 +67,7 @@ body{display:flex;align-items:flex-start;justify-content:center}
 .ink{position:absolute;inset:0;z-index:1;opacity:0;
   background:radial-gradient(120% 70% at 50% 28%, #1B1713 0%, var(--ink) 52%, var(--ink-deep) 100%);
   clip-path:inset(100% 0 0 0);
-  animation-timing-function:var(--e-soft);animation-fill-mode:none}
+  animation-timing-function:var(--ease-in-out-quart);animation-fill-mode:none}
 .ink-a{animation-name:inkA;animation-duration:4s;animation-delay:4.8s}
 .ink-b{animation-name:inkB;animation-duration:4.2s;animation-delay:23.9s}
 @keyframes inkA{
@@ -99,7 +107,7 @@ body{display:flex;align-items:flex-start;justify-content:center}
   display:flex;justify-content:center;align-items:center;gap:15px;direction:ltr}
 .rail i{position:relative;width:13px;height:13px;border-radius:50%;background:var(--muted);opacity:.34;
   animation-name:railOn;animation-duration:var(--rd);animation-delay:var(--rt);
-  animation-timing-function:var(--e-out);animation-fill-mode:none}
+  animation-timing-function:linear;animation-fill-mode:none}
 @keyframes railOn{
   0%{opacity:.34;transform:scale(1);background:var(--muted)}
   12%{opacity:1;transform:scale(1.5);background:var(--gold)}
@@ -110,7 +118,7 @@ body{display:flex;align-items:flex-start;justify-content:center}
 .rail i::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--gold);opacity:0;
   animation-name:railFinal;animation-duration:2.6s;
   animation-delay:calc(27.9s + var(--i) * .07s);
-  animation-timing-function:var(--e-out);animation-fill-mode:none}
+  animation-timing-function:linear;animation-fill-mode:none}
 @keyframes railFinal{0%{opacity:0;transform:scale(1)}18%{opacity:1;transform:scale(1.5)}100%{opacity:1;transform:scale(1.5)}}
 
 /* ---------- المعيّن (عنصر الهوية) ---------- */
@@ -123,7 +131,7 @@ body{display:flex;align-items:flex-start;justify-content:center}
 .lockup{position:absolute;left:50%;top:50%;display:flex;flex-direction:column;align-items:center;
   transform:translate(-50%,-50%)}
 .lockup .mark{width:760px;display:block;opacity:0;clip-path:inset(0 0 0 100%)}
-.lockup .diamond{margin-top:60px;transform:rotate(45deg) scale(0);opacity:0}
+.lockup .diamond{margin-top:60px;transform:rotate(45deg) scale(.92);opacity:0}
 .lockup .tag{width:302px;display:block;margin-top:48px;opacity:0}
 
 .dotwrap{position:relative;margin-top:56px;height:16px;display:flex;align-items:center;justify-content:center}
@@ -132,34 +140,34 @@ body{display:flex;align-items:flex-start;justify-content:center}
 .dots{position:relative;display:flex;gap:13px;direction:ltr}
 .dot{width:15px;height:15px;border-radius:50%;background:var(--c);transform:translateY(-860px)}
 
-.s-intro .thread{animation:threadDraw 3.6s var(--e-out) calc(var(--t0) + .15s) both}
+.s-intro .thread{animation:threadDraw 3.6s var(--ease-out-cubic) calc(var(--t0) + .15s) both}
 @keyframes threadDraw{
   0%{transform:translate(-50%,-50%) scaleX(0);opacity:1}
   30%{transform:translate(-50%,-50%) scaleX(1);opacity:1}
   78%{transform:translate(-50%,-50%) scaleX(1);opacity:1}
   100%{transform:translate(-50%,-50%) scaleX(1);opacity:0}
 }
-.s-intro .dot{animation:beadDrop .95s var(--e-pop) calc(var(--t0) + .55s + var(--i) * .13s) both}
+.s-intro .dot{animation:beadDrop .95s var(--ease-out-back) calc(var(--t0) + .55s + var(--i) * .13s) both}
 @keyframes beadDrop{
   0%{transform:translateY(-860px);opacity:0}
   12%{opacity:1}
   100%{transform:translateY(0);opacity:1}
 }
-.s-intro .mark{animation:markWipe 1.2s var(--e-soft) calc(var(--t0) + 1.95s) both}
+.s-intro .mark{animation:markWipe 1.2s var(--ease-in-out-cubic) calc(var(--t0) + 1.95s) both}
 @keyframes markWipe{
   0%{opacity:0;clip-path:inset(0 0 0 100%);transform:translateY(16px)}
   22%{opacity:1}
   100%{opacity:1;clip-path:inset(0 0 0 0%);transform:translateY(0)}
 }
-.s-intro .diamond{animation:diamondPop .8s var(--e-pop) calc(var(--t0) + 2.55s) both}
+.s-intro .diamond{animation:diamondPop .8s var(--ease-out-quint) calc(var(--t0) + 2.55s) both}
 @keyframes diamondPop{
-  0%{opacity:0;transform:rotate(-45deg) scale(0)}
+  0%{opacity:0;transform:rotate(18deg) scale(.92)}
   100%{opacity:1;transform:rotate(45deg) scale(1)}
 }
-.s-intro .tag{animation:riseIn .9s var(--e-out) calc(var(--t0) + 3.15s) both}
+.s-intro .tag{animation:riseIn .9s var(--ease-out-quart) calc(var(--t0) + 3.15s) both}
 @keyframes riseIn{0%{opacity:0;transform:translateY(22px)}100%{opacity:1;transform:translateY(0)}}
 
-.s-intro .lockup{animation:lockOut .5s var(--e-soft) calc(var(--t0) + var(--dur) - .5s) forwards}
+.s-intro .lockup{animation:lockOut .5s var(--ease-out-quart) calc(var(--t0) + var(--dur) - .5s) forwards}
 @keyframes lockOut{
   0%{opacity:1;transform:translate(-50%,-50%) scale(1)}
   100%{opacity:0;transform:translate(-50%,-50%) scale(.955)}
@@ -179,14 +187,14 @@ body{display:flex;align-items:flex-start;justify-content:center}
 .say-line.l2{color:var(--gold-hi)}
 .say-rule{width:120px;height:1px;background:var(--gold);margin-top:60px;transform:scaleX(0);opacity:.9}
 
-.s-say .eyebrow{animation:riseIn .8s var(--e-out) calc(var(--t0) + .45s) both,
-                          softOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
-.s-say .l1{animation:lineWipe 1s var(--e-soft) calc(var(--t0) + .68s) both,
-                      softOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
-.s-say .l2{animation:lineWipe 1s var(--e-soft) calc(var(--t0) + 1.02s) both,
-                      softOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
-.s-say .say-rule{animation:ruleIn .8s var(--e-out) calc(var(--t0) + 1.6s) both,
-                           softOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-say .eyebrow{animation:riseIn .8s var(--ease-out-quart) calc(var(--t0) + .45s) both,
+                          softOut .45s var(--ease-out-quart) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-say .l1{animation:lineWipe 1s var(--ease-in-out-cubic) calc(var(--t0) + .68s) both,
+                      softOut .45s var(--ease-out-quart) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-say .l2{animation:lineWipe 1s var(--ease-in-out-cubic) calc(var(--t0) + 1.02s) both,
+                      softOut .45s var(--ease-out-quart) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-say .say-rule{animation:ruleIn .8s var(--ease-out-cubic) calc(var(--t0) + 1.6s) both,
+                           softOut .45s var(--ease-out-quart) calc(var(--t0) + var(--dur) - .45s) forwards}
 @keyframes lineWipe{
   0%{clip-path:inset(0 0 0 100%);transform:translateY(14px)}
   100%{clip-path:inset(0 0 0 0%);transform:translateY(0)}
@@ -203,12 +211,12 @@ body{display:flex;align-items:flex-start;justify-content:center}
   color:var(--fg);margin-top:40px;opacity:0}
 .bridge-lat{font-family:"Subha UI",sans-serif;font-size:21px;letter-spacing:.46em;text-indent:.46em;
   color:var(--muted);margin-top:22px;opacity:0}
-.s-bridge .diamond{animation:diamondPop .6s var(--e-pop) calc(var(--t0) + .1s) both,
-                             softOut .4s var(--e-soft) calc(var(--t0) + var(--dur) - .4s) forwards}
-.s-bridge .bridge-ar{animation:riseIn .65s var(--e-out) calc(var(--t0) + .24s) both,
-                               softOut .4s var(--e-soft) calc(var(--t0) + var(--dur) - .4s) forwards}
-.s-bridge .bridge-lat{animation:riseIn .65s var(--e-out) calc(var(--t0) + .4s) both,
-                                softOut .4s var(--e-soft) calc(var(--t0) + var(--dur) - .4s) forwards}
+.s-bridge .diamond{animation:diamondPop .6s var(--ease-out-quint) calc(var(--t0) + .1s) both,
+                             softOut .4s var(--ease-out-quart) calc(var(--t0) + var(--dur) - .4s) forwards}
+.s-bridge .bridge-ar{animation:riseIn .65s var(--ease-out-quart) calc(var(--t0) + .24s) both,
+                               softOut .4s var(--ease-out-quart) calc(var(--t0) + var(--dur) - .4s) forwards}
+.s-bridge .bridge-lat{animation:riseIn .65s var(--ease-out-quart) calc(var(--t0) + .4s) both,
+                                softOut .4s var(--ease-out-quart) calc(var(--t0) + var(--dur) - .4s) forwards}
 
 /* ===========================================================================
    بطاقة القسم — هيكل مشترك لكل الأقسام الخمسة
@@ -229,11 +237,11 @@ body{display:flex;align-items:flex-start;justify-content:center}
 .uline{width:170px;height:2px;background:var(--gold);margin-top:30px;transform:scaleX(0)}
 .desc{margin-top:42px;font-size:39px;line-height:1.75;color:var(--muted);max-width:780px;opacity:0}
 
-.s-card .head  {animation:slideIn .75s var(--e-out) calc(var(--t0) + .18s) both, cardOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
-.s-card .motif {animation:motifIn .9s  var(--e-out) calc(var(--t0) + .30s) both, cardOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
-.s-card .title {animation:lineWipe .85s var(--e-soft) calc(var(--t0) + .62s) both, cardOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
-.s-card .uline {animation:ruleIn .6s   var(--e-out) calc(var(--t0) + 1.05s) both, cardOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
-.s-card .desc  {animation:riseIn .8s   var(--e-out) calc(var(--t0) + 1.18s) both, cardOut .45s var(--e-soft) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-card .head  {animation:slideIn .75s var(--ease-out-quart) calc(var(--t0) + .18s) both, cardOut .45s var(--ease-out-quart) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-card .motif {animation:motifIn .9s  var(--ease-out-quart) calc(var(--t0) + .30s) both, cardOut .45s var(--ease-out-quart) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-card .title {animation:lineWipe .85s var(--ease-in-out-cubic) calc(var(--t0) + .62s) both, cardOut .45s var(--ease-out-quart) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-card .uline {animation:ruleIn .6s   var(--ease-out-quart) calc(var(--t0) + 1.05s) both, cardOut .45s var(--ease-out-quart) calc(var(--t0) + var(--dur) - .45s) forwards}
+.s-card .desc  {animation:riseIn .8s   var(--ease-out-quart) calc(var(--t0) + 1.18s) both, cardOut .45s var(--ease-out-quart) calc(var(--t0) + var(--dur) - .45s) forwards}
 @keyframes slideIn{0%{opacity:0;transform:translateX(-34px)}100%{opacity:1;transform:translateX(0)}}
 @keyframes motifIn{0%{opacity:0;transform:translateY(26px) scale(.96)}100%{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes cardOut{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-34px)}}
@@ -246,26 +254,26 @@ body{display:flex;align-items:flex-start;justify-content:center}
 .loop{position:absolute;inset:0}
 .loop b{position:absolute;left:50%;top:50%;width:28px;height:28px;margin:-14px 0 0 -14px;
   border-radius:50%;background:var(--c);
-  transform:rotate(var(--a)) translateY(-216px) scale(0)}
+  transform:rotate(var(--a)) translateY(-216px) scale(.86)}
 .loop b.div{width:37px;height:37px;margin:-18.5px 0 0 -18.5px;background:var(--gold)}
-.s-card .loop b{animation:beadPop .5s var(--e-pop) calc(var(--t0) + .45s + var(--i) * .034s) both}
+.s-card .loop b{animation:beadPop .5s var(--ease-out-quint) calc(var(--t0) + .45s + var(--i) * .034s) both}
 @keyframes beadPop{
-  0%{transform:rotate(var(--a)) translateY(-216px) scale(0);opacity:0}
+  0%{transform:rotate(var(--a)) translateY(-216px) scale(.86);opacity:0}
   100%{transform:rotate(var(--a)) translateY(-216px) scale(1);opacity:1}
 }
 .motif-misbaha .shahid{position:absolute;left:50%;top:50%;width:36px;height:66px;
   border-radius:50% / 34%;background:var(--b5);
-  transform:translate(-50%,-50%) translateY(-244px) scale(0);transform-origin:50% 100%}
-.s-card .shahid{animation:shahidIn .6s var(--e-pop) calc(var(--t0) + 1.6s) both}
+  transform:translate(-50%,-50%) translateY(-244px) scale(.86);transform-origin:50% 100%}
+.s-card .shahid{animation:shahidIn .6s var(--ease-out-quint) calc(var(--t0) + 1.6s) both}
 @keyframes shahidIn{
-  0%{transform:translate(-50%,-50%) translateY(-244px) scale(0);opacity:0}
+  0%{transform:translate(-50%,-50%) translateY(-244px) scale(.86);opacity:0}
   100%{transform:translate(-50%,-50%) translateY(-244px) scale(1);opacity:1}
 }
 .minitassel{position:absolute;left:50%;top:50%;width:110px;height:230px;
   transform:translate(-50%,0) translateY(-212px)}
 .minitassel i{position:absolute;left:50%;top:0;width:3.5px;border-radius:2px;background:var(--c);
   height:var(--h);transform-origin:50% 0;transform:translateX(-50%) rotate(var(--r)) scaleY(0)}
-.s-card .minitassel i{animation:fanIn .55s var(--e-out) calc(var(--t0) + 1.78s + var(--j) * .028s) both}
+.s-card .minitassel i{animation:fanIn .55s var(--ease-out-cubic) calc(var(--t0) + 1.78s + var(--j) * .028s) both}
 @keyframes fanIn{
   0%{transform:translateX(-50%) rotate(var(--r)) scaleY(0)}
   100%{transform:translateX(-50%) rotate(var(--r)) scaleY(1)}
@@ -276,47 +284,47 @@ body{display:flex;align-items:flex-start;justify-content:center}
 .tassel{position:relative;width:118px;display:flex;flex-direction:column;align-items:center;
   transform-origin:50% 0;animation:sway 4.2s ease-in-out infinite alternate;
   animation-delay:calc(var(--i) * -1.35s)}
-.tassel .ring{width:36px;height:36px;border:3.5px solid var(--c);border-radius:50%;transform:scale(0)}
-.tassel .knot{width:30px;height:30px;border-radius:50%;background:var(--c);margin-top:-7px;transform:scale(0)}
+.tassel .ring{width:36px;height:36px;border:3.5px solid var(--c);border-radius:50%;transform:scale(.9)}
+.tassel .knot{width:30px;height:30px;border-radius:50%;background:var(--c);margin-top:-7px;transform:scale(.9)}
 .tassel .cap{width:46px;height:62px;margin-top:2px;border-radius:8px 8px 22px 22px;
   background:linear-gradient(180deg,var(--c) 0%,color-mix(in srgb,var(--c) 58%,#000) 100%);
   transform:scaleY(0);transform-origin:50% 0}
 .tassel .fan{position:relative;width:140px;height:270px;margin-top:-2px}
 .tassel .fan i{position:absolute;left:50%;top:0;width:4px;border-radius:3px;background:var(--c);
   height:var(--h);transform-origin:50% 0;transform:translateX(-50%) rotate(var(--r)) scaleY(0)}
-.s-card .tassel .ring{animation:popIn .5s var(--e-pop) calc(var(--t0) + .45s + var(--i) * .13s) both}
-.s-card .tassel .knot{animation:popIn .5s var(--e-pop) calc(var(--t0) + .55s + var(--i) * .13s) both}
-.s-card .tassel .cap {animation:capIn .55s var(--e-out) calc(var(--t0) + .64s + var(--i) * .13s) both}
-.s-card .tassel .fan i{animation:fanIn .6s var(--e-out)
+.s-card .tassel .ring{animation:popIn .5s var(--ease-out-quint) calc(var(--t0) + .45s + var(--i) * .13s) both}
+.s-card .tassel .knot{animation:popIn .5s var(--ease-out-quint) calc(var(--t0) + .55s + var(--i) * .13s) both}
+.s-card .tassel .cap {animation:capIn .55s var(--ease-out-cubic) calc(var(--t0) + .64s + var(--i) * .13s) both}
+.s-card .tassel .fan i{animation:fanIn .6s var(--ease-out-cubic)
   calc(var(--t0) + .86s + var(--i) * .13s + var(--j) * .022s) both}
-@keyframes popIn{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes popIn{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
 @keyframes capIn{0%{transform:scaleY(0)}100%{transform:scaleY(1)}}
 
 /* ------------------------- ٠٣ · التعليقات ------------------------- */
 .motif-charms{align-items:flex-start!important;padding-top:30px}
 .rail-line{position:absolute;top:30px;left:50%;width:560px;height:1px;background:var(--line);
   transform:translateX(-50%) scaleX(0)}
-.s-card .rail-line{animation:railDraw .8s var(--e-out) calc(var(--t0) + .4s) both}
+.s-card .rail-line{animation:railDraw .8s var(--ease-out-cubic) calc(var(--t0) + .4s) both}
 @keyframes railDraw{0%{transform:translateX(-50%) scaleX(0)}100%{transform:translateX(-50%) scaleX(1)}}
 .charms{position:absolute;top:30px;left:50%;transform:translateX(-50%);display:flex;gap:132px;direction:ltr}
 .charm{position:relative;width:92px;display:flex;flex-direction:column;align-items:center;
   transform-origin:50% 0;animation:sway 3.9s ease-in-out infinite alternate;
   animation-delay:calc(var(--i) * -1.05s)}
 .charm .chain{width:2.5px;height:var(--len);background:var(--c);transform-origin:50% 0;transform:scaleY(0)}
-.charm .cbead{width:16px;height:16px;border-radius:50%;background:var(--c);transform:scale(0)}
+.charm .cbead{width:16px;height:16px;border-radius:50%;background:var(--c);transform:scale(.9)}
 .charm .shape{margin-top:14px;width:66px;height:66px;background:var(--c)}
-.charm .sh-diamond{transform:rotate(45deg) scale(0);width:60px;height:60px}
-.charm .sh-drop{border-radius:50% 50% 50% 2px;transform:rotate(45deg) scale(0)}
-.charm .sh-moon{border-radius:50%;transform:scale(0);
+.charm .sh-diamond{transform:rotate(45deg) scale(.9);width:60px;height:60px}
+.charm .sh-drop{border-radius:50% 50% 50% 2px;transform:rotate(45deg) scale(.9)}
+.charm .sh-moon{border-radius:50%;transform:scale(.9);
   -webkit-mask:radial-gradient(circle 34px at 74% 30%,transparent 98%,#000 100%);
   mask:radial-gradient(circle 34px at 74% 30%,transparent 98%,#000 100%)}
-.s-card .charm .chain{animation:chainIn .7s var(--e-out) calc(var(--t0) + .62s + var(--i) * .14s) both}
-.s-card .charm .cbead{animation:popIn .45s var(--e-pop) calc(var(--t0) + 1.0s + var(--i) * .14s) both}
-.s-card .charm .sh-diamond{animation:shapeInD .6s var(--e-pop) calc(var(--t0) + 1.12s + var(--i) * .14s) both}
-.s-card .charm .sh-drop{animation:shapeInD .6s var(--e-pop) calc(var(--t0) + 1.12s + var(--i) * .14s) both}
-.s-card .charm .sh-moon{animation:popIn .6s var(--e-pop) calc(var(--t0) + 1.12s + var(--i) * .14s) both}
+.s-card .charm .chain{animation:chainIn .7s var(--ease-out-cubic) calc(var(--t0) + .62s + var(--i) * .14s) both}
+.s-card .charm .cbead{animation:popIn .45s var(--ease-out-quint) calc(var(--t0) + 1.0s + var(--i) * .14s) both}
+.s-card .charm .sh-diamond{animation:shapeInD .6s var(--ease-out-quint) calc(var(--t0) + 1.12s + var(--i) * .14s) both}
+.s-card .charm .sh-drop{animation:shapeInD .6s var(--ease-out-quint) calc(var(--t0) + 1.12s + var(--i) * .14s) both}
+.s-card .charm .sh-moon{animation:popIn .6s var(--ease-out-quint) calc(var(--t0) + 1.12s + var(--i) * .14s) both}
 @keyframes chainIn{0%{transform:scaleY(0)}100%{transform:scaleY(1)}}
-@keyframes shapeInD{0%{transform:rotate(-20deg) scale(0);opacity:0}100%{transform:rotate(45deg) scale(1);opacity:1}}
+@keyframes shapeInD{0%{transform:rotate(26deg) scale(.9);opacity:0}100%{transform:rotate(45deg) scale(1);opacity:1}}
 
 /* ------------------------- ٠٤ · المحفظات ------------------------- */
 .motif-case{flex-direction:column}
@@ -328,21 +336,21 @@ body{display:flex;align-items:flex-start;justify-content:center}
 .casesvg .stitch{stroke:var(--gold);stroke-width:3;stroke-dasharray:.02 .022}
 .casesvg .clasp,.casesvg .d6{stroke:var(--gold)}
 .casesvg .flap{transform-box:fill-box;transform-origin:50% 100%}
-.s-card .casesvg .body  {animation:draw 1.0s var(--e-soft) calc(var(--t0) + .45s) both}
-.s-card .casesvg .flap  {animation:draw .85s var(--e-soft) calc(var(--t0) + .70s) both,
-                                   flapOpen .9s var(--e-out) calc(var(--t0) + 1.5s) both}
-.s-card .casesvg .d3    {animation:draw .7s linear calc(var(--t0) + 1.05s) both}
-.s-card .casesvg .d4    {animation:draw .7s linear calc(var(--t0) + 1.18s) both}
-.s-card .casesvg .clasp {animation:draw .6s var(--e-out) calc(var(--t0) + 1.35s) both}
-.s-card .casesvg .d6    {animation:draw .45s var(--e-out) calc(var(--t0) + 1.5s) both}
+.s-card .casesvg .body  {animation:draw 1.0s var(--ease-out-cubic) calc(var(--t0) + .45s) both}
+.s-card .casesvg .flap  {animation:draw .85s var(--ease-out-cubic) calc(var(--t0) + .70s) both,
+                                   flapOpen .9s var(--ease-out-quart) calc(var(--t0) + 1.5s) both}
+.s-card .casesvg .d3    {animation:draw .7s var(--ease-out-cubic) calc(var(--t0) + 1.05s) both}
+.s-card .casesvg .d4    {animation:draw .7s var(--ease-out-cubic) calc(var(--t0) + 1.18s) both}
+.s-card .casesvg .clasp {animation:draw .6s var(--ease-out-cubic) calc(var(--t0) + 1.35s) both}
+.s-card .casesvg .d6    {animation:draw .45s var(--ease-out-cubic) calc(var(--t0) + 1.5s) both}
 @keyframes draw{0%{stroke-dashoffset:1;opacity:0}8%{opacity:1}100%{stroke-dashoffset:0;opacity:1}}
 @keyframes flapOpen{0%{transform:rotate(0) translateY(0)}100%{transform:rotate(-5deg) translateY(-12px)}}
 
 .peek{position:absolute;top:144px;left:50%;transform:translateX(-50%);display:flex;gap:12px;direction:ltr}
 .peek i{width:24px;height:24px;border-radius:50%;background:var(--c);
-  transform:translateY(60px) scale(.4);opacity:0}
-.s-card .peek i{animation:peekUp .8s var(--e-pop) calc(var(--t0) + 1.75s + var(--i) * .07s) both}
-@keyframes peekUp{0%{transform:translateY(60px) scale(.4);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
+  transform:translateY(60px) scale(.9);opacity:0}
+.s-card .peek i{animation:peekUp .8s var(--ease-out-back) calc(var(--t0) + 1.75s + var(--i) * .07s) both}
+@keyframes peekUp{0%{transform:translateY(60px) scale(.9);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
 
 /* ------------------------- الإهداء ------------------------- */
 .s-gift .idx{font-family:"Subha AR",serif;font-size:30px}
@@ -352,23 +360,23 @@ body{display:flex;align-items:flex-start;justify-content:center}
   stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
 .giftsvg .ribbon,.giftsvg .bow,.giftsvg .g3{stroke:var(--gold);stroke-width:4.5}
 .giftsvg .lid{transform-box:fill-box;transform-origin:50% 100%}
-.s-card .giftsvg .box    {animation:draw 1.0s var(--e-soft) calc(var(--t0) + .45s) both}
-.s-card .giftsvg .g5     {animation:draw .6s var(--e-out) calc(var(--t0) + .95s) both}
-.s-card .giftsvg .g6     {animation:draw .6s var(--e-out) calc(var(--t0) + 1.08s) both}
-.s-card .giftsvg .g1     {animation:draw .7s var(--e-soft) calc(var(--t0) + 1.22s) both}
-.s-card .giftsvg .g3     {animation:draw .3s linear calc(var(--t0) + 1.5s) both}
-.s-card .giftsvg .bow    {animation:draw .9s var(--e-out) calc(var(--t0) + 1.6s) both}
-.s-card .giftsvg .lid    {animation:lidLift 1s var(--e-pop) calc(var(--t0) + 2.1s) both}
+.s-card .giftsvg .box    {animation:draw 1.0s var(--ease-out-cubic) calc(var(--t0) + .45s) both}
+.s-card .giftsvg .g5     {animation:draw .6s var(--ease-out-cubic) calc(var(--t0) + .95s) both}
+.s-card .giftsvg .g6     {animation:draw .6s var(--ease-out-cubic) calc(var(--t0) + 1.08s) both}
+.s-card .giftsvg .g1     {animation:draw .7s var(--ease-out-cubic) calc(var(--t0) + 1.22s) both}
+.s-card .giftsvg .g3     {animation:draw .3s var(--ease-out-cubic) calc(var(--t0) + 1.5s) both}
+.s-card .giftsvg .bow    {animation:draw .9s var(--ease-out-cubic) calc(var(--t0) + 1.6s) both}
+.s-card .giftsvg .lid    {animation:lidLift 1s var(--ease-in-out-cubic) calc(var(--t0) + 2.1s) both}
 @keyframes lidLift{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(-26px) rotate(-3.5deg)}}
 
 .sparks{position:absolute;inset:0;pointer-events:none}
 .sparks i{position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);background:var(--gold-hi);
-  transform:translate(-50%,-50%) translate(var(--x),var(--y)) rotate(45deg) scale(0);opacity:0}
-.s-card .sparks i{animation:sparkle 1.5s var(--e-out) calc(var(--t0) + 1.9s + var(--i) * .11s) both}
+  transform:translate(-50%,-50%) translate(var(--x),var(--y)) rotate(45deg) scale(.9);opacity:0}
+.s-card .sparks i{animation:sparkle 1.5s var(--ease-out-quart) calc(var(--t0) + 1.9s + var(--i) * .11s) both}
 @keyframes sparkle{
-  0%{transform:translate(-50%,-50%) translate(var(--x),var(--y)) rotate(0deg) scale(0);opacity:0}
-  35%{transform:translate(-50%,-50%) translate(var(--x),var(--y)) rotate(45deg) scale(1);opacity:1}
-  100%{transform:translate(-50%,-50%) translate(var(--x),var(--y)) rotate(90deg) scale(.55);opacity:.35}
+  0%{transform:translate(-50%,-50%) translate(var(--x),var(--y)) rotate(26deg) scale(.9);opacity:0}
+  34%{transform:translate(-50%,-50%) translate(var(--x),var(--y)) rotate(45deg) scale(1);opacity:1}
+  100%{transform:translate(-50%,-50%) translate(var(--x),var(--y)) rotate(58deg) scale(.86);opacity:0}
 }
 
 /* ===========================================================================
@@ -381,12 +389,42 @@ body{display:flex;align-items:flex-start;justify-content:center}
 .cta b{position:relative;z-index:1;font-family:"Subha AR",serif;font-weight:700;font-size:46px;color:var(--gold)}
 .cta-fill{position:absolute;inset:0;background:var(--gold);transform-origin:100% 50%;transform:scaleX(0)}
 
-.s-out .mark{animation:markWipe 1.15s var(--e-soft) calc(var(--t0) + .38s) both}
-.s-out .diamond{animation:diamondPop .7s var(--e-pop) calc(var(--t0) + .88s) both}
-.s-out .tag{animation:riseIn .85s var(--e-out) calc(var(--t0) + 1.05s) both}
-.s-out .cta{animation:riseIn .7s var(--e-out) calc(var(--t0) + 1.4s) both}
-.s-out .cta-fill{animation:ruleIn .75s var(--e-soft) calc(var(--t0) + 1.95s) both}
-.s-out .cta b{animation:ctaInk .5s var(--e-soft) calc(var(--t0) + 2.15s) both}
+.s-out .mark{animation:markWipe 1.15s var(--ease-in-out-cubic) calc(var(--t0) + .38s) both}
+.s-out .diamond{animation:diamondPop .7s var(--ease-out-quint) calc(var(--t0) + .88s) both}
+.s-out .tag{animation:riseIn .85s var(--ease-out-quart) calc(var(--t0) + 1.05s) both}
+.s-out .cta{animation:riseIn .7s var(--ease-out-quart) calc(var(--t0) + 1.4s) both}
+.s-out .cta-fill{animation:ruleIn .75s var(--ease-out-cubic) calc(var(--t0) + 1.95s) both}
+.s-out .cta b{animation:ctaInk .5s ease calc(var(--t0) + 2.15s) both}
 @keyframes ctaInk{0%{color:var(--gold)}100%{color:var(--ink)}}
 
 /* معاينة في المتصفح: افتح index.html?fit لتصغير المسرح حتى يناسب النافذة */
+
+/* ===========================================================================
+   تقليل الحركة — توصية سكِل motion-design (references/decision-tree.md)
+   الصفحة تُفتح في متصفح حقيقي للمعاينة، فلمن ضبط نظامه على تقليل الحركة
+   تُعرض اللقطة النهائية لكل مشهد ساكنةً بدل أن تتحرّك.
+
+   هذا لا يمسّ التصيير: render.mjs يفتح الصفحة بـ reducedMotion:'no-preference'
+   صراحةً، فالفيديو يُبنى بالحركة كاملة مهما كان إعداد الجهاز المُصيِّر.
+   =========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .stage *,
+  .stage *::before,
+  .stage *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* ===========================================================================
+   سياسة الأزمنة
+   ---------------------------------------------------------------------------
+   أزمنة السكِل (120–300ms) مضبوطة على واجهات المنتجات، حيث القياس هو سرعة
+   الاستجابة للمستخدم. هنا لا مستخدم ولا استجابة: مقطعٌ خطّي يُشاهَد مرة.
+   فالمرجع هو --dur-illustrative في الملف نفسه (700–1200ms) مع «Marketing →
+   more freedom» في Context Modifier. ومعظم حركات الدخول هنا بين ٥٥٠ و١٢٠٠ms،
+   أي داخل هذا النطاق، والخروج ٤٠٠–٥٠٠ms — أسرع من الدخول، كما يوصي السكِل.
+   الأزمنة مكتوبة بالثواني صراحةً لا برموز، لأن كل مشهد يُوقَّت على إيقاعه
+   وعلى زمن قراءة نصّه العربي، لا على سلّم واجهات موحّد.
+   =========================================================================== */

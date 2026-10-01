@@ -12,7 +12,7 @@ const times = process.argv.slice(2).map(Number).sort((a, b) => a - b);
 const out = process.env.PREVIEW_DIR || path.join(HERE, '.preview');
 await mkdir(out, { recursive: true });
 const b = await chromium.launch({ args: ['--force-color-profile=srgb', '--font-render-hinting=none'] });
-const p = await b.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
+const p = await b.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1, reducedMotion: 'no-preference' });
 p.on('pageerror', e => console.error('PAGEERROR:', e.message));
 await p.goto('file://' + path.join(HERE, PAGE), { waitUntil: 'load' });
 await p.evaluate(() => document.fonts.ready);

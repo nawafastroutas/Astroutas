@@ -60,7 +60,9 @@ const browser = await chromium.launch({
 });
 const page = await browser.newPage({
   viewport: { width: W, height: H },
-  deviceScaleFactor: 1
+  deviceScaleFactor: 1,
+  // الصفحة تحترم prefers-reduced-motion للمعاينة؛ التصيير يتجاوزه صراحةً
+  reducedMotion: 'no-preference'
 });
 
 page.on('pageerror', e => console.error('خطأ في الصفحة:', e.message));
