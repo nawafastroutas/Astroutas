@@ -5061,7 +5061,7 @@ html:not(.js) .splash {
 
 هل المنتج متوفر حالياً؟
 وشكراً لكم 🤍`;
-      window.open(`https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent(msg)}`,"_blank");
+      window.open(`https://api.whatsapp.com/send?phone=${STORE.whatsapp}&text=${encodeURIComponent(msg)}`,"_blank");
     }
 
     function openCheckout(){
@@ -5117,7 +5117,7 @@ ${lines}
           exportOrderPdf(order);
         }
       },350);
-      window.open(`https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent(msg)}`,"_blank");
+      window.open(`https://api.whatsapp.com/send?phone=${STORE.whatsapp}&text=${encodeURIComponent(msg)}`,"_blank");
     }
 
     function exportOrderPdf(order){
@@ -6183,7 +6183,7 @@ ${lines}
 
 فضلاً مراجعة المواصفات وتأكيد السعر النهائي والتوفر.
 شكراً لكم 🤍`;
-      window.open(`https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent(msg)}`,"_blank");
+      window.open(`https://api.whatsapp.com/send?phone=${STORE.whatsapp}&text=${encodeURIComponent(msg)}`,"_blank");
     });
 
     $("#newsletterForm").addEventListener("submit",e=>{e.preventDefault();const phone=$("#newsletterPhone").value.trim();if(!phone)return toast("أدخل رقم الهاتف","alert-circle");toast("تم تسجيل اشتراكك بنجاح","check-circle");e.target.reset()});
@@ -7053,7 +7053,7 @@ ${lines}
     const c=order.customer;
     const orderNumber=String(order.id).slice(-6);
     const discountLines=`${order.productDiscount?`\n🏷️ *خصم المنتجات:* -${money(order.productDiscount)} ر.ع`:''}${order.couponDiscount?`\n🎟️ *كود الخصم:* ${order.couponCode} (${order.couponPercent}%)\n💸 *خصم الكود:* -${money(order.couponDiscount)} ر.ع`:''}`;
-    const msg=`السلام عليكم ورحمة الله وبركاته 🌿
+    const msg=order.gift&&window.subbhaGift?window.subbhaGift.orderMessage(order):`السلام عليكم ورحمة الله وبركاته 🌿
 
 لدي طلب جديد من متجر *Subbha*:
 
@@ -7072,7 +7072,7 @@ ${lines}
 🏘️ *الولاية:* ${c.wilayat}
 🏠 *العنوان:* ${c.address}
 📝 *الملاحظات:* ${c.notes||'لا توجد'}
-╰────────────────${window.subbhaGift?window.subbhaGift.whatsappBlock(order):''}
+╰────────────────
 
 🔖 *رقم الطلب:* #${orderNumber}
 
@@ -7096,7 +7096,7 @@ ${lines}
     setTimeout(()=>{
       if(confirm('تم إنشاء الطلب. هل تريد تصديره الآن كملف PDF؟'))exportOrderPdf(order);
     },350);
-    const whatsappUrl=`https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent(msg)}`;
+    const whatsappUrl=`https://api.whatsapp.com/send?phone=${STORE.whatsapp}&text=${encodeURIComponent(msg)}`;
     if(whatsappWindow)whatsappWindow.location.href=whatsappUrl;
     else window.location.href=whatsappUrl;
   };
@@ -7740,12 +7740,15 @@ ${lines}
   }
   function setGift(on){const f=form();if(f?.elements.isGift){f.elements.isGift.checked=on;sync();}}
 
+  // يحذف نصف إيموجي مقطوعاً (عند اللصق فوق الحد الأقصى) حتى لا يتحول إلى علامة استفهام.
+  const wellFormed=s=>String(s||'').replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])/g,'').replace(/(^|[^\uD800-\uDBFF])[\uDC00-\uDFFF]/g,'$1');
+
   function extract(customer){
     const gift=customer.isGift==='on'?{
-      recipientName:String(customer.recipientName||'').trim(),
+      recipientName:wellFormed(customer.recipientName).trim(),
       recipientPhone:String(customer.recipientPhone||'').replace(/[^\d+]/g,''),
       showSenderIdentity:customer.showIdentity!=='no',
-      message:String(customer.giftMessage||'').trim()
+      message:wellFormed(customer.giftMessage).trim()
     }:null;
     GIFT_KEYS.forEach(k=>delete customer[k]);
     if(gift&&(!gift.recipientName||gift.recipientPhone.replace(/\D/g,'').length<8)){
@@ -7755,17 +7758,48 @@ ${lines}
     return gift;
   }
 
-  function whatsappBlock(order){
-    const g=order?.gift;if(!g)return '';
-    return `
-
-╭─ 🎁 *طلب إهداء*
-🎀 *المُهدى إليه:* ${g.recipientName}
-📱 *رقم المُهدى إليه:* ${g.recipientPhone}
-${g.showSenderIdentity?'👤 *هوية المُرسل:* تظهر للمُهدى إليه':'🙈 *هوية المُرسل:* مخفية — لا يُذكر اسم المُرسل للمُهدى إليه'}
-💌 *رسالة الإهداء:* ${g.message||'لا توجد'}
-📦 التوصيل للمُهدى إليه على العنوان أعلاه
-╰────────────────`;
+  function orderMessage(order){
+    const g=order.gift,c=order.customer||{};
+    const line='━━━━━━━━━━━━';
+    const items=(order.items||[]).map((i,idx)=>`${idx+1}. ${i.product?.name||'منتج'} × ${i.qty} — ${money(i.lineTotal??((i.product?.price||0)*i.qty))} ر.ع${i.productDiscountPercent?` (خصم ${i.productDiscountPercent}%)`:''}`).join('\n');
+    const discounts=[
+      order.productDiscount?`🏷️ خصم المنتجات: -${money(order.productDiscount)} ر.ع`:'',
+      order.couponDiscount?`🎟️ كود الخصم ${order.couponCode} (${order.couponPercent}%): -${money(order.couponDiscount)} ر.ع`:''
+    ].filter(Boolean);
+    const card=g.message?(g.message.includes('\n')?`💌 *رسالة البطاقة:*\n${g.message}`:`💌 *رسالة البطاقة:*\n_«${g.message}»_`):'';
+    const identity=g.showSenderIdentity
+      ?`👤 *باسم المُرسل:* ${c.name}\nيُذكر اسمه للمُهدى إليه`
+      :'🙈 *هدية بدون اسم*\nلا يُذكر اسم المُرسل للمُهدى إليه';
+    return [
+      '🎁 *طلب إهداء جديد — Subbha*',
+      `رقم الطلب: #${String(order.id).slice(-6)}`,
+      '',
+      line,
+      '*المُهدى إليه*',
+      `الاسم: ${g.recipientName}`,
+      `الرقم: ${g.recipientPhone}`,
+      `العنوان: ${c.governorate} — ${c.wilayat}، ${c.address}`,
+      ...(card?['',card]:[]),
+      '',
+      identity,
+      line,
+      '',
+      '*المنتجات*',
+      items,
+      '',
+      ...(discounts.length?[`💵 المجموع قبل الخصم: ${money(order.subtotal)} ر.ع`,...discounts]:[]),
+      `💰 *الإجمالي:* ${money(order.total)} ر.ع`,
+      `💳 *الدفع:* ${order.payment}`,
+      '',
+      line,
+      '*المُرسل (للتواصل فقط)*',
+      `الاسم: ${c.name}`,
+      `الرقم: ${c.phone}`,
+      `ملاحظات: ${c.notes||'لا توجد'}`,
+      line,
+      '',
+      'فضلاً تأكيد الطلب وموعد توصيل الهدية 🤍'
+    ].join('\n');
   }
 
   function adminTag(o){
@@ -7789,7 +7823,7 @@ ${g.showSenderIdentity?'👤 *هوية المُرسل:* تظهر للمُهدى 
     document.querySelector('#checkoutBtn')?.click();
   });
 
-  window.subbhaGift={extract,whatsappBlock,adminTag,invoiceHtml,reset:()=>setGift(false)};
+  window.subbhaGift={extract,orderMessage,adminTag,invoiceHtml,reset:()=>setGift(false)};
 })();
 </script>
 
