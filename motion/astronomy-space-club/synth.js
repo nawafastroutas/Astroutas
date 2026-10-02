@@ -7,7 +7,6 @@
  *   0.0  → 12.6   space bed: slow low rumble + faint high "air", with distant twinkles
  *   1.25 / 3.55 / 5.85   a soft swish as each word appears
  *   1.45 → 3.0    tiny ticks as the constellation lines connect
- *   3.45 → 6.2    a very low pass-by as the ringed planet drifts across
  *   6.05 → 7.3    the shooting star: fast whoosh, left to right
  *   8.25 → 9.5    the comet approaches
  *   9.4  → 11.8   sizzle of the glowing tail tracing the logo, with sparkles
@@ -163,9 +162,6 @@ for (const t of [1.25, 3.55, 5.85]) {
 
 // the constellation connecting, line by line
 for (let i = 0; i < 5; i++) tick(1.5 + i * .31, .035, -.45 + i * .22, 5200 + i * 500, { dur: .06 });
-
-// the ringed planet drifting past — felt more than heard
-noiseSweep(3.5, 6.3, .11, 52, 128, -.8, .45, { q: .6, attack: .4, send: .2 });
 
 // the shooting star
 noiseSweep(6.05, 7.3, .14, 900, 5600, -.85, .85, { q: .8, attack: .42 });

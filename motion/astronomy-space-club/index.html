@@ -11,7 +11,7 @@
   الشعار الأصلي نفسه (تتبّع على دقّة ×8 + مطابقة تدرّج العلامة بأقل مربّعات)،
   لذلك كل حرف وكل منحنى مطابق للأصل، ويبقى حادًّا عند أي دقّة.
 
-  الفكرة: من عمق الفضاء — نجوم، كوكب بحلقة، مذنّب — يرسم المذنّب مسار الشعار
+  الفكرة: من عمق الفضاء — نجوم وكوكبة وشهاب — يرسم المذنّب مسار الشعار
   بذيله المضيء، ثم ينفجر الضوء ليتحوّل المشهد من ليل إلى أبيض الهوية.
 
   كل الحركة دالة واحدة: render(t). لا CSS animations — لذلك التصدير
@@ -94,7 +94,7 @@
   const CONSTELLATION = [          // a small "telescope" asterism, in unit screen coords
     [.30, .30], [.38, .24], [.46, .28], [.53, .21], [.60, .27], [.66, .20],
   ];
-  let consLines, consDots, planetG, ring1, ring2, moonG, wordsG, trailPath, trailGlow,
+  let consLines, consDots, wordsG, trailPath, trailGlow,
       markG, markFill, lockG, tArG, tEnG, ruleClip, botG, sheen, sheenMask, cometSVG;
 
   function build() {
@@ -137,12 +137,6 @@
       'stroke-dasharray': '1 1', 'stroke-dashoffset': 1 }, consLines));
     consDots = el('g', { fill: '#DFF3FA', opacity: 0 }, scene);
     CONSTELLATION.forEach(() => el('circle', { r: 2.4, cx: 0, cy: 0 }, consDots));
-
-    planetG = el('g', { opacity: 0 }, scene);
-    ring2 = el('ellipse', { rx: 118, ry: 30, fill: 'none', stroke: '#5FA9C4', 'stroke-width': 1.6, opacity: .55 }, planetG);
-    el('circle', { r: 54, fill: 'url(#gm)', opacity: .95 }, planetG);
-    ring1 = el('ellipse', { rx: 118, ry: 30, fill: 'none', stroke: '#9BD7E8', 'stroke-width': 2.2 }, planetG);
-    moonG = el('circle', { r: 6, fill: '#CFE9F2' }, planetG);
 
     wordsG = el('g', { id: 'words' }, scene);
 
@@ -395,22 +389,6 @@
           'stroke-dashoffset': (1 - E.outCubic(seg)).toFixed(3) });
       }
     });
-
-    // ---- ringed planet (with the second word) ----
-    const pK = prog(t, 3.45, 6.2);
-    const pA = E.outCubic(prog(t, 3.45, 4.3)) * (1 - E.inCubic(prog(t, 5.5, 6.2)));
-    planetG.setAttribute('opacity', (pA * .9).toFixed(3));
-    if (pA > 0) {
-      const px = lerp(-.12, .42, pK) * W, py = H * (PORTRAIT ? .26 : .255);
-      const ps = base / 1000;
-      set(planetG, { transform: `translate(${px} ${py}) scale(${ps}) rotate(-16)` });
-      const ma = pK * 6.283 * 1.3;
-      set(moonG, { cx: Math.cos(ma) * 118, cy: Math.sin(ma) * 30 });
-      // the moon passes behind the planet on the far side
-      moonG.setAttribute('opacity', Math.sin(ma) < 0 ? .45 : 1);
-      set(ring1, { opacity: (.9 * E.outCubic(prog(t, 3.6, 4.6))).toFixed(2) });
-      set(ring2, { opacity: (.5 * E.outCubic(prog(t, 3.7, 4.8))).toFixed(2) });
-    }
 
     // ---- canvas layers ----
     paintBg(t, darkA);
