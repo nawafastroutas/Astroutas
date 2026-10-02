@@ -27,7 +27,9 @@ async function renderDay(browser, day){
   // audio (real-time capture) runs alongside the frame capture
   const audio = (async () => {
     const p = await browser.newPage(); await p.goto(url); await p.evaluate(() => document.fonts.ready);
+    if (await p.evaluate(() => S.CFG.silent)) { await p.close(); return false; } // silent episodes: video only
     fs.writeFileSync(aud, Buffer.from(await p.evaluate(() => S.audioWebm()), 'base64')); await p.close();
+    return true;
   })();
   const p = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
   p.on('pageerror', e => console.error(`[day ${id}]`, e.message));
@@ -37,9 +39,10 @@ async function renderDay(browser, day){
   fs.closeSync(fd); await p.close();
   await ff(['-f', 'image2pipe', '-c:v', 'mjpeg', '-framerate', String(FPS), '-i', 'file:' + mj,
     '-c:v', 'libvpx', '-b:v', '7M', '-crf', '6', '-qmin', '0', '-qmax', '28', '-deadline', 'good', '-cpu-used', '2', '-threads', '2', '-pix_fmt', 'yuv420p', '-auto-alt-ref', '0', vid]);
-  await audio;
+  const hasAudio = await audio;
   const out = path.join(DIR, 'videos', `day-${id}.${mp4 ? 'mp4' : 'webm'}`);
-  if (mp4) await ff(['-i', vid, '-i', aud, '-map', '0:v', '-map', '1:a', '-c:v', 'libx264', '-crf', '18', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', out]);
+  if (!hasAudio) mp4 ? await ff(['-i', vid, '-c:v', 'libx264', '-crf', '18', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', out]) : fs.copyFileSync(vid, out);
+  else if (mp4) await ff(['-i', vid, '-i', aud, '-map', '0:v', '-map', '1:a', '-c:v', 'libx264', '-crf', '18', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', out]);
   else await ff(['-i', vid, '-i', aud, '-map', '0:v', '-map', '1:a', '-c', 'copy', '-shortest', out]);
   fs.rmSync(tmp, { recursive: true, force: true });
   console.log(`day ${id} ✓ ${n} frames, ${((Date.now() - t0) / 1000).toFixed(0)}s → ${path.relative(DIR, out)}`);

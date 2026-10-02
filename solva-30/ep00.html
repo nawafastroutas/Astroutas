@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solva — مقدمة · من أنا</title>
+<link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="engine.css">
+<style>
+  /* silent on purpose — a Quran recitation is added over it, so the pacing is slow and calm */
+  .ln{position:absolute;left:80px;right:80px;text-align:center}
+  #mk0{left:470px;top:700px;width:140px;height:210px}
+  #ic{left:440px;top:640px;width:200px;height:200px;border-radius:50%;border:2px solid var(--ink-2);display:flex;align-items:center;justify-content:center}
+  #ic > div{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+  .lock{position:absolute;left:0;right:0;top:700px;display:flex;justify-content:center;align-items:center;gap:36px;direction:ltr}
+  .lock .wm{font-family:var(--lat);font-weight:600;font-size:150px;letter-spacing:-.045em;line-height:1}
+  .lock .mk{width:100px;height:150px}
+  #dots{left:200px;top:880px;width:680px;display:grid;grid-template-columns:repeat(6,1fr);gap:22px;justify-items:center}
+  #dots i{width:64px;height:64px;border-radius:50%;border:2px solid var(--ink-2);display:flex;align-items:center;justify-content:center;font:500 20px var(--mono);font-style:normal;color:var(--muted)}
+  .soft{color:#9AA39D}
+</style></head><body>
+<div id="stage">
+  <!-- 1 -->
+  <div class="abs" id="mk0"></div>
+  <div class="ln h-l" id="a1" style="top:1000px">كل رحلة…<br><span class="gl">تبدأ بخطوة.</span></div>
+  <!-- 2 -->
+  <div class="abs" id="ic"><div id="i1"></div><div id="i2"></div></div>
+  <div class="ln h-l" id="b1" style="top:900px">أنا طالب،</div>
+  <div class="ln h-m soft" id="b2" style="top:1040px">وطموحي أكبر من<br>حدود الفصل.</div>
+  <!-- 3 -->
+  <div class="ln h-m" id="c1" style="top:520px">وعندي مشروع…</div>
+  <div class="lock" id="lk"><div class="wm" id="wm">Solva</div><div class="mk" id="mk1"></div></div>
+  <div class="ln t-l soft" id="c2" style="top:930px">نبني مواقع تعمل،<br>لا مواقع تُعجب فقط.</div>
+  <!-- 4 -->
+  <div class="ln h-l" id="d1" style="top:520px">هدفنا:</div>
+  <div class="ln h-m" id="d2" style="top:680px"><span class="gl mono">30</span> مقطع في <span class="gl mono">30</span> يوم.</div>
+  <div class="abs" id="dots"></div>
+  <!-- 5 -->
+  <div class="ln h-l" id="e1" style="top:780px">تابعوا الرحلة<br><span class="gl">معنا.</span></div>
+</div>
+<script src="engine.js"></script>
+<script>
+const {K, inOut, fade, draw, icon, MARK, $, $$, E} = S;
+S.setup({day: 0, dur: 28.2, silent: true, end: {cta: 'تابعنا', line: 'من اليوم… <b>٣٠ يوم</b> من البناء.', next: 'DAY 01 · tomorrow'}});
+const SLOW = 'cubic-bezier(.33,0,.15,1)';
+// gentle in/out: long fades, small drift, a touch of blur — nothing that fights the recitation
+const soft = (el, a, b, o = {}) => inOut(el, a, b, {dy: 24, blur: 8, d: 1.1, od: .7, ez: SLOW, ...o});
+
+// 1 — the first step
+$('#mk0').innerHTML = MARK('#5FA88A', 11);
+$$('#mk0 path').forEach((p, i) => draw(p, .6 + i * .9, 1.8 + i * .9, SLOW));
+fade('#mk0', .4, 4.6, .8);
+soft('#a1', 2.0, 4.8);
+
+// 2 — a student with ambition (book becomes a light bulb)
+$('#i1').innerHTML = icon('bookmark', 84, '#C9C7BD', 1.4);
+$('#i2').innerHTML = icon('bulb', 92, '#5FA88A', 1.4);
+soft('#ic', 5.6, 10.3, {dy: 0, s: .9});
+K('#i1', [[6.8, {opacity: 1, filter: 'blur(0px)'}, SLOW], [7.8, {opacity: 0, filter: 'blur(6px)'}]]);
+K('#i2', [[6.8, {opacity: 0, filter: 'blur(6px)'}, SLOW], [7.8, {opacity: 1, filter: 'blur(0px)'}]]);
+K('#ic', [[7.6, {borderColor: '#3A423E'}, SLOW], [8.4, {borderColor: '#5FA88A'}]]);
+soft('#b1', 5.9, 10.3);
+soft('#b2', 7.0, 10.4);
+
+// 3 — the project
+soft('#c1', 11.0, 15.8);
+$('#mk1').innerHTML = MARK('#5FA88A', 13);
+soft('#wm', 11.8, 15.9, {dy: 0, blur: 12});
+$$('#mk1 path').forEach((p, i) => draw(p, 12.2 + i * .6, 13.2 + i * .6, SLOW));
+K('#mk1', [[15.9, {opacity: 1}, E.IN], [16.6, {opacity: 0}]]);
+soft('#c2', 13.4, 16.0);
+
+// 4 — the goal: thirty days fill one by one
+const dots = $('#dots');
+for (let n = 1; n <= 30; n++) dots.insertAdjacentHTML('beforeend', `<i id="o${n}">${String(n).padStart(2, '0')}</i>`);
+soft('#d1', 16.8, 21.6);
+soft('#d2', 17.4, 21.7);
+fade('#dots', 17.8, 21.6, .8);
+for (let n = 1; n <= 30; n++){
+  const t = 18.4 + n * .08;
+  K(`#o${n}`, [[t, {backgroundColor: 'rgba(95,168,138,0)', borderColor: '#3A423E', color: '#7C837E'}, SLOW], [t + .5, {backgroundColor: 'rgba(95,168,138,1)', borderColor: '#5FA88A', color: '#14201B'}]]);
+}
+
+// 5 — invitation
+soft('#e1', 22.2, null);
+S.start();
+// slower outro reveal for this calm piece: keep the engine's outro but no sound is rendered
+</script></body></html>
