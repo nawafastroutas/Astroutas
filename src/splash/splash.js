@@ -13,8 +13,6 @@
 /** @typedef {Object} SplashOptions
  *  @property {string}   [mark]         شِفرة SVG للشعار (مرسوم داخل الصفحة).
  *  @property {string}   [markup]       قالب كامل بديل للشاشة.
- *  @property {string}   [title]        العنوان تحت الشعار.
- *  @property {string}   [tagline]      العبارة الصغيرة تحت العنوان.
  *  @property {number}   [minDuration]  أقل مدة ظهور (ms).
  *  @property {number}   [maxDuration]  أقصى مدة ظهور قبل الإخفاء القسري (ms).
  *  @property {number}   [exitDuration] مدة تأثير الاختفاء (ms).
@@ -26,10 +24,8 @@
  *  @property {Document} [document]
  */
 
-/** @type {Required<Pick<SplashOptions,'title'|'tagline'|'minDuration'|'maxDuration'|'exitDuration'|'holdAfterComplete'|'appRoot'|'once'>>} */
+/** @type {Required<Pick<SplashOptions,'minDuration'|'maxDuration'|'exitDuration'|'holdAfterComplete'|'appRoot'|'once'>>} */
 export const SPLASH_DEFAULTS = {
-  title: 'قسم الأنشطة الطلابية',
-  tagline: 'نصنع تجربة طلابية استثنائية',
   minDuration: 950,
   maxDuration: 7000,
   exitDuration: 620,
@@ -40,11 +36,6 @@ export const SPLASH_DEFAULTS = {
 
 const SESSION_KEY = 'astroutas:splash-seen';
 const PROGRESS_CEILING = 0.92;
-
-const escapeHtml = (value) =>
-  String(value).replace(/[&<>"']/g, (ch) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-  })[ch]);
 
 /**
  * الشعار مرسوم داخل الصفحة (inline SVG) بدل <img>:
@@ -68,7 +59,7 @@ export const MARK_SVG = `<svg class="splash__mark-svg" viewBox="160 196 692 610"
  * @returns {string} HTML
  */
 export function splashMarkup(options = {}) {
-  const { title, tagline, mark = MARK_SVG } = { ...SPLASH_DEFAULTS, ...options };
+  const { mark = MARK_SVG } = { ...SPLASH_DEFAULTS, ...options };
   return `
 <div class="splash" id="splash" role="status" aria-live="polite"
      aria-label="جارٍ فتح التطبيق" data-splash>
@@ -77,9 +68,6 @@ export function splashMarkup(options = {}) {
       ${mark}
       <span class="splash__sheen" aria-hidden="true"></span>
     </div>
-    <p class="splash__title">${escapeHtml(title)}</p>
-    <span class="splash__rule" aria-hidden="true"></span>
-    <p class="splash__tagline">${escapeHtml(tagline)}</p>
   </div>
 
   <div class="splash__footer">
@@ -87,7 +75,6 @@ export function splashMarkup(options = {}) {
          aria-valuenow="0" aria-label="نسبة التحميل" data-splash-progress>
       <span class="splash__progress-fill" data-splash-fill></span>
     </div>
-    <span class="splash__status" data-splash-status>جارٍ التحميل…</span>
   </div>
 </div>`.trim();
 }
@@ -129,7 +116,6 @@ export function createSplash(options = {}) {
 
   const fill = el.querySelector('[data-splash-fill]');
   const bar = el.querySelector('[data-splash-progress]');
-  const status = el.querySelector('[data-splash-status]');
   const appRoot = config.appRoot ? doc.querySelector(config.appRoot) : null;
 
   const startedAt = performance.now();
@@ -196,7 +182,6 @@ export function createSplash(options = {}) {
     window.clearTimeout(hardStop);
 
     paint(1);
-    if (status) status.textContent = 'جاهز';
 
     window.setTimeout(() => {
       el?.classList.add('is-leaving');

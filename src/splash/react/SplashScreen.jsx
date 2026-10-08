@@ -17,8 +17,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const DEFAULTS = {
-  title: 'قسم الأنشطة الطلابية',
-  tagline: 'نصنع تجربة طلابية استثنائية',
   minDuration: 950,
   maxDuration: 7000,
   exitDuration: 620,
@@ -52,8 +50,6 @@ export function BrandMark() {
 
 export default function SplashScreen({
   mark = <BrandMark />,
-  title = DEFAULTS.title,
-  tagline = DEFAULTS.tagline,
   minDuration = DEFAULTS.minDuration,
   maxDuration = DEFAULTS.maxDuration,
   exitDuration = DEFAULTS.exitDuration,
@@ -166,9 +162,6 @@ export default function SplashScreen({
           {mark}
           <span className="splash__sheen" aria-hidden="true" />
         </div>
-        <p className="splash__title">{title}</p>
-        <span className="splash__rule" aria-hidden="true" />
-        <p className="splash__tagline">{tagline}</p>
       </div>
 
       <div className="splash__footer">
@@ -183,9 +176,6 @@ export default function SplashScreen({
         >
           <span ref={fillRef} className="splash__progress-fill" />
         </div>
-        <span className="splash__status">
-          {phase === 'leaving' ? 'جاهز' : 'جارٍ التحميل…'}
-        </span>
       </div>
     </div>
   );
