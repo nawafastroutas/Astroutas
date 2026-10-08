@@ -1,14 +1,15 @@
 /* ==========================================================================
    Astroutas — صفحة العرض (ديمو) لإظهار الانتقال بعد شاشة التحميل.
-   استبدلها بموقعك الفعلي؛ شاشة التحميل مستقلة تمامًا عن هذا الملف.
+   استبدلها بموقعك الفعلي؛ شاشة الدخول مستقلة تمامًا عن هذا الملف.
+   الألوان هنا مشتقّة من الشعار حتى لا ينكسر الانتقال بعد اختفاء الشاشة.
    ========================================================================== */
 
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
   margin: 0;
-  background: #f6f9fd;
-  color: #0e2f5e;
+  background: #f2fbf8;
+  color: #042421;
   font-family: "SF Arabic", "Geeza Pro", "Noto Kufi Arabic", "Noto Naskh Arabic",
     "Dubai", "Tajawal", "Segoe UI", system-ui, -apple-system, sans-serif;
   line-height: 1.7;
@@ -35,18 +36,18 @@ img { max-width: 100%; }
   gap: 1rem;
   flex-wrap: wrap;
   padding-block: 1.25rem;
-  border-block-end: 1px solid rgba(14, 47, 94, 0.08);
+  border-block-end: 1px solid rgba(4, 36, 33, 0.08);
 }
 
 .brand { display: flex; align-items: center; gap: 0.7rem; }
 .brand__logo { flex: none; }
 .brand__text { display: flex; flex-direction: column; line-height: 1.3; }
 .brand__text strong { font-size: 1rem; }
-.brand__text small { font-size: 0.75rem; color: #5b76a0; }
+.brand__text small { font-size: 0.75rem; color: #4b6c67; }
 
 .nav { display: flex; gap: clamp(0.75rem, 2.5vw, 1.6rem); flex-wrap: wrap; font-size: 0.9rem; }
-.nav a { color: #45618c; padding-block: 0.25rem; border-block-end: 2px solid transparent; }
-.nav a:hover { color: #1e6fd9; border-block-end-color: #f5851f; }
+.nav a { color: #3f615c; padding-block: 0.25rem; border-block-end: 2px solid transparent; }
+.nav a:hover { color: #0b8d79; border-block-end-color: #45e2c3; }
 
 /* ---------- Hero ---------- */
 .hero { padding-block: clamp(3rem, 10vw, 6rem) clamp(2rem, 6vw, 3.5rem); max-width: 44rem; }
@@ -55,7 +56,7 @@ img { max-width: 100%; }
   margin: 0 0 0.9rem;
   font-size: 0.78rem;
   letter-spacing: 0.1em;
-  color: #f5851f;
+  color: #0b8d79;
   font-weight: 700;
 }
 
@@ -68,13 +69,13 @@ img { max-width: 100%; }
   text-wrap: balance;
 }
 .hero__title span {
-  background: linear-gradient(to left, #f5851f, #ffa24a);
+  background: linear-gradient(to left, #0b8d79, #2fc7ab);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-.hero__lede { margin: 0 0 2rem; font-size: clamp(1rem, 3.4vw, 1.15rem); color: #45618c; text-wrap: pretty; }
+.hero__lede { margin: 0 0 2rem; font-size: clamp(1rem, 3.4vw, 1.15rem); color: #3f615c; text-wrap: pretty; }
 
 .hero__actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
@@ -88,13 +89,13 @@ img { max-width: 100%; }
   transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 .btn--primary {
-  background: linear-gradient(135deg, #1e6fd9, #0e2f5e);
-  color: #fff;
-  box-shadow: 0 10px 24px rgba(30, 111, 217, 0.28);
+  background: linear-gradient(135deg, #45e2c3, #55dafd);
+  color: #042421;
+  box-shadow: 0 10px 24px rgba(69, 226, 195, 0.38);
 }
-.btn--ghost { border: 1.5px solid rgba(14, 47, 94, 0.18); color: #0e2f5e; }
+.btn--ghost { border: 1.5px solid rgba(4, 36, 33, 0.18); color: #042421; }
 .btn:hover { transform: translateY(-2px); }
-.btn--ghost:hover { border-color: #f5851f; color: #f5851f; }
+.btn--ghost:hover { border-color: #0b8d79; color: #0b8d79; }
 
 /* ---------- Cards ---------- */
 .cards {
@@ -106,24 +107,24 @@ img { max-width: 100%; }
 
 .card {
   background: #fff;
-  border: 1px solid rgba(14, 47, 94, 0.07);
+  border: 1px solid rgba(4, 36, 33, 0.07);
   border-radius: 1.15rem;
   padding: 1.6rem 1.4rem;
-  box-shadow: 0 4px 18px rgba(14, 47, 94, 0.05);
+  box-shadow: 0 4px 18px rgba(4, 36, 33, 0.05);
   transition: transform 220ms ease, box-shadow 220ms ease;
 }
-.card:hover { transform: translateY(-4px); box-shadow: 0 14px 34px rgba(14, 47, 94, 0.1); }
-.card__icon { color: #f5851f; font-size: 1.1rem; }
+.card:hover { transform: translateY(-4px); box-shadow: 0 14px 34px rgba(4, 36, 33, 0.1); }
+.card__icon { color: #0b8d79; font-size: 1.1rem; }
 .card h2 { margin: 0.6rem 0 0.5rem; font-size: 1.1rem; }
-.card p { margin: 0; font-size: 0.92rem; color: #5b76a0; }
+.card p { margin: 0; font-size: 0.92rem; color: #4b6c67; }
 
 /* ---------- Footer ---------- */
 .site__footer {
   margin-block-start: auto;
   padding-block: 1.5rem;
-  border-block-start: 1px solid rgba(14, 47, 94, 0.08);
+  border-block-start: 1px solid rgba(4, 36, 33, 0.08);
   font-size: 0.82rem;
-  color: #7189ad;
+  color: #688a85;
 }
 
 @media (prefers-reduced-motion: reduce) {

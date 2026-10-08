@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>معاينة شاشة الدخول</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="src/splash/splash.css">
+<style>
+  /* صفحة أدوات فقط — ليست جزءًا من المنتج، وُجدت لمعاينة الحركة وضبطها. */
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    background: #f2fbf8;
+    color: #042421;
+    font-family: "SF Arabic", "Geeza Pro", "Noto Kufi Arabic", "Dubai", "Tajawal",
+      system-ui, -apple-system, sans-serif;
+  }
+  .panel {
+    position: fixed;
+    inset-block-end: clamp(0.75rem, 3vh, 1.5rem);
+    inset-inline: 0;
+    z-index: calc(var(--splash-z) + 10);   /* فوق الشاشة حتى تبقى الأزرار قابلة للنقر */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    padding-inline: 1rem;
+    pointer-events: none;
+  }
+  .panel > * { pointer-events: auto; }
+  .group {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 8px 24px rgba(4, 36, 33, 0.16);
+    backdrop-filter: blur(10px);
+  }
+  button {
+    border: 0;
+    border-radius: 999px;
+    padding: 0.5rem 0.95rem;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #0b3b35;
+    background: transparent;
+    cursor: pointer;
+  }
+  button:hover { background: rgba(4, 36, 33, 0.07); }
+  button[aria-pressed="true"] { background: #042421; color: #88f5e0; }
+  .replay { background: linear-gradient(135deg, #45e2c3, #55dafd); color: #042421; }
+  .hint {
+    position: fixed;
+    inset-block-start: clamp(0.75rem, 3vh, 1.5rem);
+    inset-inline: 0;
+    z-index: calc(var(--splash-z) + 10);
+    text-align: center;
+    font-size: 0.78rem;
+    color: rgba(4, 36, 33, 0.55);
+    pointer-events: none;
+  }
+  /* ما يظهر خلف الشاشة بعد انتهائها */
+  .stage { text-align: center; padding: 2rem 1.5rem 6rem; max-width: 30rem; }
+  .stage img { width: 96px; height: 96px; border-radius: 22px; }
+  .stage h1 { font-size: 1.25rem; margin: 1rem 0 0.4rem; }
+  .stage p { margin: 0; font-size: 0.9rem; line-height: 1.8; color: #4b6c67; }
+</style>
+</head>
+<body>
+
+<p class="hint">معاينة شاشة الدخول — اضغط «إعادة التشغيل» لمشاهدتها من جديد</p>
+
+<div class="stage" data-preview-app>
+  <img src="assets/logo.svg" alt="" width="96" height="96">
+  <h1>انتهت شاشة الدخول</h1>
+  <p>
+    هذه صفحة معاينة فقط. غيّر الوضع أو أبطئ الحركة من الأسفل ثم أعد التشغيل
+    لفحص كل تفصيلة في الحركة.
+  </p>
+</div>
+
+<div class="panel">
+  <div class="group">
+    <button class="replay" type="button" data-replay>إعادة التشغيل</button>
+  </div>
+  <div class="group" role="group" aria-label="الوضع اللوني">
+    <button type="button" data-theme-btn="auto" aria-pressed="true">تلقائي</button>
+    <button type="button" data-theme-btn="light" aria-pressed="false">فاتح</button>
+    <button type="button" data-theme-btn="dark" aria-pressed="false">داكن</button>
+  </div>
+  <div class="group" role="group" aria-label="سرعة الحركة">
+    <button type="button" data-speed="1" aria-pressed="true">1×</button>
+    <button type="button" data-speed="0.5" aria-pressed="false">0.5×</button>
+    <button type="button" data-speed="0.25" aria-pressed="false">0.25×</button>
+  </div>
+</div>
+
+<script type="module">
+  import { createSplash } from './src/splash/splash.js';
+
+  const root = document.documentElement;
+  const EXIT_MS = 620;
+  let speed = 1;
+  let controller = null;
+
+  function play() {
+    controller?.destroy();
+    document.querySelector('[data-splash]')?.remove();
+    root.classList.remove('app-ready');
+
+    // الحركات تُبطّأ عبر Web Animations، والانتقالات عبر متغيّر CSS
+    root.style.setProperty('--splash-exit-duration', `${Math.round(EXIT_MS / speed)}ms`);
+
+    controller = createSplash({
+      appRoot: '[data-preview-app]',
+      minDuration: 1500 / speed,
+      maxDuration: 12000 / speed,
+      exitDuration: EXIT_MS / speed,
+      holdAfterComplete: 240 / speed,
+    });
+
+    if (speed !== 1) {
+      const el = document.querySelector('[data-splash]');
+      el?.getAnimations({ subtree: true }).forEach((a) => { a.playbackRate = speed; });
+    }
+  }
+
+  function pressed(selector, value) {
+    document.querySelectorAll(selector).forEach((b) => {
+      b.setAttribute('aria-pressed', String(b.dataset.themeBtn === value || b.dataset.speed === value));
+    });
+  }
+
+  document.querySelector('[data-replay]').addEventListener('click', play);
+
+  document.querySelectorAll('[data-theme-btn]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.themeBtn;
+      if (mode === 'auto') root.removeAttribute('data-theme');
+      else root.setAttribute('data-theme', mode);
+      pressed('[data-theme-btn]', mode);
+      play();
+    });
+  });
+
+  document.querySelectorAll('[data-speed]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      speed = Number(btn.dataset.speed);
+      pressed('[data-speed]', btn.dataset.speed);
+      play();
+    });
+  });
+
+  play();
+</script>
+
+</body>
+</html>

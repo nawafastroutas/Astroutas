@@ -1,30 +1,79 @@
 /* ==========================================================================
-   Astroutas — Splash / Loading Screen
-   هوية بصرية: الأزرق + البرتقالي + الأبيض
+   شاشة الدخول (Splash / Launch Screen)
+   مبنيّة على الشعار نفسه: التدرّج الفيروزي + العلامة الداكنة.
+   الشاشة تبدو امتدادًا لأيقونة التطبيق، فيبدو الفتح وكأن الأيقونة تتمدّد.
    لا يعتمد على أي مكتبة خارجية. Zero dependencies.
    ========================================================================== */
 
 :root {
-  /* --- Brand tokens (غيّرها هنا فقط لتغيير الهوية بالكامل) --- */
-  --astro-blue-900: #06162c;
-  --astro-blue-800: #0a2246;
-  --astro-blue-700: #0e2f5e;
-  --astro-blue-500: #1e6fd9;
-  --astro-blue-400: #3d8bef;
-  --astro-orange-500: #f5851f;
-  --astro-orange-400: #ffa24a;
-  --astro-white: #ffffff;
+  /* --- ألوان الهوية (مأخوذة من الشعار — غيّرها هنا فقط) --- */
+  --brand-ink: #042421;        /* لون العلامة الداكن */
+  --brand-ink-2: #0b3b35;
+  --brand-teal: #45e2c3;       /* بداية التدرّج (أعلى اليسار) */
+  --brand-aqua: #88f5e0;       /* منتصف التدرّج */
+  --brand-sky: #55dafd;        /* نهاية التدرّج (أسفل اليمين) */
 
-  /* --- Splash tuning --- */
-  --splash-logo-size: clamp(6.5rem, 17vw, 9.5rem);
-  --splash-ring-gap: clamp(1.4rem, 4vw, 2.1rem);
+  /* أسطح الشاشة — تُعاد تعريفها في الوضع الداكن */
+  --splash-bg: linear-gradient(135deg,
+      var(--brand-teal) 0%, var(--brand-aqua) 52%, var(--brand-sky) 100%);
+  --splash-mark: var(--brand-ink);
+  --splash-title: var(--brand-ink);
+  --splash-muted: rgba(4, 36, 33, 0.6);
+  --splash-track: rgba(4, 36, 33, 0.14);
+  --splash-fill: linear-gradient(to left, var(--brand-ink-2), var(--brand-ink));
+  --splash-sheen: rgba(255, 255, 255, 0.42);
+  --splash-glow:
+    radial-gradient(38% 30% at 50% 42%, rgba(255, 255, 255, 0.5), transparent 70%),
+    radial-gradient(42% 34% at 16% 14%, rgba(69, 226, 195, 0.45), transparent 72%),
+    radial-gradient(40% 32% at 86% 88%, rgba(85, 218, 253, 0.4), transparent 72%);
+  --splash-mark-shadow: drop-shadow(0 12px 26px rgba(4, 36, 33, 0.22));
+  /* قناع اللمعة = شكل العلامة نفسه، مضمّن هنا حتى يعمل الملف وحده
+     بلا أي ملف خارجي مهما نُقل splash.css */
+  --splash-mark-mask: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='160%20196%20692%20610'%20fill='%23000'%3E%3Cpath%20d='M262.3%20405.9C264%20405.5%20553.1%20405.2%20555%20405.5C556.9%20405.7%20558.9%20406%20560.6%20406.9C562.3%20407.7%20564%20409.1%20565.1%20410.5C566.2%20411.8%20567%20413.4%20567.6%20415C568.1%20416.6%20568.3%20418.4%20568.3%20420C568.2%20421.6%20567.7%20423.2%20567.1%20424.6C566.5%20426.1%20565.6%20427.6%20564.4%20428.8C563.2%20430%20561.3%20431.2%20559.5%20432C557.7%20432.7%20555.2%20433%20553%20433.2C550.8%20433.4%20268.9%20433.4%20267%20433.2C265.1%20433%20262.8%20432.6%20261.4%20432.1C260%20431.6%20258.7%20430.9%20257.5%20430C256.3%20429.1%20254.9%20427.7%20254.1%20426.4C253.3%20425.1%20252.8%20423.5%20252.5%20422C252.3%20420.5%20252.3%20417.5%20252.6%20416C252.9%20414.5%20253.4%20413%20254.3%20411.7C255.1%20410.4%20256.3%20409.1%20257.6%20408.1C258.9%20407.2%20260.6%20406.3%20262.3%20405.9Z'/%3E%3Cpath%20d='M176.4%20471.9C178.1%20471.6%20497.1%20471.4%20499%20471.6C500.9%20471.9%20502.8%20472.2%20504.5%20473C506.2%20473.9%20508%20475.5%20508.9%20476.5C509.9%20477.6%20510.7%20478.9%20511.2%20480.2C511.7%20481.6%20512.2%20484.3%20512.1%20485.9C512.1%20487.5%20511.7%20489.1%20511.1%20490.6C510.5%20492.1%20509.6%20493.7%20508.5%20494.9C507.4%20496.2%20506%20497.2%20504.5%20498C503%20498.7%20500.9%20499.1%20499%20499.4C497.1%20499.6%20180.9%20499.6%20179%20499.4C177.1%20499.2%20174.7%20498.7%20173.4%20498.1C172.1%20497.5%20170.9%20496.6%20169.9%20495.6C168.9%20494.5%20167.7%20492.9%20167%20491.5C166.3%20490.1%20165.8%20488.6%20165.6%20487C165.4%20485.4%20165.4%20483.7%20165.8%20482.2C166.2%20480.6%20167.1%20478.9%20168%20477.5C169%20476.2%20170.1%20474.9%20171.5%20474C172.8%20473.1%20174.6%20472.3%20176.4%20471.9Z'/%3E%3Cpath%20d='M268.4%20537.9C270.4%20537.6%20445.2%20537.3%20448%20537.8C450.8%20538.2%20454.5%20539.1%20456.2%20540.3C457.9%20541.6%20459.3%20543.7%20460.1%20545.4C460.9%20547.1%20461.2%20549.1%20461.1%20551C461.1%20552.8%20460.6%20554.7%20459.8%20556.3C458.9%20557.9%20457%20559.8%20456.1%20560.5C455.2%20561.3%20454.1%20561.9%20452.9%20562.3C451.8%20562.7%20449.7%20563.1%20448%20563.2C446.3%20563.4%20271.6%20563.4%20270%20563.2C268.4%20563.1%20266.4%20562.6%20265.2%20562.2C264.1%20561.8%20263.1%20561.2%20262.1%20560.5C261.2%20559.7%20259.7%20558%20258.9%20556.6C258.1%20555.2%20257.7%20553.6%20257.5%20552C257.3%20550.4%20257.4%20548.7%20257.8%20547.2C258.2%20545.6%20259.5%20543.5%20260.1%20542.6C260.8%20541.6%20261.5%20540.7%20262.5%20540.1C263.5%20539.4%20266.3%20538.3%20268.4%20537.9Z'/%3E%3Cpath%20d='M844.5%20202C844.8%20202%20845.1%20202.2%20845.5%20202.3C845.4%20202.6%20845.4%20204%20845.2%20204.8C845.1%20205.6%20811.4%20321%20811.1%20321.6C810.8%20322.3%20810.3%20322.7%20809.9%20323.3L506%20344.3C485.7%20345.6%20447.8%20348.2%20445%20348.3C442.2%20348.3%20439.5%20348.1%20436.7%20348C439.3%20347.1%20844.2%20202.1%20844.5%20202Z'/%3E%3Cpath%20d='M796.4%20346.9L801.8%20346.8C802%20347.5%20802.2%20348.1%20802.2%20348.8C802.2%20349.5%20710.3%20661.8%20708.2%20667.8C706.2%20673.9%20703.8%20679.9%20701.2%20685.8C698.7%20691.7%20694.2%20701.1%20690.4%20707.8C686.6%20714.6%20681.6%20722.2%20677.9%20727.4C674.2%20732.6%20670.1%20737.6%20665.8%20742.4C661.5%20747.2%20655.2%20753.5%20650.4%20757.8C645.6%20762.1%20639.8%20766.8%20635.4%20769.9C631.1%20773%20626.1%20775.9%20621.8%20778.4C617.5%20780.8%20612.8%20783.2%20608.6%20785.1C604.4%20787%20600.2%20788.8%20595.8%20790.2C591.5%20791.7%20580.9%20794.9%20574.9%20796.2C569%20797.5%20561.6%20798.6%20557%20799.2C552.3%20799.7%20547.7%20800%20543%20800.2C538.3%20800.4%20533%20800.4%20528%20800.2C523%20800%20511.7%20799.1%20506%20798.3C500.3%20797.5%20494%20796.4%20489.1%20795.2C484.1%20794.1%20479.2%20792.7%20474.3%20791.1C469.5%20789.5%20458.9%20785.4%20454.2%20783.2C449.6%20781.1%20445%20778.6%20440.6%20775.9C436.1%20773.2%20428.1%20767.6%20425.7%20765.7C423.2%20763.9%20420.9%20761.9%20418.6%20759.8C416.3%20757.7%20410.6%20752.5%20407%20748.5C403.4%20744.5%20398.8%20738.8%20396.3%20735.3C393.7%20731.8%20391.3%20728.2%20389.1%20724.4C386.9%20720.7%20383.7%20714.5%20381.9%20710.7C380%20706.8%20378.3%20702.8%20376.8%20698.8C375.3%20694.8%20373.3%20688.8%20371.9%20683.6C370.6%20678.5%20368%20666.1%20367.8%20663.9C367.6%20661.8%20367.9%20659.6%20367.9%20657.4L480.9%20617.6C481.3%20618.1%20481.9%20618.6%20482.2%20619.2C482.5%20619.8%20485.4%20633.4%20487.7%20639.8C490%20646.3%20493.9%20654.6%20496%20658.5C498.1%20662.3%20501.2%20667%20503.1%20669.4C504.9%20671.9%20506.8%20674.3%20508.9%20676.5C511%20678.8%20514.7%20682.3%20516.6%20683.8C518.5%20685.3%20520.6%20686.6%20522.6%20687.9C524.7%20689.1%20526.9%20690.4%20529.1%20691.4C531.3%20692.4%20534.4%20693.6%20537.2%20694.3C539.9%20695%20548.3%20696.7%20554%20696.5C559.7%20696.4%20568.2%20694.1%20570.8%20693.3C573.4%20692.4%20575.9%20691.2%20578.3%20689.8C580.8%20688.5%20584.2%20686.5%20586.9%20684.5C589.5%20682.4%20595.2%20677%20598.1%20673.6C601.1%20670.1%20603.6%20666.3%20605.9%20662.4C608.2%20658.5%20611.1%20652.7%20613.2%20647.7C615.3%20642.6%20617.6%20635.9%20619.3%20629.8C621%20623.8%20677.2%20358%20677.8%20355.3C680.5%20354.8%20683.2%20354.1%20686%20353.8C688.8%20353.4%20794.6%20347%20796.4%20346.9Z'/%3E%3C/svg%3E");
+
+  /* --- مقاسات وتوقيت --- */
+  --splash-mark-size: clamp(8rem, 34vw, 14rem);
   --splash-exit-duration: 620ms;
   --splash-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --splash-ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
   --splash-z: 2147483000;
 }
 
+/* الوضع الداكن: خلفية بلون العلامة، والعلامة بلون التدرّج.
+   يُطبَّق تلقائيًا حسب إعداد الجهاز، أو يدويًا عبر <html data-theme="dark">
+   (و data-theme="light" يُبقي الوضع الفاتح رغم إعداد الجهاز). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --splash-bg: radial-gradient(90% 70% at 50% 38%, #0a3a34 0%, #05241f 58%, #021311 100%);
+    --splash-mark: var(--brand-teal);
+    --splash-title: #e9fffa;
+    --splash-muted: rgba(189, 240, 230, 0.6);
+    --splash-track: rgba(136, 245, 224, 0.16);
+    --splash-fill: linear-gradient(to left, var(--brand-sky), var(--brand-teal));
+    --splash-sheen: rgba(255, 255, 255, 0.32);
+    --splash-glow:
+      radial-gradient(40% 30% at 50% 40%, rgba(69, 226, 195, 0.22), transparent 70%),
+      radial-gradient(44% 34% at 84% 84%, rgba(85, 218, 253, 0.16), transparent 74%);
+    --splash-mark-shadow: drop-shadow(0 0 26px rgba(69, 226, 195, 0.35));
+  }
+}
+
+:root[data-theme="dark"] {
+  --splash-bg: radial-gradient(90% 70% at 50% 38%, #0a3a34 0%, #05241f 58%, #021311 100%);
+  --splash-mark: var(--brand-teal);
+  --splash-title: #e9fffa;
+  --splash-muted: rgba(189, 240, 230, 0.6);
+  --splash-track: rgba(136, 245, 224, 0.16);
+  --splash-fill: linear-gradient(to left, var(--brand-sky), var(--brand-teal));
+  --splash-sheen: rgba(255, 255, 255, 0.32);
+  --splash-glow:
+    radial-gradient(40% 30% at 50% 40%, rgba(69, 226, 195, 0.22), transparent 70%),
+    radial-gradient(44% 34% at 84% 84%, rgba(85, 218, 253, 0.16), transparent 74%);
+  --splash-mark-shadow: drop-shadow(0 0 26px rgba(69, 226, 195, 0.35));
+}
+
 /* --------------------------------------------------------------------------
-   1. Stage
+   1. المسرح
    -------------------------------------------------------------------------- */
 
 .splash {
@@ -36,52 +85,31 @@
   justify-items: center;
   overflow: hidden;
   isolation: isolate;
-  background: var(--astro-blue-900);
-  color: var(--astro-white);
-  /* الخط: يعتمد على خطوط النظام العربية — لا طلبات شبكة، ولا وميض خطوط */
+  background: var(--splash-bg);
+  color: var(--splash-title);
+  /* الخط: خطوط النظام العربية — لا طلبات شبكة، ولا وميض خطوط */
   font-family: "SF Arabic", "Geeza Pro", "Noto Kufi Arabic", "Noto Naskh Arabic",
     "Dubai", "Tajawal", "Segoe UI", system-ui, -apple-system, sans-serif;
   /* يمنع سحب/تكبير الشاشة أثناء التحميل على الجوال */
   touch-action: none;
   -webkit-user-select: none;
   user-select: none;
-  will-change: opacity, transform, filter;
+  will-change: opacity, transform;
 }
 
-/* الخلفية: تدرّج أساسي + هالتان ناعمتان (أزرق/برتقالي) + شبكة رفيعة */
-.splash::before,
-.splash::after {
+/* هالة ضوئية ناعمة تتنفّس خلف العلامة — عمق بلا ضجيج */
+.splash::before {
   content: "";
   position: absolute;
-  inset: -20%;
-  z-index: -2;
-  pointer-events: none;
-}
-
-.splash::before {
-  background:
-    radial-gradient(46% 38% at 24% 22%, rgba(30, 111, 217, 0.42), transparent 70%),
-    radial-gradient(32% 28% at 82% 84%, rgba(245, 133, 31, 0.15), transparent 68%),
-    radial-gradient(30% 26% at 88% 12%, rgba(61, 139, 239, 0.16), transparent 70%),
-    radial-gradient(58% 50% at 50% 46%, rgba(14, 47, 94, 0.75), transparent 78%),
-    linear-gradient(165deg, var(--astro-blue-800) 0%, var(--astro-blue-900) 58%, #030c1b 100%);
-  animation: splash-aurora 14s var(--splash-ease) infinite alternate;
-}
-
-/* شبكة معمارية رفيعة جدًا — إحساس رسمي/جامعي */
-.splash::after {
+  inset: -25%;
   z-index: -1;
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-  background-size: 68px 68px;
-  -webkit-mask-image: radial-gradient(70% 60% at 50% 45%, #000 25%, transparent 78%);
-  mask-image: radial-gradient(70% 60% at 50% 45%, #000 25%, transparent 78%);
-  opacity: 0.85;
+  pointer-events: none;
+  background: var(--splash-glow);
+  animation: splash-drift 13s var(--splash-ease) infinite alternate;
 }
 
 /* --------------------------------------------------------------------------
-   2. Core (logo + text)
+   2. القلب: العلامة + النص
    -------------------------------------------------------------------------- */
 
 .splash__core {
@@ -90,74 +118,106 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(1.5rem, 4.2vw, 2.25rem);
+  gap: clamp(1.4rem, 4vw, 2rem);
   padding: 2rem 1.5rem 0;
   text-align: center;
   max-width: 34rem;
 }
 
-/* --- Logo + rings --- */
 .splash__mark {
   position: relative;
-  display: grid;
-  place-items: center;
-  width: calc(var(--splash-logo-size) + var(--splash-ring-gap) * 2);
-  aspect-ratio: 1;
+  width: var(--splash-mark-size);
+  color: var(--splash-mark);
+  /* الدخول: العلامة تنزلق من اليسار كأنها وصلت مسرعة ثم استقرّت */
   opacity: 0;
-  animation: splash-mark-in 1000ms var(--splash-ease) 60ms forwards;
+  animation: splash-mark-in 760ms var(--splash-ease) 40ms forwards;
 }
 
-.splash__logo {
-  width: var(--splash-logo-size);
-  height: auto;
+.splash__mark-svg {
   display: block;
-  /* توهج ناعم خلف الشعار يمنحه عمقًا دون مبالغة */
-  filter: drop-shadow(0 14px 34px rgba(6, 22, 44, 0.6))
-    drop-shadow(0 0 22px rgba(61, 139, 239, 0.28));
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: var(--splash-mark-shadow);
 }
 
-/* حلقتان دائريتان حول الشعار: برتقالية سريعة + زرقاء أبطأ بالاتجاه المعاكس */
-.splash__ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  pointer-events: none;
+/* كل جزء من الشعار له نقطة ارتكازه الخاصة (fill-box) ليتحرّك حول نفسه */
+.splash__mark-svg path {
+  transform-box: fill-box;
 }
 
-.splash__ring--track {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+/* --- أسطر السرعة: تدخل من اليسار متتابعة، ثم تنبض نبضًا خفيفًا --- */
+.mark-bar1,
+.mark-bar2,
+.mark-bar3 {
+  transform-origin: right center;
+  opacity: 0;
+  animation:
+    splash-bar-in 520ms var(--splash-ease-out) forwards,
+    splash-bar-streak 2.4s var(--splash-ease) infinite;
 }
 
-.splash__ring--arc {
-  border: 2px solid transparent;
-  border-top-color: var(--astro-orange-500);
-  border-inline-end-color: rgba(245, 133, 31, 0.35);
-  animation: splash-spin 3.1s linear infinite;
+.mark-bar1 { animation-delay: 140ms, 1.15s; }
+.mark-bar2 { animation-delay: 60ms, 1s; }
+.mark-bar3 { animation-delay: 220ms, 1.3s; }
+
+/* --- السهم: يأتي من أسفل اليسار بانطلاقة قصيرة --- */
+.mark-arrow {
+  transform-origin: left center;
+  opacity: 0;
+  animation: splash-arrow-in 640ms var(--splash-ease) 180ms forwards;
 }
 
-.splash__ring--arc-alt {
-  inset: clamp(-0.75rem, -2.2vw, -0.5rem);
-  border: 1px solid transparent;
-  border-bottom-color: rgba(61, 139, 239, 0.75);
-  border-inline-start-color: rgba(61, 139, 239, 0.2);
-  animation: splash-spin 6.4s linear infinite reverse;
+/* --- حرف J: يستقرّ من أسفل مع تكبير طفيف --- */
+.mark-j {
+  transform-origin: 50% 20%;
+  opacity: 0;
+  animation: splash-j-in 720ms var(--splash-ease) 120ms forwards;
 }
 
-/* --- Text --- */
+/* --- لمعة تمرّ فوق العلامة (مقصوصة على شكل الشعار نفسه) --- */
+.splash__sheen {
+  display: none;
+}
+
+@supports ((-webkit-mask-image: url("x.svg")) or (mask-image: url("x.svg"))) {
+  .splash__sheen {
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      100deg,
+      transparent 42%,
+      var(--splash-sheen) 50%,
+      transparent 58%
+    );
+    background-size: 280% 100%;
+    background-position: 130% 0;
+    -webkit-mask: var(--splash-mark-mask) no-repeat center / contain;
+    mask: var(--splash-mark-mask) no-repeat center / contain;
+    -webkit-mask-mode: alpha;
+    mask-mode: alpha;
+    opacity: 0;
+    animation: splash-sheen 3.2s linear 900ms infinite;
+  }
+}
+
+/* --- النص --- */
 .splash__title,
 .splash__tagline {
   margin: 0;
   opacity: 0;
-  animation: splash-text-in 820ms var(--splash-ease) forwards;
+  animation: splash-text-in 760ms var(--splash-ease) forwards;
 }
 
 .splash__title {
-  font-size: clamp(1.35rem, 5.2vw, 1.95rem);
+  font-size: clamp(1.3rem, 5vw, 1.9rem);
   font-weight: 700;
   line-height: 1.35;
   letter-spacing: 0.01em;
-  color: var(--astro-white);
-  animation-delay: 420ms;
+  color: var(--splash-title);
+  animation-delay: 480ms;
   text-wrap: balance;
 }
 
@@ -165,28 +225,23 @@
   font-size: clamp(0.85rem, 3.3vw, 1rem);
   font-weight: 400;
   line-height: 1.7;
-  color: rgba(214, 230, 250, 0.72);
-  animation-delay: 560ms;
+  color: var(--splash-muted);
+  animation-delay: 620ms;
   text-wrap: balance;
 }
 
-/* خط فاصل صغير برتقالي بين العنوان والعبارة */
+/* خط فاصل صغير بين العنوان والعبارة */
 .splash__rule {
   width: clamp(2.5rem, 9vw, 3.75rem);
   height: 2px;
   border-radius: 2px;
-  background: linear-gradient(
-    to left,
-    transparent,
-    var(--astro-orange-500),
-    transparent
-  );
+  background: linear-gradient(to left, transparent, var(--splash-mark), transparent);
   opacity: 0;
-  animation: splash-rule-in 700ms var(--splash-ease) 500ms forwards;
+  animation: splash-rule-in 700ms var(--splash-ease) 560ms forwards;
 }
 
 /* --------------------------------------------------------------------------
-   3. Progress
+   3. مؤشّر التقدّم
    -------------------------------------------------------------------------- */
 
 .splash__footer {
@@ -198,7 +253,7 @@
   align-items: center;
   gap: 0.85rem;
   opacity: 0;
-  animation: splash-text-in 760ms var(--splash-ease) 700ms forwards;
+  animation: splash-text-in 760ms var(--splash-ease) 760ms forwards;
 }
 
 .splash__progress {
@@ -206,7 +261,7 @@
   width: 100%;
   height: 3px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.11);
+  background: var(--splash-track);
   overflow: hidden;
 }
 
@@ -214,12 +269,7 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(
-    to left,
-    var(--astro-blue-400),
-    var(--astro-blue-500) 45%,
-    var(--astro-orange-500)
-  );
+  background: var(--splash-fill);
   transform: scaleX(0);
   transform-origin: right center;
   transition: transform 260ms cubic-bezier(0.33, 1, 0.68, 1);
@@ -227,51 +277,52 @@
 
 [dir="ltr"] .splash__progress-fill {
   transform-origin: left center;
-  background: linear-gradient(
-    to right,
-    var(--astro-blue-400),
-    var(--astro-blue-500) 45%,
-    var(--astro-orange-500)
-  );
-}
-
-/* لمعة تمرّ فوق الشريط — تفصيلة "premium" خفيفة */
-.splash__progress::after {
-  content: "";
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: -40%;
-  width: 40%;
-  background: linear-gradient(
-    to left,
-    transparent,
-    rgba(255, 255, 255, 0.55),
-    transparent
-  );
-  animation: splash-sheen 2.1s ease-in-out infinite;
 }
 
 .splash__status {
   font-size: 0.72rem;
   letter-spacing: 0.06em;
-  color: rgba(196, 216, 242, 0.55);
+  color: var(--splash-muted);
   font-variant-numeric: tabular-nums;
 }
 
 /* --------------------------------------------------------------------------
-   4. Exit
+   4. الخروج — العلامة تنطلق يمينًا ثم تختفي الشاشة
    -------------------------------------------------------------------------- */
 
 .splash.is-leaving {
-  animation: none;
   pointer-events: none;
   opacity: 0;
-  transform: scale(1.045);
-  filter: blur(10px);
+  transform: scale(1.035);
   transition:
     opacity var(--splash-exit-duration) cubic-bezier(0.4, 0, 0.2, 1),
-    transform var(--splash-exit-duration) var(--splash-ease),
-    filter var(--splash-exit-duration) ease-out;
+    transform var(--splash-exit-duration) var(--splash-ease);
+}
+
+.splash.is-leaving .splash__mark {
+  animation: none;
+  transform: translateX(14%) scale(1.06);
+  opacity: 0;
+  transition:
+    transform 540ms cubic-bezier(0.55, 0, 0.9, 0.4),
+    opacity 420ms ease-in 80ms;
+}
+
+.splash.is-leaving .splash__sheen,
+.splash.is-leaving .mark-bar1,
+.splash.is-leaving .mark-bar2,
+.splash.is-leaving .mark-bar3,
+.splash.is-leaving .mark-arrow,
+.splash.is-leaving .mark-j {
+  animation: none;
+  opacity: 1;
+}
+
+.splash.is-leaving .splash__core > :not(.splash__mark),
+.splash.is-leaving .splash__footer {
+  animation: none;
+  opacity: 0;
+  transition: opacity 240ms ease-out;
 }
 
 /* قفل التمرير أثناء ظهور الشاشة */
@@ -299,19 +350,91 @@
 }
 
 /* --------------------------------------------------------------------------
-   5. Keyframes
+   5. الحركات
    -------------------------------------------------------------------------- */
 
 @keyframes splash-mark-in {
   from {
     opacity: 0;
-    transform: scale(0.86) translateY(14px);
-    filter: blur(9px);
+    transform: translateX(-7%) scale(0.94);
   }
   to {
     opacity: 1;
     transform: none;
-    filter: blur(0);
+  }
+}
+
+/* سطر السرعة يُرسم من اليمين إلى اليسار (نهايته ثابتة عند حرف J) */
+@keyframes splash-bar-in {
+  from {
+    opacity: 0;
+    transform: scaleX(0.1) translateX(-22px);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* نبضة متكرّرة: إحساس حركة مستمرّة أثناء التحميل بدل دوّارة تقليدية */
+@keyframes splash-bar-streak {
+  0%, 62%, 100% {
+    transform: none;
+    opacity: 1;
+  }
+  74% {
+    transform: translateX(-10%) scaleX(1.06);
+    opacity: 0.55;
+  }
+  88% {
+    transform: translateX(2%) scaleX(0.98);
+    opacity: 1;
+  }
+}
+
+@keyframes splash-arrow-in {
+  from {
+    opacity: 0;
+    transform: translate(-26%, 16%) rotate(-6deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes splash-j-in {
+  from {
+    opacity: 0;
+    transform: translateY(9%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes splash-sheen {
+  0% {
+    background-position: 130% 0;
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  32% {
+    opacity: 1;
+  }
+  38% {
+    background-position: -30% 0;
+    opacity: 0;
+  }
+  100% {
+    background-position: -30% 0;
+    opacity: 0;
   }
 }
 
@@ -337,51 +460,7 @@
   }
 }
 
-@keyframes splash-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes splash-sheen {
-  0% {
-    transform: translateX(0);
-    opacity: 0;
-  }
-  22% {
-    opacity: 1;
-  }
-  78% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(-350%);
-    opacity: 0;
-  }
-}
-
-[dir="ltr"] .splash__progress::after {
-  animation-name: splash-sheen-ltr;
-}
-
-@keyframes splash-sheen-ltr {
-  0% {
-    transform: translateX(0);
-    opacity: 0;
-  }
-  22% {
-    opacity: 1;
-  }
-  78% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(350%);
-    opacity: 0;
-  }
-}
-
-@keyframes splash-aurora {
+@keyframes splash-drift {
   from {
     transform: translate3d(-1.5%, -1%, 0) scale(1.02);
   }
@@ -391,13 +470,13 @@
 }
 
 /* --------------------------------------------------------------------------
-   6. Responsive / accessibility / fallbacks
+   6. الاستجابة / الوصولية / الحالات الاحتياطية
    -------------------------------------------------------------------------- */
 
 /* شاشات قصيرة (جوال أفقي) — تقليل الازدحام */
 @media (max-height: 560px) {
   :root {
-    --splash-logo-size: clamp(4.5rem, 13vh, 6rem);
+    --splash-mark-size: clamp(5.5rem, 22vh, 7.5rem);
   }
   .splash__core {
     gap: 1rem;
@@ -416,30 +495,40 @@
   }
 }
 
-/* احترام تقليل الحركة: تلاشٍ بسيط فقط، بلا دوران أو ضبابية */
+/* احترام تقليل الحركة: ظهور بالتلاشي فقط، بلا انزلاق ولا نبض ولا لمعة */
 @media (prefers-reduced-motion: reduce) {
   .splash__mark,
   .splash__title,
   .splash__tagline,
   .splash__rule,
-  .splash__footer {
-    animation-duration: 1ms;
-    animation-delay: 0ms;
+  .splash__footer,
+  .mark-bar1,
+  .mark-bar2,
+  .mark-bar3,
+  .mark-arrow,
+  .mark-j {
+    animation: none;
     opacity: 1;
+    transform: none;
+  }
+  .splash__core,
+  .splash__footer {
+    animation: splash-fade-in 300ms linear forwards;
   }
   .splash::before,
-  .splash__ring--arc,
-  .splash__ring--arc-alt,
-  .splash__progress::after {
+  .splash__sheen {
     animation: none;
   }
-  .splash__ring--arc {
-    border-color: rgba(245, 133, 31, 0.5);
+  .splash__sheen {
+    display: none;
   }
   .splash.is-leaving {
     transform: none;
-    filter: none;
     transition: opacity 220ms linear;
+  }
+  .splash.is-leaving .splash__mark {
+    transform: none;
+    transition: opacity 180ms linear;
   }
   .js.app-ready [data-splash-enter] {
     transition-duration: 1ms;
@@ -450,7 +539,12 @@
   }
 }
 
-/* شبكة الأمان الأولى: بدون JavaScript لا تُعرض شاشة التحميل إطلاقًا.
+@keyframes splash-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* شبكة الأمان الأولى: بدون JavaScript لا تُعرض شاشة الدخول إطلاقًا.
    الصنف `.js` يُضاف من <head> قبل رسم الصفحة، فلا يحدث أي وميض. */
 html:not(.js) .splash {
   display: none !important;
