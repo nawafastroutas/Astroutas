@@ -1,0 +1,11 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{margin:0;padding:0;background:#fff}
+iframe{display:block;border:0}
+</style></head><body><script>
+const q = new URLSearchParams(location.search);
+const w = q.get('w') || 390, h = q.get('h') || 844;
+q.delete('w'); q.delete('h');
+const f = document.createElement('iframe');
+f.width = w; f.height = h; f.src = '/_gif.html?' + q.toString();
+document.body.appendChild(f);
+</script></body></html>
