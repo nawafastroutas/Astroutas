@@ -192,3 +192,7 @@ createSplash({ waitFor: [fetch('/api/events').then(r => r.json())] });
 في مجلد [`ios/`](ios/) تطبيق آيفون أصلي بـ SwiftUI: **لعبة أسئلة** بشاشة
 واحدة — ١٠ أسئلة عربية بمؤقّت ونقاط. افتح `ios/AstroQuiz.xcodeproj` في Xcode
 واضغط ⌘R. التفاصيل في [`ios/README.md`](ios/README.md).
+
+وفي [`game/index.html`](game/index.html) **نسخة ويب** من اللعبة نفسها: ملف واحد
+بلا أي اعتمادية، يعمل على أي جوال بالمتصفّح. بنك الأسئلة فيها مستخرج آليًا من
+كود Swift نفسه، فالنسختان لا تفترقان.
