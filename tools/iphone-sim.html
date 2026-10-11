@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>محاكي iPhone — قسم الأنشطة الطلابية</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#121c30; --line:#223352; --txt:#e8eefb; --muted:#9db0d0;
+    --accent:#2f7df6; --accent-2:#f59a3c; --frame:#2a2f3a; --frame-2:#5c6475;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:radial-gradient(1200px 700px at 70% -10%,#16243f 0%,var(--bg) 60%);
+    color:var(--txt); font:15px/1.6 system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;
+    display:flex; flex-direction:column; min-height:100vh;
+  }
+
+  /* ===== شريط التحكم ===== */
+  .bar{
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+    padding:12px 16px; background:rgba(18,28,48,.85); border-bottom:1px solid var(--line);
+    backdrop-filter:blur(8px); position:sticky; top:0; z-index:5;
+  }
+  .bar__title{font-weight:700; margin-inline-end:auto; display:flex; align-items:center; gap:8px}
+  .bar__title b{color:var(--accent-2)}
+  label{display:flex; align-items:center; gap:6px; color:var(--muted); font-size:13px}
+  select,input[type=text],button{
+    font:inherit; font-size:13px; color:var(--txt); background:var(--panel);
+    border:1px solid var(--line); border-radius:9px; padding:7px 10px;
+  }
+  input[type=text]{min-width:230px; direction:ltr; text-align:left}
+  button{cursor:pointer; transition:background .15s,border-color .15s}
+  button:hover{background:#1a2742; border-color:var(--accent)}
+  button.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+  button.primary:hover{background:#1f6ae0}
+
+  /* ===== المسرح ===== */
+  .stage{flex:1; display:grid; place-items:center; padding:28px 16px; overflow:auto}
+  .wrap{transform-origin:center center}
+
+  /* ===== هيكل الجهاز ===== */
+  .device{
+    position:relative; border-radius:58px; padding:12px;
+    background:linear-gradient(145deg,var(--frame-2),var(--frame) 40%,#1b1f27 75%,var(--frame-2));
+    box-shadow:0 40px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06) inset;
+  }
+  .device[data-model="se"]{border-radius:42px}
+  .screen{
+    position:relative; overflow:hidden; background:#000;
+    border-radius:46px; box-shadow:0 0 0 2px #000 inset;
+  }
+  .device[data-model="se"] .screen{border-radius:6px}
+  .screen iframe{display:block; width:100%; height:100%; border:0; background:#fff}
+
+  /* الجزيرة الديناميكية / النتوء */
+  .island{
+    position:absolute; top:11px; left:50%; transform:translateX(-50%);
+    width:122px; height:35px; background:#000; border-radius:20px; z-index:3; pointer-events:none;
+  }
+  .device[data-model="se"] .island{display:none}
+
+  /* شريط الحالة */
+  .status{
+    position:absolute; top:0; left:0; right:0; height:52px; z-index:2; pointer-events:none;
+    display:flex; align-items:center; justify-content:space-between; padding:0 30px;
+    font:600 14px/1 -apple-system,system-ui,sans-serif; color:#fff; mix-blend-mode:difference;
+  }
+  .device[data-model="se"] .status{height:24px; padding:0 14px; font-size:12px}
+  .status__icons{display:flex; align-items:center; gap:5px}
+  .status.hidden{display:none}
+
+  /* مؤشر الهوم */
+  .home{
+    position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
+    width:134px; height:5px; border-radius:3px; background:rgba(255,255,255,.75);
+    mix-blend-mode:difference; z-index:3; pointer-events:none;
+  }
+  .device[data-model="se"] .home{display:none}
+  .home.hidden{display:none}
+
+  /* أزرار جانبية */
+  .btn-side{position:absolute; background:linear-gradient(90deg,#3a4150,#656e81); border-radius:3px}
+  .btn-power{width:3px; height:92px; top:168px; left:-3px}
+  .btn-volup{width:3px; height:58px; top:150px; right:-3px}
+  .btn-voldn{width:3px; height:58px; top:220px; right:-3px}
+  .btn-action{width:3px; height:34px; top:104px; right:-3px}
+
+  .hint{color:var(--muted); font-size:12.5px; text-align:center; padding:0 16px 18px}
+  .hint code{background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:1px 6px}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <span class="bar__title">محاكي <b>iPhone</b></span>
+
+  <label>الجهاز
+    <select id="model">
+      <option value="15pro" data-w="393" data-h="852" selected>iPhone 15 / 16 — 393×852</option>
+      <option value="16pro" data-w="402" data-h="874">iPhone 16 Pro — 402×874</option>
+      <option value="15max" data-w="430" data-h="932">iPhone 15 Pro Max — 430×932</option>
+      <option value="se"    data-w="375" data-h="667">iPhone SE — 375×667</option>
+    </select>
+  </label>
+
+  <label>العنوان
+    <input type="text" id="url" value="../index.html">
+  </label>
+
+  <button id="rotate" title="تدوير الشاشة">⟳ تدوير</button>
+  <button id="chrome" title="إظهار/إخفاء شريط الحالة">شريط الحالة</button>
+  <button id="reload" class="primary" title="إعادة التحميل — تُعيد تشغيل شاشة الافتتاح">↻ إعادة التحميل</button>
+</div>
+
+<div class="stage">
+  <div class="wrap" id="wrap">
+    <div class="device" id="device" data-model="15pro">
+      <span class="btn-side btn-power"></span>
+      <span class="btn-side btn-action"></span>
+      <span class="btn-side btn-volup"></span>
+      <span class="btn-side btn-voldn"></span>
+
+      <div class="screen" id="screen">
+        <div class="island"></div>
+        <div class="status" id="status">
+          <span id="clock">9:41</span>
+          <span class="status__icons">▂▄▆ &nbsp;Wi‑Fi&nbsp; ▮</span>
+        </div>
+        <iframe id="frame" src="../index.html" title="معاينة الموقع داخل iPhone"
+                allow="fullscreen"></iframe>
+        <div class="home" id="home"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="hint">
+  شغّل الخادم من جذر المشروع: <code>npx http-server -p 8080 -c-1 .</code>
+  ثم افتح <code>http://localhost:8080/tools/iphone-sim.html</code>
+  — فتح الملف مباشرةً عبر <code>file://</code> قد يمنع المتصفح تحميل الإطار.
+</p>
+
+<script>
+(function () {
+  var sel = document.getElementById('model');
+  var device = document.getElementById('device');
+  var screenEl = document.getElementById('screen');
+  var frame = document.getElementById('frame');
+  var wrap = document.getElementById('wrap');
+  var status = document.getElementById('status');
+  var home = document.getElementById('home');
+  var landscape = false;
+
+  function apply() {
+    var o = sel.options[sel.selectedIndex];
+    var w = +o.dataset.w, h = +o.dataset.h;
+    device.dataset.model = o.value;
+    screenEl.style.width  = (landscape ? h : w) + 'px';
+    screenEl.style.height = (landscape ? w : h) + 'px';
+    fit();
+  }
+
+  /* تصغير الجهاز ليتّسع داخل النافذة دون قصّ */
+  function fit() {
+    wrap.style.transform = 'scale(1)';
+    var stage = document.querySelector('.stage');
+    var pad = 48;
+    var sx = (stage.clientWidth  - pad) / wrap.offsetWidth;
+    var sy = (stage.clientHeight - pad) / wrap.offsetHeight;
+    var s = Math.min(1, sx, sy);
+    wrap.style.transform = 'scale(' + s.toFixed(3) + ')';
+  }
+
+  function clock() {
+    var d = new Date();
+    document.getElementById('clock').textContent =
+      d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
+
+  sel.addEventListener('change', apply);
+  document.getElementById('rotate').addEventListener('click', function () {
+    landscape = !landscape; apply();
+  });
+  document.getElementById('chrome').addEventListener('click', function () {
+    status.classList.toggle('hidden'); home.classList.toggle('hidden');
+  });
+  document.getElementById('reload').addEventListener('click', function () {
+    frame.src = document.getElementById('url').value;
+  });
+  document.getElementById('url').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') frame.src = this.value;
+  });
+  window.addEventListener('resize', fit);
+
+  clock(); setInterval(clock, 30000); apply();
+})();
+</script>
+</body>
+</html>
