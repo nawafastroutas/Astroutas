@@ -184,3 +184,11 @@ createSplash({ waitFor: [fetch('/api/events').then(r => r.json())] });
 - تعطيل JavaScript → لا شاشة، والمحتوى ظاهر ومنسّق.
 - `prefers-reduced-motion` → بلا دوران، ويكتمل التسلسل.
 - لا أخطاء JavaScript، والموقع قابل للنقر والتمرير بعد الاختفاء.
+
+---
+
+## تطبيق الآيفون
+
+في مجلد [`ios/`](ios/) تطبيق آيفون أصلي بـ SwiftUI: **لعبة أسئلة** بشاشة
+واحدة — ١٠ أسئلة عربية بمؤقّت ونقاط. افتح `ios/AstroQuiz.xcodeproj` في Xcode
+واضغط ⌘R. التفاصيل في [`ios/README.md`](ios/README.md).

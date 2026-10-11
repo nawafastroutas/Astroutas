@@ -1,0 +1,316 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A50000000000000000000016 /* AstroQuizApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000015 /* AstroQuizApp.swift */; };
+		A50000000000000000000018 /* Question.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000017 /* Question.swift */; };
+		A5000000000000000000001A /* QuestionBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000019 /* QuestionBank.swift */; };
+		A5000000000000000000001C /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5000000000000000000001B /* Haptics.swift */; };
+		A5000000000000000000001E /* QuizEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5000000000000000000001D /* QuizEngine.swift */; };
+		A50000000000000000000020 /* AnswerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5000000000000000000001F /* AnswerButton.swift */; };
+		A50000000000000000000022 /* QuizView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000021 /* QuizView.swift */; };
+		A50000000000000000000024 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000023 /* ResultView.swift */; };
+		A50000000000000000000026 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000025 /* RootView.swift */; };
+		A50000000000000000000028 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000027 /* StartView.swift */; };
+		A5000000000000000000002A /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000029 /* Theme.swift */; };
+		A50000000000000000000011 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000010 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A50000000000000000000006 /* AstroQuiz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AstroQuiz.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A50000000000000000000015 /* AstroQuizApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AstroQuizApp.swift; sourceTree = "<group>"; };
+		A50000000000000000000017 /* Question.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Question.swift; sourceTree = "<group>"; };
+		A50000000000000000000019 /* QuestionBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionBank.swift; sourceTree = "<group>"; };
+		A5000000000000000000001B /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		A5000000000000000000001D /* QuizEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizEngine.swift; sourceTree = "<group>"; };
+		A5000000000000000000001F /* AnswerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnswerButton.swift; sourceTree = "<group>"; };
+		A50000000000000000000021 /* QuizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizView.swift; sourceTree = "<group>"; };
+		A50000000000000000000023 /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
+		A50000000000000000000025 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		A50000000000000000000027 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
+		A50000000000000000000029 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		A50000000000000000000010 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A50000000000000000000008 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A50000000000000000000002 = {
+			isa = PBXGroup;
+			children = (
+				A50000000000000000000004 /* AstroQuiz */,
+				A50000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A50000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A50000000000000000000006 /* AstroQuiz.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A50000000000000000000004 /* AstroQuiz */ = {
+			isa = PBXGroup;
+			children = (
+				A50000000000000000000015 /* AstroQuizApp.swift */,
+				A50000000000000000000012 /* Model */,
+				A50000000000000000000013 /* Game */,
+				A50000000000000000000014 /* Views */,
+				A50000000000000000000010 /* Assets.xcassets */,
+			);
+			path = AstroQuiz;
+			sourceTree = "<group>";
+		};
+		A50000000000000000000012 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				A50000000000000000000017 /* Question.swift */,
+				A50000000000000000000019 /* QuestionBank.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		A50000000000000000000013 /* Game */ = {
+			isa = PBXGroup;
+			children = (
+				A5000000000000000000001B /* Haptics.swift */,
+				A5000000000000000000001D /* QuizEngine.swift */,
+			);
+			path = Game;
+			sourceTree = "<group>";
+		};
+		A50000000000000000000014 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A5000000000000000000001F /* AnswerButton.swift */,
+				A50000000000000000000021 /* QuizView.swift */,
+				A50000000000000000000023 /* ResultView.swift */,
+				A50000000000000000000025 /* RootView.swift */,
+				A50000000000000000000027 /* StartView.swift */,
+				A50000000000000000000029 /* Theme.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A50000000000000000000005 /* AstroQuiz */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A5000000000000000000000B /* Build configuration list for PBXNativeTarget "AstroQuiz" */;
+			buildPhases = (
+				A50000000000000000000007 /* Sources */,
+				A50000000000000000000008 /* Frameworks */,
+				A50000000000000000000009 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AstroQuiz;
+			productName = AstroQuiz;
+			productReference = A50000000000000000000006 /* AstroQuiz.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A50000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A50000000000000000000005 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A5000000000000000000000A /* Build configuration list for PBXProject "AstroQuiz" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				ar,
+			);
+			mainGroup = A50000000000000000000002;
+			productRefGroup = A50000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A50000000000000000000005 /* AstroQuiz */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A50000000000000000000009 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A50000000000000000000011 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A50000000000000000000007 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A50000000000000000000016 /* AstroQuizApp.swift in Sources */,
+				A50000000000000000000018 /* Question.swift in Sources */,
+				A5000000000000000000001A /* QuestionBank.swift in Sources */,
+				A5000000000000000000001C /* Haptics.swift in Sources */,
+				A5000000000000000000001E /* QuizEngine.swift in Sources */,
+				A50000000000000000000020 /* AnswerButton.swift in Sources */,
+				A50000000000000000000022 /* QuizView.swift in Sources */,
+				A50000000000000000000024 /* ResultView.swift in Sources */,
+				A50000000000000000000026 /* RootView.swift in Sources */,
+				A50000000000000000000028 /* StartView.swift in Sources */,
+				A5000000000000000000002A /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A5000000000000000000000C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A5000000000000000000000D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A5000000000000000000000E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Astro Quiz";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.astroutas.astroquiz;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A5000000000000000000000F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Astro Quiz";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.astroutas.astroquiz;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A5000000000000000000000A /* Build configuration list for PBXProject "AstroQuiz" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A5000000000000000000000C /* Debug */,
+				A5000000000000000000000D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A5000000000000000000000B /* Build configuration list for PBXNativeTarget "AstroQuiz" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A5000000000000000000000E /* Debug */,
+				A5000000000000000000000F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A50000000000000000000001 /* Project object */;
+}
