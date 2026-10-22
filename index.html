@@ -6438,9 +6438,10 @@ ${lines}
       <form id="phoneLoginForm">
         <div class="form-grid" style="grid-template-columns:1fr">
           <div class="form-field"><label>رقم الهاتف</label><input required name="phone" inputmode="tel" autocomplete="tel" placeholder="9xxxxxxx"></div>
-          <div class="form-field"><label>الاسم (اختياري)</label><input name="name" autocomplete="name" placeholder="اسمك"></div>
+          <div class="form-field" id="phoneLoginName"><label>الاسم (اختياري)</label><input name="name" autocomplete="name" placeholder="اسمك"></div>
+          <div class="form-field" id="phoneLoginAdminPass" style="display:none"><label>كلمة مرور الإدارة</label><input type="password" name="adminPassword" autocomplete="current-password" placeholder="••••••••"></div>
         </div>
-        <button class="btn btn-primary" style="width:100%;margin-top:15px">متابعة</button>
+        <button class="btn btn-primary" id="phoneLoginSubmit" style="width:100%;margin-top:15px">متابعة</button>
       </form>
       <p style="margin:16px 0 0;text-align:center;font-size:.78rem;color:var(--muted)">صاحب المتجر؟ <a href="#admin" data-open-admin-login style="color:var(--brown);font-weight:800">دخول الإدارة بالبريد وكلمة المرور</a></p>
     </div>
@@ -6684,12 +6685,38 @@ ${lines}
       const fd=Object.fromEntries(new FormData(e.target).entries());
       const phone=String(fd.phone||'').replace(/[^\d+]/g,'');
       if(phone.replace(/\D/g,'').length<8){toast('اكتب رقم هاتف صحيح','alert-circle');return;}
+      // رقم صاحب المتجر يدخل الإدارة، لكن بكلمة مرور حساب الإدارة في Firebase؛ الرقم وحده ليس سراً.
+      if(phoneKey(phone)===ADMIN_PHONE){
+        const pass=String(fd.adminPassword||'');
+        if(!pass){syncAdminPhoneField(e.target);e.target.elements.adminPassword?.focus();toast('اكتب كلمة مرور الإدارة','alert-circle');return;}
+        const emailInput=$q('#adminEmail'),pinInput=$q('#adminPin');
+        if(emailInput)emailInput.value=ADMIN_EMAIL;
+        if(pinInput)pinInput.value=pass;
+        try{await window.enterAdmin?.();}
+        finally{
+          if(pinInput)pinInput.value='';
+          e.target.elements.adminPassword.value='';
+          if($q('#adminShell')?.classList.contains('open')){e.target.reset();syncAdminPhoneField(e.target);}
+        }
+        return;
+      }
       setCurrent({phone,name:String(fd.name||'').trim(),role:'USER'});
       e.target.reset();closeAuth();toast('تم الدخول برقم هاتفك','check-circle');
       if(pendingCheckout){pendingCheckout=false;openCheckoutGuard();}
       else renderProfile();
     }
   },true);
+  const ADMIN_PHONE='92003373';
+  function syncAdminPhoneField(form){
+    if(!form)return;
+    const isAdmin=phoneKey(form.elements.phone?.value)===ADMIN_PHONE;
+    const pass=form.querySelector('#phoneLoginAdminPass'),name=form.querySelector('#phoneLoginName'),btn=form.querySelector('#phoneLoginSubmit');
+    if(pass)pass.style.display=isAdmin?'':'none';
+    if(name)name.style.display=isAdmin?'none':'';
+    if(form.elements.adminPassword)form.elements.adminPassword.required=isAdmin;
+    if(btn)btn.textContent=isAdmin?'دخول الإدارة':'متابعة';
+  }
+  document.addEventListener('input',e=>{if(e.target.name==='phone'&&e.target.form?.id==='phoneLoginForm')syncAdminPhoneField(e.target.form);});
   // يُستدعى بعد إتمام الطلب لحفظ رقم العميل دون المساس بجلسة الإدارة.
   window.subbhaRememberCustomer=function(customer){
     const current=getCurrent();
