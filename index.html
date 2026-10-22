@@ -6442,9 +6442,7 @@ ${lines}
           <div class="form-field" id="phoneLoginAdminPass" style="display:none"><label>كلمة مرور الإدارة</label><input type="password" name="adminPassword" autocomplete="current-password" placeholder="••••••••"></div>
         </div>
         <button class="btn btn-primary" id="phoneLoginSubmit" style="width:100%;margin-top:15px">متابعة</button>
-      </form>
-      <p style="margin:16px 0 0;text-align:center;font-size:.78rem;color:var(--muted)">صاحب المتجر؟ <a href="#admin" data-open-admin-login style="color:var(--brown);font-weight:800">دخول الإدارة بالبريد وكلمة المرور</a></p>
-    </div>
+      </form>    </div>
   </div>
 </div>
 
@@ -6659,9 +6657,7 @@ ${lines}
   };
   document.addEventListener('click',async function(e){
     if(e.target.closest('#profileBtn')) { const u=getCurrent(); if(isVerifiedAdmin(u)){ const shell=$q('#adminShell'); if(shell){shell.classList.add('open'); shell.style.display='block';} document.body.classList.add('no-scroll'); renderAdmin('overview'); } else renderProfile(); }
-    if(e.target.closest('[data-close-auth]')) closeAuth();
-    if(e.target.closest('[data-open-admin-login]')){e.preventDefault();closeAuth();window.openAdminLogin?.();return;}
-    if(e.target.closest('[data-open-account]')){e.preventDefault();$q('#navLinks')?.classList.remove('open');$q('#profileBtn')?.click();return;}
+    if(e.target.closest('[data-close-auth]')) closeAuth();    if(e.target.closest('[data-open-account]')){e.preventDefault();$q('#navLinks')?.classList.remove('open');$q('#profileBtn')?.click();return;}
     if(e.target.closest('[data-close-profile]')) {$q('#profileModal')?.classList.remove('open');document.body.classList.remove('no-scroll')}
     const tab=e.target.closest('[data-auth-tab]');
     if(tab){$$q('[data-auth-tab]').forEach(b=>b.classList.toggle('active',b===tab));$$q('.auth-panel').forEach(p=>p.classList.toggle('active',p.id===(tab.dataset.authTab==='login'?'loginForm':'registerForm')))}
