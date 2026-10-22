@@ -4239,7 +4239,12 @@ html:not(.js) .splash {
         </div>
         <div>
           <h4>خدمة العملاء</h4>
-          <ul><li>تواصل معنا</li><li>سياسة الاستبدال</li><li>الشحن والتوصيل</li><li>الأسئلة الشائعة</li></ul>
+          <ul class="footer-info-links">
+            <li><a href="#contact-info" data-info-page="contact">تواصل معنا</a></li>
+            <li><a href="#exchange-policy" data-info-page="exchange">سياسة الاستبدال</a></li>
+            <li><a href="#shipping" data-info-page="shipping">الشحن والتوصيل</a></li>
+            <li><a href="#faq" data-info-page="faq">الأسئلة الشائعة</a></li>
+          </ul>
         </div>
         <div>
           <h4>الإدارة</h4>
@@ -7687,6 +7692,205 @@ ${lines}
   try{renderProducts();}catch(e){}
   if(isPending()) setCloudStatus('saved');
   let tries=0;const timer=setInterval(()=>{tries++;if(connectCategoryFirebase()||tries>40)clearInterval(timer);},500);
+})();
+</script>
+
+<div class="modal" id="infoModal" aria-hidden="true">
+  <div class="modal-backdrop" data-close-info></div>
+  <div class="modal-card info-modal-card" role="dialog" aria-modal="true" aria-labelledby="infoPageTitle">
+    <button class="icon-btn modal-close" data-close-info aria-label="إغلاق"><i data-lucide="x"></i></button>
+    <div class="info-page" id="infoPageBody"></div>
+  </div>
+</div>
+
+<style id="subbha-info-pages-style">
+  .footer-info-links a{color:inherit;text-decoration:none;transition:color .2s}
+  .footer-info-links a:hover,.footer-info-links a:focus-visible{color:#fff;text-decoration:underline;text-underline-offset:4px}
+  .info-modal-card{width:min(720px,96vw)!important}
+  .info-page{padding:clamp(26px,5vw,44px)}
+  .info-page h2{margin:12px 0 10px;color:var(--green);font-size:clamp(1.5rem,4vw,2rem)}
+  .info-page .info-lead{color:var(--muted);line-height:2;margin:0 0 18px}
+  .info-page p{line-height:2;color:var(--ink);margin:0 0 12px}
+  .info-page ul{margin:0 0 14px;padding:0;list-style:none;display:grid;gap:10px}
+  .info-page li{position:relative;padding:12px 16px 12px 14px;padding-inline-start:38px;border-radius:14px;background:#fbf6ee;border:1px solid rgba(91,70,54,.08);line-height:1.9;color:var(--ink)}
+  .info-page li:before{content:"";position:absolute;inset-inline-start:16px;top:22px;width:9px;height:9px;border-radius:50%;background:var(--brown)}
+  .info-contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:6px 0 18px}
+  .info-contact-grid a{display:flex;align-items:center;gap:12px;padding:16px;border-radius:18px;background:#fbf6ee;border:1px solid rgba(91,70,54,.1);color:var(--ink);text-decoration:none;transition:.2s}
+  .info-contact-grid a:hover{border-color:var(--brown);transform:translateY(-2px)}
+  .info-contact-grid i,.info-contact-grid svg{flex:0 0 auto;width:26px;height:26px;color:var(--brown)}
+  .info-contact-grid b{display:block;font-size:.95rem}
+  .info-contact-grid small{display:block;color:var(--muted);direction:ltr;text-align:right}
+  .info-faq details{border:1px solid rgba(91,70,54,.12);border-radius:16px;background:#fff;margin-bottom:10px;overflow:hidden}
+  .info-faq summary{cursor:pointer;list-style:none;padding:16px 18px;font-weight:800;color:var(--green);display:flex;justify-content:space-between;gap:12px;align-items:center}
+  .info-faq summary::-webkit-details-marker{display:none}
+  .info-faq summary:after{content:"+";font-size:1.3rem;line-height:1;color:var(--brown);transition:transform .2s}
+  .info-faq details[open] summary:after{transform:rotate(45deg)}
+  .info-faq .info-answer{padding:0 18px 16px;color:var(--ink);line-height:2}
+  .info-faq .info-answer p{margin:0 0 8px}
+  .info-pages-admin textarea{min-height:200px;line-height:1.9}
+  .info-pages-admin .info-help{display:block;margin-top:6px;color:var(--muted);font-size:.72rem;line-height:1.8}
+  .info-pages-admin .admin-actions{display:flex;gap:10px;flex-wrap:wrap}
+</style>
+<script id="subbha-info-pages">
+(function(){
+  const CACHE_KEY='subbhaInfoPages';
+  const PATH='subbha/settings/pages';
+  const DEFAULTS={
+    exchange:[
+      'نحرص أن تصلك قطعتك كما تتوقعها تماماً، وإن احتجت إلى الاستبدال فنحن هنا لمساعدتك.',
+      '- لطلب الاستبدال تواصل معنا عبر واتساب، وأرسل رقم الطلب وصورة للمنتج.',
+      '- يُشترط أن تكون القطعة بحالتها الأصلية، غير مستخدمة، ومع تغليفها.',
+      '- إذا وصلك المنتج تالفاً أو مختلفاً عمّا طلبته، تواصل معنا فور الاستلام لنعالج الأمر.',
+      '- نتفق معك على تفاصيل الاستبدال وتكلفة الشحن بعد مراجعة الطلب.'
+    ].join('\n'),
+    shipping:[
+      'نوصل طلبك داخل سلطنة عُمان، ونشحن أيضاً إلى خارج السلطنة.',
+      '- بعد إرسال الطلب نتواصل معك عبر واتساب لتأكيد توفر المنتجات وموعد التوصيل قبل التجهيز.',
+      '- تُغلّف القطع بعناية بتغليف فاخر مناسب للهدايا.',
+      '- مدة التوصيل ورسومه تختلف حسب المحافظة والولاية، ونؤكدها لك عند تأكيد الطلب.',
+      '- للطلبات خارج السلطنة تواصل معنا لمعرفة التكلفة والمدة.',
+      '- طلبات الإهداء توصل مباشرة إلى المُهدى إليه على العنوان المكتوب في الطلب.'
+    ].join('\n'),
+    faq:[
+      'كيف أطلب؟',
+      'أضف المنتجات إلى السلة ثم اضغط «إتمام الطلب»، واكتب اسمك ورقمك وعنوانك. يصلنا الطلب ونتواصل معك عبر واتساب لتأكيده.',
+      '',
+      'هل أحتاج إلى إنشاء حساب؟',
+      'لا، الطلب يتم برقم هاتفك فقط. ويمكنك رؤية طلباتك السابقة من «حسابي» بإدخال رقمك على نفس الجهاز.',
+      '',
+      'ما طرق الدفع المتاحة؟',
+      'الدفع عند الاستلام، أو التحويل البنكي، أو رابط دفع. تختار الطريقة المناسبة عند إتمام الطلب.',
+      '',
+      'هل يمكنني إهداء سبحة لشخص آخر؟',
+      'نعم. اضغط «أهدِ هذا المنتج» أو فعّل «أرسلها هدية» عند إتمام الطلب، واكتب اسم المُهدى إليه ورقمه، واختر إن كان اسمك يظهر له أو لا.',
+      '',
+      'كيف أستخدم كود الخصم؟',
+      'اكتب الكود في خانة «كود الخصم» عند إتمام الطلب. كل كود صالح للاستخدام مرة واحدة فقط.',
+      '',
+      'هل تشحنون خارج عُمان؟',
+      'نعم، تواصل معنا عبر واتساب لمعرفة التكلفة والمدة إلى بلدك.',
+      '',
+      'كيف أتابع طلبي؟',
+      'راسلنا على واتساب برقم الطلب المكوّن من 6 أرقام، وتجده في رسالة الطلب وفي «حسابي».'
+    ].join('\n')
+  };
+  const TITLES={contact:'تواصل معنا',exchange:'سياسة الاستبدال',shipping:'الشحن والتوصيل',faq:'الأسئلة الشائعة'};
+  const HASHES={contact:'#contact-info',exchange:'#exchange-policy',shipping:'#shipping',faq:'#faq'};
+
+  let pages={...DEFAULTS,...(readLocalJson(CACHE_KEY,{})||{})};
+  const clean=v=>String(v||'').replace(/\r\n?/g,'\n').trim();
+  const pick=data=>{const out={};['exchange','shipping','faq'].forEach(k=>{out[k]=clean(data?.[k])||DEFAULTS[k]});return out};
+  pages=pick(pages);
+
+  // "- " or "• " lines become list items; other lines become paragraphs.
+  function richText(text){
+    const parts=[];let list=[];
+    const flush=()=>{if(list.length){parts.push(`<ul>${list.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>`);list=[]}};
+    clean(text).split('\n').forEach(line=>{
+      const s=line.trim();
+      if(!s){flush();return}
+      const m=s.match(/^[-•*]\s*(.+)$/);
+      if(m)list.push(m[1]);else{flush();parts.push(`<p>${escapeHtml(s)}</p>`)}
+    });
+    flush();return parts.join('');
+  }
+  // Blank line between entries; first line is the question, the rest is the answer.
+  function faqHtml(text){
+    const blocks=clean(text).split(/\n\s*\n/).map(b=>b.split('\n').map(x=>x.trim()).filter(Boolean)).filter(b=>b.length);
+    return `<div class="info-faq">${blocks.map((b,i)=>`<details${i===0?' open':''}><summary>${escapeHtml(b[0])}</summary><div class="info-answer">${richText(b.slice(1).join('\n'))||''}</div></details>`).join('')}</div>`;
+  }
+  function contactHtml(){
+    const wa=String(STORE.whatsapp||'').replace(/\D/g,'');
+    const waLocal=wa.replace(/^968/,'');
+    const ig=String(STORE.instagram||'').replace(/^@/,'');
+    const domain=String(STORE.domain||'');
+    return `<p class="info-lead">نسعد بخدمتك. للاستفسارات، متابعة الطلبات، الطلبات الخاصة أو طلبات الجملة، تواصل معنا مباشرة:</p>
+      <div class="info-contact-grid">
+        ${wa?`<a href="https://api.whatsapp.com/send?phone=${wa}" target="_blank" rel="noopener"><i data-lucide="message-circle"></i><span><b>واتساب</b><small>${escapeHtml(waLocal)}</small></span></a>`:''}
+        ${ig?`<a href="https://instagram.com/${encodeURIComponent(ig)}" target="_blank" rel="noopener"><i data-lucide="instagram"></i><span><b>إنستقرام</b><small>@${escapeHtml(ig)}</small></span></a>`:''}
+        ${domain?`<a href="https://${escapeHtml(domain)}" target="_blank" rel="noopener"><i data-lucide="globe-2"></i><span><b>الموقع</b><small>${escapeHtml(domain)}</small></span></a>`:''}
+      </div>
+      <ul><li>عند السؤال عن طلب، أرسل لنا رقم الطلب المكوّن من 6 أرقام؛ تجده في رسالة الطلب وفي «حسابي».</li><li>مقرّنا في سلطنة عُمان.</li></ul>`;
+  }
+
+  function open(key){
+    if(!TITLES[key])return;
+    const body=key==='contact'?contactHtml():key==='faq'?faqHtml(pages.faq):richText(pages[key]);
+    const box=document.getElementById('infoPageBody');if(!box)return;
+    box.innerHTML=`<span class="eyebrow">خدمة العملاء</span><h2 id="infoPageTitle">${TITLES[key]}</h2>${body}`;
+    const modal=document.getElementById('infoModal');
+    modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('no-scroll');
+    try{lucide.createIcons()}catch(e){}
+    modal.querySelector('.modal-card').scrollTop=0;
+    modal.querySelector('.modal-close')?.focus({preventScroll:true});
+  }
+  function close(){
+    const modal=document.getElementById('infoModal');if(!modal?.classList.contains('open'))return;
+    modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('no-scroll');
+    if(Object.values(HASHES).includes(location.hash))history.replaceState(null,'',location.pathname+location.search);
+  }
+  function openFromHash(){const key=Object.keys(HASHES).find(k=>HASHES[k]===location.hash);if(key)open(key)}
+
+  document.addEventListener('click',e=>{
+    const link=e.target.closest('[data-info-page]');
+    if(link){e.preventDefault();history.replaceState(null,'',HASHES[link.dataset.infoPage]);open(link.dataset.infoPage);return}
+    if(e.target.closest('[data-close-info]'))close();
+    if(e.target.closest('[data-reset-info-pages]')){
+      const form=document.getElementById('infoPagesForm');if(!form)return;
+      ['exchange','shipping','faq'].forEach(k=>{form.elements[k].value=DEFAULTS[k]});
+      toast('تمت استعادة النص الافتراضي؛ اضغط «حفظ الصفحات» لاعتماده','bell');
+    }
+  });
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+  window.addEventListener('hashchange',openFromHash);
+  setTimeout(openFromHash,0);
+
+  // ---- admin: edit the three pages from the settings tab ----
+  function adminCard(){
+    return `<div class="admin-card info-pages-admin" style="margin-top:16px">
+      <h3 style="margin:0 0 6px">صفحات خدمة العملاء</h3>
+      <small style="color:var(--muted)">تظهر للعملاء من روابط أسفل الموقع. صفحة «تواصل معنا» تُبنى تلقائياً من رقم الواتساب والإنستجرام والدومين أعلاه.</small>
+      <form id="infoPagesForm" class="admin-form" style="margin-top:14px">
+        <div class="form-field span-2"><label>سياسة الاستبدال</label><textarea name="exchange">${escapeHtml(pages.exchange)}</textarea><span class="info-help">السطر الذي يبدأ بـ «-» يظهر كنقطة في قائمة، وباقي الأسطر فقرات.</span></div>
+        <div class="form-field span-2"><label>الشحن والتوصيل</label><textarea name="shipping">${escapeHtml(pages.shipping)}</textarea></div>
+        <div class="form-field span-2"><label>الأسئلة الشائعة</label><textarea name="faq" style="min-height:300px">${escapeHtml(pages.faq)}</textarea><span class="info-help">اكتب السؤال في سطر، والجواب في السطر الذي بعده، واترك سطراً فارغاً بين كل سؤال والآخر.</span></div>
+        <div class="form-field span-2 admin-actions"><button class="btn btn-primary" type="submit">حفظ الصفحات</button><button class="btn btn-soft" type="button" data-reset-info-pages>استعادة النص الافتراضي</button></div>
+      </form>
+    </div>`;
+  }
+  if(typeof renderAdmin==='function'){
+    const previousRenderAdmin=renderAdmin;
+    renderAdmin=function(){
+      const result=previousRenderAdmin.apply(this,arguments);
+      const settings=document.getElementById('settingsForm');
+      if(settings && !document.getElementById('infoPagesForm'))settings.closest('.admin-card')?.insertAdjacentHTML('afterend',adminCard());
+      return result;
+    };
+  }
+  document.addEventListener('submit',async e=>{
+    if(e.target.getAttribute?.('id')!=='infoPagesForm')return;
+    e.preventDefault();
+    const fd=new FormData(e.target);
+    const next={exchange:clean(fd.get('exchange')),shipping:clean(fd.get('shipping')),faq:clean(fd.get('faq'))};
+    if(!next.exchange||!next.shipping||!next.faq){toast('لا تترك أي صفحة فارغة','alert-circle');return}
+    if(typeof firebaseDB==='undefined'||!firebaseDB){toast('السحابة غير متصلة؛ لم تُحفظ الصفحات','alert-circle');return}
+    try{await firebaseDB.ref(PATH).set({...next,updatedAt:new Date().toISOString()})}
+    catch(err){console.warn('Info pages save failed',err);toast('تعذر حفظ الصفحات في السحابة','alert-circle');return}
+    pages=next;writeLocal(CACHE_KEY,pages);toast('تم حفظ صفحات خدمة العملاء','check-circle');
+  });
+
+  // ---- keep the pages in sync with Firebase ----
+  let tries=0;
+  const timer=setInterval(()=>{
+    tries++;
+    if(typeof firebaseDB!=='undefined'&&firebaseDB){
+      clearInterval(timer);
+      firebaseDB.ref(PATH).on('value',snap=>{
+        const remote=snap.val();
+        if(remote&&typeof remote==='object'){pages=pick(remote);writeLocal(CACHE_KEY,pages)}
+      },err=>console.warn('Info pages read failed',err));
+    }else if(tries>40)clearInterval(timer);
+  },500);
 })();
 </script>
 
