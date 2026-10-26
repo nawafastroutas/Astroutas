@@ -4369,7 +4369,8 @@ html:not(.js) .splash {
           <button data-admin-tab="notifications"><i data-lucide="bell"></i> الإشعارات</button>
           <button data-admin-tab="builderOptions"><i data-lucide="settings"></i> إنشاء السبحة</button>
           <button data-admin-tab="settings"><i data-lucide="settings"></i> الإعدادات</button>
-          <button id="exitAdminBtn"><i data-lucide="log-out"></i> خروج</button>
+          <button id="exitAdminBtn"><i data-lucide="arrow-left"></i> خروج</button>
+          <button id="adminSignOutBtn"><i data-lucide="log-out"></i> تسجيل الخروج من الجهاز</button>
         </nav>
       </aside>
       <main class="admin-content">
@@ -6202,8 +6203,16 @@ ${lines}
     /* ربط ثابت لأزرار لوحة الإدارة */
     /* معالج واحد لأزرار الإدارة، ويعمل أيضاً بعد إعادة رسم اللوحة. */
     $("#adminShell")?.addEventListener("click",async e=>{
-      const exitBtn=e.target.closest("#exitAdminBtn");
-      if(exitBtn){
+      // «خروج» يغلق اللوحة فقط ويُبقي الجهاز مسجلاً، فيدخل المالك مباشرة في المرة القادمة.
+      if(e.target.closest("#exitAdminBtn")){
+        e.preventDefault();
+        $("#adminProductModal")?.classList.remove("open");
+        const shell=$("#adminShell");
+        if(shell){shell.classList.remove("open");shell.style.display="none";}
+        document.body.classList.remove("no-scroll");
+        return;
+      }
+      if(e.target.closest("#adminSignOutBtn")){
         e.preventDefault();
         exitAdmin();
         return;
@@ -6679,7 +6688,7 @@ ${lines}
   ['click','change','submit'].forEach(type=>document.addEventListener(type,e=>{
     const target=e.target;
     if(!target.closest?.('#adminShell, #adminProductModal'))return;
-    if(target.closest('#exitAdminBtn, [data-close-admin-product]'))return;
+    if(target.closest('#exitAdminBtn, #adminSignOutBtn, [data-close-admin-product]'))return;
     if(isVerifiedAdmin(getCurrent()))return;
     e.preventDefault();e.stopImmediatePropagation();
     $q('#adminShell')?.classList.remove('open');
@@ -6695,6 +6704,7 @@ ${lines}
       if(phone.replace(/\D/g,'').length<8){toast('اكتب رقم هاتف صحيح','alert-circle');return;}
       // رقم صاحب المتجر يدخل الإدارة، لكن بكلمة مرور حساب الإدارة في Firebase؛ الرقم وحده ليس سراً.
       if(phoneKey(phone)===ADMIN_PHONE){
+        if(await openAdminFromSession()){e.target.reset();syncAdminPhoneField(e.target);return;}
         const pass=String(fd.adminPassword||'');
         if(!pass){syncAdminPhoneField(e.target);e.target.elements.adminPassword?.focus();toast('اكتب كلمة مرور الإدارة','alert-circle');return;}
         const emailInput=$q('#adminEmail'),pinInput=$q('#adminPin');
@@ -6715,14 +6725,30 @@ ${lines}
     }
   },true);
   const ADMIN_PHONE='92003373';
+  // Firebase يحفظ جلسة الدخول على الجهاز؛ إن كان الجهاز مسجلاً كإدارة فلا حاجة لكلمة المرور.
+  const hasAdminSession=()=>!!(fbReady() && String(firebase.auth().currentUser?.email||'').toLowerCase()===ADMIN_EMAIL);
+  async function openAdminFromSession(){
+    if(!hasAdminSession())return false;
+    const profile=await loadFirebaseUser(firebase.auth().currentUser,{name:'Admin'});
+    if(!isVerifiedAdmin(profile))return false;
+    setCurrent(profile);
+    $q('#authModal')?.classList.remove('open');
+    $q('#profileModal')?.classList.remove('open');
+    const shell=$q('#adminShell'); if(shell){shell.classList.add('open'); shell.style.display='block';}
+    document.body.classList.add('no-scroll');
+    renderAdmin('overview');
+    toast('تم دخول لوحة الإدارة','check-circle');
+    return true;
+  }
   function syncAdminPhoneField(form){
     if(!form)return;
-    const isAdmin=phoneKey(form.elements.phone?.value)===ADMIN_PHONE;
+    const isAdminNumber=phoneKey(form.elements.phone?.value)===ADMIN_PHONE;
+    const needsPassword=isAdminNumber && !hasAdminSession();
     const pass=form.querySelector('#phoneLoginAdminPass'),name=form.querySelector('#phoneLoginName'),btn=form.querySelector('#phoneLoginSubmit');
-    if(pass)pass.style.display=isAdmin?'':'none';
-    if(name)name.style.display=isAdmin?'none':'';
-    if(form.elements.adminPassword)form.elements.adminPassword.required=isAdmin;
-    if(btn)btn.textContent=isAdmin?'دخول الإدارة':'متابعة';
+    if(pass)pass.style.display=needsPassword?'':'none';
+    if(name)name.style.display=isAdminNumber?'none':'';
+    if(form.elements.adminPassword)form.elements.adminPassword.required=needsPassword;
+    if(btn)btn.textContent=isAdminNumber?'دخول الإدارة':'متابعة';
   }
   document.addEventListener('input',e=>{if(e.target.name==='phone'&&e.target.form?.id==='phoneLoginForm')syncAdminPhoneField(e.target.form);});
   // يُستدعى بعد إتمام الطلب لحفظ رقم العميل دون المساس بجلسة الإدارة.
