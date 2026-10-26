@@ -6437,9 +6437,8 @@ ${lines}
       <p style="color:var(--muted);line-height:1.8">اكتب رقم هاتفك لمتابعة طلباتك. لا تحتاج بريداً إلكترونياً ولا كلمة مرور، ويمكنك الطلب مباشرة بدون دخول.</p>
       <form id="phoneLoginForm">
         <div class="form-grid" style="grid-template-columns:1fr">
-          <div class="form-field"><label>رقم الهاتف</label><input required name="phone" inputmode="tel" autocomplete="tel" placeholder="9xxxxxxx"></div>
-          <div class="form-field" id="phoneLoginName"><label>الاسم (اختياري)</label><input name="name" autocomplete="name" placeholder="اسمك"></div>
-          <div class="form-field" id="phoneLoginAdminPass" style="display:none"><label>كلمة مرور الإدارة</label><input type="password" name="adminPassword" autocomplete="current-password" placeholder="••••••••"></div>
+          <div class="form-field"><label>رقم الهاتف</label><input required name="phone" autocomplete="tel" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="9xxxxxxx"></div>
+          <div class="form-field"><label>الاسم (اختياري)</label><input name="name" autocomplete="name" placeholder="اسمك"></div>
         </div>
         <button class="btn btn-primary" id="phoneLoginSubmit" style="width:100%;margin-top:15px">متابعة</button>
       </form>    </div>
@@ -6691,40 +6690,41 @@ ${lines}
     if(e.target.id==='phoneLoginForm'){
       e.preventDefault();
       const fd=Object.fromEntries(new FormData(e.target).entries());
-      const phone=String(fd.phone||'').replace(/[^\d+]/g,'');
-      if(phone.replace(/\D/g,'').length<8){toast('اكتب رقم هاتف صحيح','alert-circle');return;}
-      // رقم صاحب المتجر يدخل الإدارة، لكن بكلمة مرور حساب الإدارة في Firebase؛ الرقم وحده ليس سراً.
-      if(phoneKey(phone)===ADMIN_PHONE){
-        const pass=String(fd.adminPassword||'');
-        if(!pass){syncAdminPhoneField(e.target);e.target.elements.adminPassword?.focus();toast('اكتب كلمة مرور الإدارة','alert-circle');return;}
+      // دخول خفي للإدارة: بريد الإدارة في خانة الرقم وكلمة المرور في خانة الاسم.
+      if(isAdminEmailEntry(e.target)){
+        const pass=String(fd.name||'');
+        if(!pass){toast('اكتب كلمة المرور','alert-circle');return;}
         const emailInput=$q('#adminEmail'),pinInput=$q('#adminPin');
         if(emailInput)emailInput.value=ADMIN_EMAIL;
         if(pinInput)pinInput.value=pass;
         try{await window.enterAdmin?.();}
         finally{
           if(pinInput)pinInput.value='';
-          e.target.elements.adminPassword.value='';
-          if($q('#adminShell')?.classList.contains('open')){e.target.reset();syncAdminPhoneField(e.target);}
+          e.target.elements.name.value='';
+          if($q('#adminShell')?.classList.contains('open')){e.target.reset();syncHiddenAdminEntry(e.target);}
         }
         return;
       }
+      const phone=String(fd.phone||'').replace(/[^\d+]/g,'');
+      if(phone.replace(/\D/g,'').length<8){toast('اكتب رقم هاتف صحيح','alert-circle');return;}
       setCurrent({phone,name:String(fd.name||'').trim(),role:'USER'});
       e.target.reset();closeAuth();toast('تم الدخول برقم هاتفك','check-circle');
       if(pendingCheckout){pendingCheckout=false;openCheckoutGuard();}
       else renderProfile();
     }
   },true);
-  const ADMIN_PHONE='92003373';
-  function syncAdminPhoneField(form){
-    if(!form)return;
-    const isAdmin=phoneKey(form.elements.phone?.value)===ADMIN_PHONE;
-    const pass=form.querySelector('#phoneLoginAdminPass'),name=form.querySelector('#phoneLoginName'),btn=form.querySelector('#phoneLoginSubmit');
-    if(pass)pass.style.display=isAdmin?'':'none';
-    if(name)name.style.display=isAdmin?'none':'';
-    if(form.elements.adminPassword)form.elements.adminPassword.required=isAdmin;
-    if(btn)btn.textContent=isAdmin?'دخول الإدارة':'متابعة';
+  const isAdminEmailEntry=form=>String(form?.elements.phone?.value||'').trim().toLowerCase()===ADMIN_EMAIL;
+  // حين يُكتب بريد الإدارة تتحول خانة الاسم إلى خانة كلمة مرور: تُخفى الأحرف، ولا تُكبَّر
+  // تلقائياً على الجوال، ولا يحفظها المتصفح كاسم. الشكل لا يتغير بالنسبة للعملاء.
+  function syncHiddenAdminEntry(form){
+    const name=form?.elements.name;if(!name)return;
+    const admin=isAdminEmailEntry(form);
+    name.type=admin?'password':'text';
+    name.autocomplete=admin?'current-password':'name';
+    name.autocapitalize=admin?'off':'';
+    name.spellcheck=!admin;
   }
-  document.addEventListener('input',e=>{if(e.target.name==='phone'&&e.target.form?.id==='phoneLoginForm')syncAdminPhoneField(e.target.form);});
+  document.addEventListener('input',e=>{if(e.target.name==='phone'&&e.target.form?.id==='phoneLoginForm')syncHiddenAdminEntry(e.target.form);});
   // يُستدعى بعد إتمام الطلب لحفظ رقم العميل دون المساس بجلسة الإدارة.
   window.subbhaRememberCustomer=function(customer){
     const current=getCurrent();
