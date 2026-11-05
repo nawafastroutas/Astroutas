@@ -1349,7 +1349,7 @@ html:not(.js) .splash {
     }
 
     footer{background:var(--green-3);color:#fff;padding:55px 0 25px;margin-top:70px}
-    .footer-grid{display:grid;grid-template-columns:1.3fr repeat(3,1fr);gap:35px}
+    .footer-grid{display:grid;grid-template-columns:1.3fr repeat(2,1fr);gap:35px}
     .footer-brand img{width:220px;filter:brightness(0) invert(1)}
     .footer-brand p{color:rgba(255,255,255,.6);line-height:2;font-size:.82rem;max-width:430px}
     footer h4{margin:0 0 16px}
@@ -4245,16 +4245,13 @@ html:not(.js) .splash {
             <li><a href="#exchange-policy" data-info-page="exchange">سياسة الاستبدال</a></li>
             <li><a href="#shipping" data-info-page="shipping">الشحن والتوصيل</a></li>
             <li><a href="#faq" data-info-page="faq">الأسئلة الشائعة</a></li>
+            <li><a href="#privacy" data-info-page="privacy">سياسة الخصوصية</a></li>
           </ul>
-        </div>
-        <div>
-          <h4>الإدارة</h4>
-          <ul><li>إدارة المنتجات</li><li>إدارة الطلبات</li><li>الإشعارات</li></ul>
         </div>
       </div>
       <div class="footer-bottom">
         <span>© 2026 Subbha. جميع الحقوق محفوظة.</span>
-        <span>subbha.om — سلطنة عُمان · <a href="#admin" class="admin-entry-link">دخول الإدارة</a></span>
+        <span>subbha.om — سلطنة عُمان</span>
       </div>
     </div>
   </footer>
@@ -7752,6 +7749,7 @@ ${lines}
   .info-modal-card{width:min(720px,96vw)!important}
   .info-page{padding:clamp(26px,5vw,44px)}
   .info-page h2{margin:12px 0 10px;color:var(--green);font-size:clamp(1.5rem,4vw,2rem)}
+  .info-page h3{margin:22px 0 10px;color:var(--green);font-size:1.05rem}
   .info-page .info-lead{color:var(--muted);line-height:2;margin:0 0 18px}
   .info-page p{line-height:2;color:var(--ink);margin:0 0 12px}
   .info-page ul{margin:0 0 14px;padding:0;list-style:none;display:grid;gap:10px}
@@ -7817,12 +7815,39 @@ ${lines}
       'راسلنا على واتساب برقم الطلب المكوّن من 6 أرقام، وتجده في رسالة الطلب وفي «حسابي».'
     ].join('\n')
   };
-  const TITLES={contact:'تواصل معنا',exchange:'سياسة الاستبدال',shipping:'الشحن والتوصيل',faq:'الأسئلة الشائعة'};
-  const HASHES={contact:'#contact-info',exchange:'#exchange-policy',shipping:'#shipping',faq:'#faq'};
+  DEFAULTS.privacy=[
+    'نحترم خصوصيتك. توضح هذه الصفحة البيانات التي نجمعها في متجر سبحة، ولماذا نجمعها، وأين تُحفظ.',
+    '# البيانات التي نجمعها',
+    '- عند الطلب: الاسم، رقم الهاتف، المحافظة والولاية، العنوان بالتفصيل، ملاحظات الطلب، طريقة الدفع، وكود الخصم إن استخدمته.',
+    '- عند الإهداء: اسم المُهدى إليه ورقمه، ورسالة البطاقة، واختيارك إظهار اسمك له أو إخفاءه.',
+    '- عند الدخول إلى «حسابي»: رقم هاتفك، واسمك إن كتبته.',
+    '- لا نطلب بريداً إلكترونياً ولا كلمة مرور، ولا تمر بيانات بطاقات الدفع عبر الموقع.',
+    '# كيف نستخدمها',
+    '- لتجهيز طلبك وتوصيله إليك أو إلى المُهدى إليه.',
+    '- للتواصل معك عبر واتساب لتأكيد الطلب وموعد التوصيل.',
+    '- لتطبيق أكواد الخصم، ومتابعة الطلبات، وخدمة العملاء.',
+    '- لا نبيع بياناتك، ولا نستخدمها لأغراض إعلانية.',
+    '# مع من نشاركها',
+    '- عند الحاجة نشارك اسم المستلم ورقمه وعنوانه مع جهة التوصيل فقط، لإيصال الطلب.',
+    '- في طلبات الإهداء بدون اسم، لا نُطلع المُهدى إليه على اسم المُرسل.',
+    '# أين تُحفظ',
+    '- تُحفظ الطلبات في قاعدة بيانات Firebase من Google لإدارتها ومتابعتها.',
+    '- تُرسل رسالة الطلب عبر واتساب من جهازك، وتخضع لسياسة خصوصية واتساب.',
+    '- السلة والمفضلة ورقمك في «حسابي» تُحفظ على جهازك فقط، ويمكنك حذفها بمسح بيانات الموقع من متصفحك.',
+    '- لا يستخدم الموقع أدوات تتبع إعلانية. تُحمَّل خطوط الموقع من Google Fonts.',
+    '# حقوقك',
+    '- يمكنك طلب الاطلاع على بيانات طلبك أو تصحيحها أو حذفها بمراسلتنا عبر واتساب مع رقم الطلب.',
+    '- نحتفظ ببيانات الطلبات للمدة اللازمة لخدمتك ومتابعة طلباتك.',
+    'قد نحدّث هذه السياسة عند تغيّر خدماتنا، وتظهر آخر نسخة دائماً في هذه الصفحة.',
+    'آخر تحديث: نوفمبر 2026'
+  ].join('\n');
+  const EDITABLE=['exchange','shipping','faq','privacy'];
+  const TITLES={contact:'تواصل معنا',exchange:'سياسة الاستبدال',shipping:'الشحن والتوصيل',faq:'الأسئلة الشائعة',privacy:'سياسة الخصوصية'};
+  const HASHES={contact:'#contact-info',exchange:'#exchange-policy',shipping:'#shipping',faq:'#faq',privacy:'#privacy'};
 
   let pages={...DEFAULTS,...(readLocalJson(CACHE_KEY,{})||{})};
   const clean=v=>String(v||'').replace(/\r\n?/g,'\n').trim();
-  const pick=data=>{const out={};['exchange','shipping','faq'].forEach(k=>{out[k]=clean(data?.[k])||DEFAULTS[k]});return out};
+  const pick=data=>{const out={};EDITABLE.forEach(k=>{out[k]=clean(data?.[k])||DEFAULTS[k]});return out};
   pages=pick(pages);
 
   // "- " or "• " lines become list items; other lines become paragraphs.
@@ -7832,6 +7857,8 @@ ${lines}
     clean(text).split('\n').forEach(line=>{
       const s=line.trim();
       if(!s){flush();return}
+      const h=s.match(/^#\s*(.+)$/);
+      if(h){flush();parts.push(`<h3>${escapeHtml(h[1])}</h3>`);return}
       const m=s.match(/^[-•*]\s*(.+)$/);
       if(m)list.push(m[1]);else{flush();parts.push(`<p>${escapeHtml(s)}</p>`)}
     });
@@ -7880,7 +7907,7 @@ ${lines}
     if(e.target.closest('[data-close-info]'))close();
     if(e.target.closest('[data-reset-info-pages]')){
       const form=document.getElementById('infoPagesForm');if(!form)return;
-      ['exchange','shipping','faq'].forEach(k=>{form.elements[k].value=DEFAULTS[k]});
+      EDITABLE.forEach(k=>{form.elements[k].value=DEFAULTS[k]});
       toast('تمت استعادة النص الافتراضي؛ اضغط «حفظ الصفحات» لاعتماده','bell');
     }
   });
@@ -7892,11 +7919,12 @@ ${lines}
   function adminCard(){
     return `<div class="admin-card info-pages-admin" style="margin-top:16px">
       <h3 style="margin:0 0 6px">صفحات خدمة العملاء</h3>
-      <small style="color:var(--muted)">تظهر للعملاء من روابط أسفل الموقع. صفحة «تواصل معنا» تُبنى تلقائياً من رقم الواتساب والإنستجرام والدومين أعلاه.</small>
+      <small style="color:var(--muted)">تظهر للعملاء من روابط «خدمة العملاء» أسفل الموقع. صفحة «تواصل معنا» تُبنى تلقائياً من رقم الواتساب والإنستجرام والدومين أعلاه.</small>
       <form id="infoPagesForm" class="admin-form" style="margin-top:14px">
         <div class="form-field span-2"><label>سياسة الاستبدال</label><textarea name="exchange">${escapeHtml(pages.exchange)}</textarea><span class="info-help">السطر الذي يبدأ بـ «-» يظهر كنقطة في قائمة، وباقي الأسطر فقرات.</span></div>
         <div class="form-field span-2"><label>الشحن والتوصيل</label><textarea name="shipping">${escapeHtml(pages.shipping)}</textarea></div>
         <div class="form-field span-2"><label>الأسئلة الشائعة</label><textarea name="faq" style="min-height:300px">${escapeHtml(pages.faq)}</textarea><span class="info-help">اكتب السؤال في سطر، والجواب في السطر الذي بعده، واترك سطراً فارغاً بين كل سؤال والآخر.</span></div>
+        <div class="form-field span-2"><label>سياسة الخصوصية</label><textarea name="privacy" style="min-height:300px">${escapeHtml(pages.privacy)}</textarea><span class="info-help">السطر الذي يبدأ بـ «#» يظهر كعنوان فرعي، والذي يبدأ بـ «-» كنقطة في قائمة.</span></div>
         <div class="form-field span-2 admin-actions"><button class="btn btn-primary" type="submit">حفظ الصفحات</button><button class="btn btn-soft" type="button" data-reset-info-pages>استعادة النص الافتراضي</button></div>
       </form>
     </div>`;
@@ -7914,8 +7942,8 @@ ${lines}
     if(e.target.getAttribute?.('id')!=='infoPagesForm')return;
     e.preventDefault();
     const fd=new FormData(e.target);
-    const next={exchange:clean(fd.get('exchange')),shipping:clean(fd.get('shipping')),faq:clean(fd.get('faq'))};
-    if(!next.exchange||!next.shipping||!next.faq){toast('لا تترك أي صفحة فارغة','alert-circle');return}
+    const next={};EDITABLE.forEach(k=>{next[k]=clean(fd.get(k))});
+    if(EDITABLE.some(k=>!next[k])){toast('لا تترك أي صفحة فارغة','alert-circle');return}
     if(typeof firebaseDB==='undefined'||!firebaseDB){toast('السحابة غير متصلة؛ لم تُحفظ الصفحات','alert-circle');return}
     try{await firebaseDB.ref(PATH).set({...next,updatedAt:new Date().toISOString()})}
     catch(err){console.warn('Info pages save failed',err);toast('تعذر حفظ الصفحات في السحابة','alert-circle');return}
