@@ -42,23 +42,18 @@
   button { font: inherit; }
   .dock-bodies { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
   .dock-bodies::-webkit-scrollbar { display: none; }
-  .bodies-track { display: flex; align-items: flex-end; gap: 4px; width: max-content; margin-inline: auto; padding: 4px 4px 2px; }
-  .orb-btn { flex: none; display: grid; justify-items: center; gap: 7px; min-width: 62px; padding: 4px 4px 3px; background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 12.5px; white-space: nowrap; }
-  .orb-slot { height: 46px; display: grid; place-items: center; }
+  .bodies-track { display: flex; align-items: flex-end; gap: 22px; width: max-content; margin-inline: auto; padding: 4px 4px 2px; }
+  .orb-btn { flex: none; display: grid; justify-items: center; gap: 8px; min-width: 70px; padding: 4px 4px 3px; background: none; border: 0; color: var(--fg); cursor: pointer; font-size: 13.5px; white-space: nowrap; }
+  .orb-slot { height: 50px; display: grid; place-items: center; }
   .orb { position: relative; display: block; width: var(--size); height: var(--size); border-radius: 50%; background-color: var(--tone); background-size: 200% 100%; background-position: 0 50%;
          box-shadow: inset -7px -5px 12px rgba(0, 0, 0, .82), inset 2px 2px 5px rgba(255, 255, 255, .16), 0 0 0 1px rgba(255, 255, 255, .06);
          transition: background-position 1.8s cubic-bezier(.2, .8, .2, 1), transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .3s; }
-  .orb.sun { background: radial-gradient(circle at 38% 36%, #fff4d2 0, #ffc45c 32%, #f08a1c 68%, #a83c08 100%); box-shadow: 0 0 18px rgba(255, 160, 50, .55); }
-  .orb.ring::after { content: ""; position: absolute; left: -46%; right: -46%; top: 41%; bottom: 41%; border-radius: 50%; border: 2px solid rgba(226, 204, 152, .75); transform: rotate(-16deg); }
   .orb-name { line-height: 1; transition: color .2s; }
   .orb-btn:hover .orb { transform: translateY(-3px) scale(1.08); background-position: 55% 50%; }
-  .orb-btn:hover .orb-name { color: var(--fg); }
+  .orb-btn:hover .orb-name { color: var(--sun); }
   .orb-btn[aria-pressed="true"] .orb-name { color: var(--sun); }
   .orb-btn[aria-pressed="true"] .orb:not(.sun) { box-shadow: inset -7px -5px 12px rgba(0, 0, 0, .82), inset 2px 2px 5px rgba(255, 255, 255, .16), 0 0 0 2px var(--void), 0 0 0 3.5px var(--sun); }
   .orb-btn:focus-visible { outline: 2px solid var(--sun); outline-offset: 2px; border-radius: 10px; }
-  .orb-btn.sat { min-width: 46px; }
-  .orb-btn.zoomable .orb-name { color: var(--fg); }
-  .orb-btn.zoomable .orb-name::after { content: ""; display: inline-block; width: 5px; height: 5px; margin-inline-start: 5px; vertical-align: middle; transform: rotate(45deg); background: var(--sun); }
 
   .dock-util { width: min(1000px, 100%); display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 9px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12.5px; }
   .util-group { display: flex; align-items: center; gap: 12px; min-width: 0; }
@@ -180,8 +175,6 @@
   @media (max-width: 700px) {
     .brand h1 { font-size: 17px; }
     .dock { padding-top: 28px; gap: 6px; }
-    .bodies-track { margin-inline: 0; }
-    .orb-btn { min-width: 54px; }
     .credit, .speed > span { display: none; }
     .speed input { width: auto; flex: 1; min-width: 70px; }
     .speed { flex: 1; }
@@ -213,7 +206,7 @@
   <p class="date">التاريخ في المحاكاة: <b id="date">—</b></p>
 </header>
 
-<nav class="dock" aria-label="اختيار الكواكب">
+<nav class="dock" aria-label="المريخ والقمر">
   <div class="dock-bodies"><div class="bodies-track" id="chips"></div></div>
   <div class="dock-util">
     <div class="util-group">
@@ -886,15 +879,17 @@ addEventListener('keydown', e => {
 
 /* ---------- UI ---------- */
 const chips = $('chips'), labelsEl = $('labels'), labels = {};
-// mini-globe sizes in the bottom bar (px): roughly by real size, squeezed so all fit
-const ORB_SIZE = { sun: 40, mercury: 20, venus: 27, earth: 29, moon: 16, mars: 23, jupiter: 40, saturn: 34, uranus: 30, neptune: 30 };
-BODIES.forEach(b => {
-  const c = document.createElement('button');
-  c.type = 'button'; c.className = 'orb-btn' + (b.key === 'moon' ? ' sat' : '') + (EXPLAINED.has(b.key) ? ' zoomable' : ''); c.dataset.key = b.key; c.setAttribute('aria-pressed', 'false');
-  c.innerHTML = `<span class="orb-slot"><span class="orb${b.key === 'sun' ? ' sun' : ''}${b.ring ? ' ring' : ''}" style="--size:${ORB_SIZE[b.key]}px;--tone:${b.color}"></span></span><span class="orb-name"></span>`;
+// the bottom bar holds only the bodies with the cinematic zoom: Mars and the Moon (mini-globe size in px)
+const ORB_SIZE = { mars: 40, moon: 32 };
+['mars', 'moon'].forEach(key => {
+  const b = byKey[key], c = document.createElement('button');
+  c.type = 'button'; c.className = 'orb-btn'; c.dataset.key = key; c.setAttribute('aria-pressed', 'false');
+  c.innerHTML = `<span class="orb-slot"><span class="orb" style="--size:${ORB_SIZE[key]}px;--tone:${b.color}"></span></span><span class="orb-name"></span>`;
   c.lastChild.textContent = b.ar;
-  c.onclick = () => focusOn(b.key);
+  c.onclick = () => focusOn(key);
   chips.appendChild(c);
+});
+BODIES.forEach(b => {
   const l = document.createElement('button');
   l.className = 'label'; l.textContent = b.ar; l.tabIndex = -1;
   l.onclick = () => focusOn(b.key);
@@ -1029,9 +1024,8 @@ function frame() {
 }
 
 function paintOrbs() {
-  const MAPS = { earth: 'earth_day.jpg' };
   document.querySelectorAll('.orb-btn').forEach(btn => {
-    const b = byKey[btn.dataset.key], t = TEX[MAPS[b.key] || (b.tex && b.tex.map)];
+    const t = TEX[byKey[btn.dataset.key].tex.map];
     if (!t || !t.image) return;
     const c = document.createElement('canvas'); c.width = 192; c.height = 96;
     const x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(t.image, 0, 0, c.width, c.height);
