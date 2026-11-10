@@ -1,19 +1,19 @@
 /* ==========================================================================
-   Subbha — Splash / Loading Screen
-   هوية بصرية: بني دافئ + كريمي (تطابق هوية سبحة، بلا لمسات ذهبية)
+   دُرمان (Durman) — Splash / Loading Screen
+   هوية بصرية: زيتوني + كريمي، والذهبي فقط في نقطة وسط الزهرة
    لا يعتمد على أي مكتبة خارجية. Zero dependencies.
    ========================================================================== */
 
 :root {
   /* --- Brand tokens (غيّرها هنا فقط لتغيير الهوية بالكامل) --- */
-  --astro-blue-900: #1c1109;
-  --astro-blue-800: #2b1b13;
-  --astro-blue-700: #40260f;
-  --astro-blue-500: #eadbc8;
-  --astro-blue-400: #f8f1e6;
-  --astro-orange-500: #7a4b2a;
-  --astro-orange-400: #a9764a;
-  --astro-white: #f8f1e6;
+  --astro-blue-900: #353b23;
+  --astro-blue-800: #3e4429;
+  --astro-blue-700: #4a5132;
+  --astro-blue-500: #e9e0c8;
+  --astro-blue-400: #fbefd0;
+  --astro-orange-500: #d2cdbf;
+  --astro-orange-400: #b9b39f;
+  --astro-white: #fbefd0;
 
   /* --- Splash tuning --- */
   --splash-logo-size: clamp(8.5rem, 24vw, 13rem);

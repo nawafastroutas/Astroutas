@@ -1,7 +1,7 @@
 {
-  "name": "Subbha | سبحة",
-  "short_name": "Subbha",
-  "description": "Subbha — متجر متخصص في السبح الفاخرة والتعليقات والإضافات.",
+  "name": "دُرمان | Durman",
+  "short_name": "دُرمان",
+  "description": "دُرمان — متجر عُماني للسبح الفاخرة والتعليقات والمحفظات والكركوشات.",
   "start_url": "./index.html",
   "scope": "./",
   "id": "./index.html",
@@ -9,8 +9,8 @@
   "orientation": "portrait",
   "lang": "ar",
   "dir": "rtl",
-  "background_color": "#2b1b13",
-  "theme_color": "#5b4636",
+  "background_color": "#3e4429",
+  "theme_color": "#3e4429",
   "icons": [
     {
       "src": "assets/icons/icon-192.png",
