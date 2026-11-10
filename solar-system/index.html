@@ -57,6 +57,8 @@
   .orb-btn[aria-pressed="true"] .orb:not(.sun) { box-shadow: inset -7px -5px 12px rgba(0, 0, 0, .82), inset 2px 2px 5px rgba(255, 255, 255, .16), 0 0 0 2px var(--void), 0 0 0 3.5px var(--sun); }
   .orb-btn:focus-visible { outline: 2px solid var(--sun); outline-offset: 2px; border-radius: 10px; }
   .orb-btn.sat { min-width: 46px; }
+  .orb-btn.zoomable .orb-name { color: var(--fg); }
+  .orb-btn.zoomable .orb-name::after { content: ""; display: inline-block; width: 5px; height: 5px; margin-inline-start: 5px; vertical-align: middle; transform: rotate(45deg); background: var(--sun); }
 
   .dock-util { width: min(1000px, 100%); display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 9px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12.5px; }
   .util-group { display: flex; align-items: center; gap: 12px; min-width: 0; }
@@ -76,6 +78,8 @@
   #labels { position: fixed; inset: 0; pointer-events: none; }
   .label { position: absolute; left: 0; top: 0; pointer-events: auto; cursor: pointer; background: none; border: 0; padding: 2px 6px; color: rgba(233, 237, 245, .82); font-family: var(--font-body); font-size: 12px; white-space: nowrap; text-shadow: 0 1px 6px #000; will-change: transform; }
   .label:hover { color: var(--sun); }
+  .label.ping { animation: label-ping 1.8s ease-out; }
+  @keyframes label-ping { 0%, 40% { color: var(--sun); transform: var(--at) scale(1.35); } 100% { transform: var(--at) scale(1); } }
   .label::before { content: ""; position: absolute; right: 50%; top: -6px; width: 1px; height: 6px; background: rgba(233, 237, 245, .35); }
 
   /* ---------- cinematic globe view ---------- */
@@ -339,7 +343,7 @@ const byKey = Object.fromEntries(BODIES.map(b => [b.key, b]));
 const fmt = n => n.toLocaleString('en-US');
 const period = P => P < 1000 ? `${fmt(+P.toFixed(1))} يوم` : `${(P / 365.25).toFixed(2)} سنة`;
 const dayLen = h => { const a = Math.abs(h), s = a > 48 ? `${(a / 24).toFixed(1)} يوم` : `${a.toFixed(1)} ساعة`; return h < 0 ? s + ' (عكسي)' : s; };
-// only the Moon and Mars carry explanations (text, numbers, places); the other bodies show just their name
+// only the Moon and Mars have the cinematic zoom (with text, numbers and places); the other bodies just get their name tag flashed
 const EXPLAINED = new Set(['moon', 'mars']);
 BODIES.forEach(b => {
   if (!EXPLAINED.has(b.key) || b.stats) return;
@@ -680,6 +684,7 @@ function cineDistance(b) {
   return extent(b) / ((innerWidth < 700 ? .55 : .68) * half);
 }
 function focusOn(key, opts = {}) {
+  if (key && !EXPLAINED.has(key)) { if (!cine) pingLabel(key); return; }
   if (poi) leavePlaceState();
   const wasCine = cine;
   cine = key || null;
@@ -861,11 +866,15 @@ const easeOut = t => 1 - Math.pow(1 - t, 4);
 /* ---------- panels ---------- */
 const statsHTML = b => b.stats.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
 function fillCine(key) {
-  const b = objs[key].b, rich = EXPLAINED.has(key);
+  const b = objs[key].b;
   $('cEyebrow').textContent = b.eyebrow;
   $('cTitle').textContent = b.ar;
-  $('cSub').hidden = $('cHud').hidden = $('cCoords').hidden = !rich;
-  if (rich) { $('cSub').textContent = b.desc; $('cHud').innerHTML = statsHTML(b); }
+  $('cSub').textContent = b.desc;
+  $('cHud').innerHTML = statsHTML(b);
+}
+function pingLabel(key) {
+  const l = labels[key];
+  l.classList.remove('ping'); void l.offsetWidth; l.classList.add('ping');
 }
 $('cBack').onclick = () => focusOn(null);
 addEventListener('keydown', e => {
@@ -881,7 +890,7 @@ const chips = $('chips'), labelsEl = $('labels'), labels = {};
 const ORB_SIZE = { sun: 40, mercury: 20, venus: 27, earth: 29, moon: 16, mars: 23, jupiter: 40, saturn: 34, uranus: 30, neptune: 30 };
 BODIES.forEach(b => {
   const c = document.createElement('button');
-  c.type = 'button'; c.className = 'orb-btn' + (b.key === 'moon' ? ' sat' : ''); c.dataset.key = b.key; c.setAttribute('aria-pressed', 'false');
+  c.type = 'button'; c.className = 'orb-btn' + (b.key === 'moon' ? ' sat' : '') + (EXPLAINED.has(b.key) ? ' zoomable' : ''); c.dataset.key = b.key; c.setAttribute('aria-pressed', 'false');
   c.innerHTML = `<span class="orb-slot"><span class="orb${b.key === 'sun' ? ' sun' : ''}${b.ring ? ' ring' : ''}" style="--size:${ORB_SIZE[b.key]}px;--tone:${b.color}"></span></span><span class="orb-name"></span>`;
   c.lastChild.textContent = b.ar;
   c.onclick = () => focusOn(b.key);
@@ -919,7 +928,7 @@ renderer.domElement.addEventListener('pointerup', e => {
 renderer.domElement.addEventListener('pointermove', e => {
   if (e.pointerType !== 'mouse' || e.buttons) return;
   const k = pick(e);
-  renderer.domElement.style.cursor = k && k !== cine ? 'pointer' : 'grab';
+  renderer.domElement.style.cursor = k && k !== cine && EXPLAINED.has(k) ? 'pointer' : 'grab';
 });
 
 /* ---------- HUD readouts ---------- */
@@ -961,7 +970,8 @@ function updateLabels() {
     const hide = proj.z > 1 || (k === 'moon' && camDist > 90) || camDist > 700;
     if (hide) { el.style.display = 'none'; continue; }
     el.style.display = '';
-    el.style.transform = `translate(${((proj.x + 1) / 2 * w).toFixed(1)}px, ${((1 - proj.y) / 2 * h + 6).toFixed(1)}px) translateX(-50%)`;
+    const at = `translate(${((proj.x + 1) / 2 * w).toFixed(1)}px, ${((1 - proj.y) / 2 * h + 6).toFixed(1)}px) translateX(-50%)`;
+    el.style.transform = at; el.style.setProperty('--at', at);   // --at lets the flash animation keep the tag in place
   }
 }
 
@@ -1009,7 +1019,7 @@ function frame() {
   controls.update();
   updateLabels();
   updateMarkers();
-  if (cine && EXPLAINED.has(cine) && (tick++ & 3) === 0) updateCoords();
+  if (cine && (tick++ & 3) === 0) updateCoords();
 
   const fast = daysPerSec() > .5 && playing && !cine;
   const ds = (fast ? dateFmtDay : dateFmt).format(new Date(J2000 + simDays * 864e5));
