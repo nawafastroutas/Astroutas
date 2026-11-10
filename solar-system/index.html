@@ -29,40 +29,48 @@
   #stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 
   .glass { background: var(--panel); border: 1px solid var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 14px; }
-  .brand, .dock, #info, #labels { transition: opacity .5s, transform .6s; }
+  .brand, .dock, #labels { transition: opacity .5s, transform .6s; }
 
   .brand { position: fixed; top: calc(16px + env(safe-area-inset-top, 0px)); right: 16px; padding: 12px 16px; display: grid; gap: 2px; max-width: calc(100% - 32px); }
   .brand h1 { margin: 0; font-family: var(--font-display); font-size: 20px; font-weight: 700; }
   .brand .date { margin: 0; color: var(--muted); font-size: 13px; }
   .brand .date b { color: var(--sun); font-weight: 500; font-family: var(--font-data); }
 
-  #info { position: fixed; top: calc(16px + env(safe-area-inset-top, 0px)); left: 16px; width: min(340px, calc(100% - 32px)); padding: 18px; display: grid; gap: 12px; }
-  #info .kind { font-size: 12px; color: var(--sun); }
-  #info h2 { margin: 0; font-family: var(--font-display); font-size: 26px; line-height: 1.3; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-  #info h2 small { font-family: var(--font-data); font-size: 12px; color: var(--muted); font-weight: 400; }
-  #info p { margin: 0; line-height: 1.75; color: #c9d0de; }
-  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border-radius: 10px; overflow: hidden; margin: 0; }
-  .stats div { background: rgba(8, 11, 20, 0.85); padding: 9px 11px; display: grid; gap: 2px; min-width: 0; }
-  .stats dt { font-size: 11.5px; color: var(--muted); }
-  .stats dd { margin: 0; font-family: var(--font-data); font-size: 14px; font-variant-numeric: tabular-nums; direction: ltr; text-align: right; }
-  .close { position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; border-radius: 8px; background: transparent; border: 1px solid var(--line); color: var(--muted); cursor: pointer; font-size: 16px; line-height: 1; }
-  .close:hover { color: var(--fg); }
-
-  .dock { position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); margin-inline: auto; max-width: 1000px; padding: 10px; display: grid; gap: 8px; }
-  .row { display: flex; align-items: center; gap: 8px; min-width: 0; }
-  .bodies { overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
-  .bodies::-webkit-scrollbar { display: none; }
+  /* bottom bar: planet selector (mini globes) + a thin time strip */
+  .dock { position: fixed; left: 0; right: 0; bottom: 0; padding: 40px 16px calc(12px + env(safe-area-inset-bottom, 0px)); display: grid; justify-items: center; gap: 8px; background: linear-gradient(to top, rgba(2, 3, 8, .94) 0, rgba(2, 3, 8, .7) 55%, transparent); pointer-events: none; }
+  .dock > * { pointer-events: auto; }
   button { font: inherit; }
-  .chip, .ctl { flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.03); color: var(--fg); cursor: pointer; font-size: 13.5px; white-space: nowrap; }
-  .chip:hover, .ctl:hover { background: rgba(255, 255, 255, 0.08); }
-  .chip[aria-pressed="true"] { border-color: var(--sun); background: rgba(244, 178, 74, 0.14); }
-  .chip i { width: 10px; height: 10px; border-radius: 50%; display: block; }
-  :is(.chip, .ctl, .close, .label, input):focus-visible { outline: 2px solid var(--sun); outline-offset: 2px; }
-  .controls { flex-wrap: wrap; }
-  .speed { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; min-width: 0; color: var(--muted); font-size: 13px; }
-  .speed input { flex: 1; min-width: 80px; accent-color: var(--sun); }
-  .speed output { font-family: var(--font-body); color: var(--fg); min-width: 120px; font-size: 12.5px; }
-  .note { margin: 0; color: var(--muted); font-size: 11.5px; line-height: 1.6; }
+  .dock-bodies { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .dock-bodies::-webkit-scrollbar { display: none; }
+  .bodies-track { display: flex; align-items: flex-end; gap: 4px; width: max-content; margin-inline: auto; padding: 4px 4px 2px; }
+  .orb-btn { flex: none; display: grid; justify-items: center; gap: 7px; min-width: 62px; padding: 4px 4px 3px; background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 12.5px; white-space: nowrap; }
+  .orb-slot { height: 46px; display: grid; place-items: center; }
+  .orb { position: relative; display: block; width: var(--size); height: var(--size); border-radius: 50%; background-color: var(--tone); background-size: 200% 100%; background-position: 0 50%;
+         box-shadow: inset -7px -5px 12px rgba(0, 0, 0, .82), inset 2px 2px 5px rgba(255, 255, 255, .16), 0 0 0 1px rgba(255, 255, 255, .06);
+         transition: background-position 1.8s cubic-bezier(.2, .8, .2, 1), transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .3s; }
+  .orb.sun { background: radial-gradient(circle at 38% 36%, #fff4d2 0, #ffc45c 32%, #f08a1c 68%, #a83c08 100%); box-shadow: 0 0 18px rgba(255, 160, 50, .55); }
+  .orb.ring::after { content: ""; position: absolute; left: -46%; right: -46%; top: 41%; bottom: 41%; border-radius: 50%; border: 2px solid rgba(226, 204, 152, .75); transform: rotate(-16deg); }
+  .orb-name { line-height: 1; transition: color .2s; }
+  .orb-btn:hover .orb { transform: translateY(-3px) scale(1.08); background-position: 55% 50%; }
+  .orb-btn:hover .orb-name { color: var(--fg); }
+  .orb-btn[aria-pressed="true"] .orb-name { color: var(--sun); }
+  .orb-btn[aria-pressed="true"] .orb:not(.sun) { box-shadow: inset -7px -5px 12px rgba(0, 0, 0, .82), inset 2px 2px 5px rgba(255, 255, 255, .16), 0 0 0 2px var(--void), 0 0 0 3.5px var(--sun); }
+  .orb-btn:focus-visible { outline: 2px solid var(--sun); outline-offset: 2px; border-radius: 10px; }
+  .orb-btn.sat { min-width: 46px; }
+
+  .dock-util { width: min(1000px, 100%); display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 9px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12.5px; }
+  .util-group { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .icon-btn { flex: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); background: rgba(255, 255, 255, .03); color: var(--fg); cursor: pointer; }
+  .icon-btn svg { width: 12px; height: 12px; fill: currentColor; }
+  .text-btn { background: none; border: 0; padding: 4px 2px; color: var(--fg); cursor: pointer; font-size: 12.5px; }
+  .icon-btn:hover, .text-btn:hover { color: var(--sun); border-color: rgba(244, 178, 74, .5); }
+  .speed { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .speed input { width: 150px; accent-color: var(--sun); }
+  .speed output { color: var(--fg); min-width: 84px; font-variant-numeric: tabular-nums; }
+  .credit { font-size: 11.5px; opacity: .8; }
+  .ctl { flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.03); color: var(--fg); cursor: pointer; font-size: 13.5px; white-space: nowrap; }
+  .ctl:hover { background: rgba(255, 255, 255, 0.08); }
+  :is(.ctl, .label, .icon-btn, .text-btn, input):focus-visible { outline: 2px solid var(--sun); outline-offset: 2px; }
 
   /* floating name tags in the overview */
   #labels { position: fixed; inset: 0; pointer-events: none; }
@@ -73,7 +81,7 @@
   /* ---------- cinematic globe view ---------- */
   body.cine .brand { opacity: 0; transform: translateY(-20px); pointer-events: none; }
   body.cine .dock { opacity: 0; transform: translateY(30px); pointer-events: none; }
-  body.cine #info, body.cine #labels { opacity: 0; pointer-events: none; }
+  body.cine #labels { opacity: 0; pointer-events: none; }
   body.cine .label { pointer-events: none; }
 
   .bar { position: fixed; left: 0; right: 0; height: 7vh; background: #000; z-index: 2; transform: scaleY(0); transition: transform .9s cubic-bezier(.7, 0, .2, 1); pointer-events: none; }
@@ -166,9 +174,15 @@
   .meter i { display: block; height: 100%; width: 0; background: var(--sun); transition: width .25s; }
 
   @media (max-width: 700px) {
-    #info { top: auto; bottom: calc(150px + env(safe-area-inset-bottom, 0px)); max-height: 46vh; overflow-y: auto; }
     .brand h1 { font-size: 17px; }
-    .note { display: none; }
+    .dock { padding-top: 28px; gap: 6px; }
+    .bodies-track { margin-inline: 0; }
+    .orb-btn { min-width: 54px; }
+    .credit, .speed > span { display: none; }
+    .speed input { width: auto; flex: 1; min-width: 70px; }
+    .speed { flex: 1; }
+    .speed output { min-width: 0; font-size: 11.5px; }
+    .dock-util { gap: 10px; }
     .cine-panel { top: auto; bottom: calc(7vh + 14px + env(safe-area-inset-bottom, 0px)); transform: none; gap: 10px; }
     .cine-title { font-size: 52px; }
     .cine-sub { display: none; }
@@ -195,26 +209,22 @@
   <p class="date">التاريخ في المحاكاة: <b id="date">—</b></p>
 </header>
 
-<aside id="info" class="glass" hidden aria-live="polite">
-  <button class="close" id="closeInfo" aria-label="إغلاق">✕</button>
-  <span class="kind" id="iKind"></span>
-  <h2><span id="iName"></span> <small id="iLatin"></small></h2>
-  <p id="iDesc"></p>
-  <dl class="stats" id="iStats"></dl>
-</aside>
-
-<nav class="dock glass" aria-label="التحكم">
-  <div class="row bodies" id="chips"></div>
-  <div class="row controls">
-    <button class="ctl" id="play" aria-label="إيقاف مؤقت">⏸ إيقاف</button>
-    <button class="ctl" id="overview">عرض الكل</button>
-    <button class="ctl" id="today">الآن</button>
-    <label class="speed" for="speed">سرعة الزمن
-      <input type="range" id="speed" min="0" max="100" value="72">
-      <output id="speedOut"></output>
-    </label>
+<nav class="dock" aria-label="اختيار الكواكب">
+  <div class="dock-bodies"><div class="bodies-track" id="chips"></div></div>
+  <div class="dock-util">
+    <div class="util-group">
+      <button class="icon-btn" id="play" aria-label="إيقاف مؤقت" title="إيقاف مؤقت"></button>
+      <label class="speed" for="speed"><span>سرعة الزمن</span>
+        <input type="range" id="speed" min="0" max="100" value="72">
+        <output id="speedOut"></output>
+      </label>
+      <button class="text-btn" id="today">الآن</button>
+    </div>
+    <div class="util-group">
+      <span class="credit">الخرائط: NASA · USGS · Celestia · Stellarium</span>
+      <button class="text-btn" id="overview">عرض الكل</button>
+    </div>
   </div>
-  <p class="note">مواقع الكواكب ودوران الأرض محسوبة فلكيًا للتاريخ المعروض (الأحجام والمسافات مصغّرة) · الخرائط: NASA و USGS عبر Celestia و Stellarium و three.js · اضغط على أي جرم للدخول السينمائي</p>
 </nav>
 
 <div class="fx"></div>
@@ -302,44 +312,37 @@ const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 /* ---------- data ---------- */
 // d = orbit radius in the scene (compressed), r = scene radius (compressed), dayH = sidereal rotation in hours (negative = retrograde)
 const BODIES = [
-  { key: 'sun', ar: 'الشمس', en: 'Sun', kind: 'نجم', color: '#f4b24a', r: 7, eyebrow: 'SOL — G2V MAIN SEQUENCE',
-    desc: 'نجم من النوع G، يحتوي وحده على نحو 99.8٪ من كتلة المجموعة الشمسية. ضوؤه يصل إلى الأرض بعد 8 دقائق و20 ثانية تقريبًا.',
-    stats: [['القطر', '1,392,700 km'], ['حرارة السطح', '≈ 5,500 °C'], ['الدوران', '≈ 25 يومًا'], ['العمر', '4.6 مليار سنة'], ['الكتلة', '333,000 أرض'], ['النوع', 'G2V']], km: 696340 },
-  { key: 'mercury', astro: 'Mercury', ar: 'عطارد', en: 'Mercury', kind: 'كوكب صخري', color: '#a9a39b', r: .6, d: 14, dayH: 1407.6, tilt: .03, au: .39, P: 87.97, moons: 0, km: 2440,
-    tex: { map: 'mercury.jpg', normal: 'mercury_normal.jpg', ns: 1.2 }, eyebrow: '01 — MERCURY · 0.39 AU',
-    desc: 'أصغر الكواكب وأقربها إلى الشمس. لا يملك غلافًا جويًا يُذكر، فتتقلب حرارته بين 430 °C نهارًا و−180 °C ليلًا.' },
-  { key: 'venus', astro: 'Venus', ar: 'الزهرة', en: 'Venus', kind: 'كوكب صخري', color: '#e4c68d', r: 1.1, d: 20, dayH: -5832.5, tilt: 177.4, au: .72, P: 224.7, moons: 0, km: 6052,
-    tex: { map: 'venus.jpg', normal: 'venus_normal.jpg', ns: .8 }, atmo: [0xffd59a, 1.03, 1.1], eyebrow: '02 — VENUS · 0.72 AU',
-    desc: 'أشد الكواكب حرارة بسبب غلاف كثيف من ثاني أكسيد الكربون. يدور حول نفسه عكس اتجاه معظم الكواكب، ويومه أطول من سنته. الخريطة تُظهر السطح كما رسمه رادار ماجلان تحت الغيوم.' },
-  { key: 'earth', astro: 'Earth', ar: 'الأرض', en: 'Earth', kind: 'كوكب صخري', color: '#3f86c8', r: 1.2, d: 27, dayH: 23.934, tilt: 23.44, au: 1, P: 365.256, moons: 1, km: 6371,
-    eyebrow: '03 — EARTH · 1.00 AU',
-    desc: 'الكوكب الوحيد المعروف بوجود حياة وماء سائل على سطحه. الضوء والظل على الكرة هنا محسوبان لساعة التاريخ المعروض، فما تراه نهارًا هو نهار فعلًا.' },
-  { key: 'moon', ar: 'القمر', en: 'Moon', kind: 'تابع طبيعي للأرض', color: '#c9c6bf', r: .33, km: 1737,
+  { key: 'sun', ar: 'الشمس', en: 'Sun', color: '#f4b24a', r: 7, eyebrow: 'SOL — G2V MAIN SEQUENCE', km: 696340 },
+  { key: 'mercury', astro: 'Mercury', ar: 'عطارد', en: 'Mercury', color: '#a9a39b', r: .6, d: 14, dayH: 1407.6, tilt: .03, au: .39, P: 87.97, moons: 0, km: 2440,
+    tex: { map: 'mercury.jpg', normal: 'mercury_normal.jpg', ns: 1.2 }, eyebrow: '01 — MERCURY · 0.39 AU' },
+  { key: 'venus', astro: 'Venus', ar: 'الزهرة', en: 'Venus', color: '#e4c68d', r: 1.1, d: 20, dayH: -5832.5, tilt: 177.4, au: .72, P: 224.7, moons: 0, km: 6052,
+    tex: { map: 'venus.jpg', normal: 'venus_normal.jpg', ns: .8 }, atmo: [0xffd59a, 1.03, 1.1], eyebrow: '02 — VENUS · 0.72 AU' },
+  { key: 'earth', astro: 'Earth', ar: 'الأرض', en: 'Earth', color: '#3f86c8', r: 1.2, d: 27, dayH: 23.934, tilt: 23.44, au: 1, P: 365.256, moons: 1, km: 6371,
+    eyebrow: '03 — EARTH · 1.00 AU' },
+  { key: 'moon', ar: 'القمر', en: 'Moon', color: '#c9c6bf', r: .33, km: 1737,
     tex: { map: 'moon.jpg', normal: 'moon_normal.jpg', ns: 1.6 }, eyebrow: 'EARTH I — LUNA',
     desc: 'التابع الوحيد للأرض. مقيّد مدّيًا، لذلك نرى منه الوجه نفسه دائمًا. يبتعد عن الأرض قرابة 3.8 سم كل سنة.',
     stats: [['القطر', '3,474 km'], ['البعد عن الأرض', '384,400 km'], ['الدورة', '27.3 يوم'], ['الجاذبية', '1.62 m/s²'], ['الحرارة', '−173 / 127 °C'], ['ميل المحور', '6.68°']] },
-  { key: 'mars', astro: 'Mars', ar: 'المريخ', en: 'Mars', kind: 'كوكب صخري', color: '#c8643a', r: .8, d: 34, dayH: 24.62, tilt: 25.19, au: 1.52, P: 686.98, moons: 2, km: 3390,
+  { key: 'mars', astro: 'Mars', ar: 'المريخ', en: 'Mars', color: '#c8643a', r: .8, d: 34, dayH: 24.62, tilt: 25.19, au: 1.52, P: 686.98, moons: 2, km: 3390,
     tex: { map: 'mars.jpg', normal: 'mars_normal.jpg', ns: 1.4 }, atmo: [0xe0905e, 1.015, .7], eyebrow: '04 — MARS · 1.52 AU',
     desc: 'الكوكب الأحمر، ولونه من أكاسيد الحديد. فيه أعلى بركان معروف في المجموعة الشمسية، أوليمبوس مونس، بارتفاع نحو 22 كم، وأخدود مارينر بطول 4,000 كم.' },
-  { key: 'jupiter', astro: 'Jupiter', ar: 'المشتري', en: 'Jupiter', kind: 'عملاق غازي', color: '#d6b48f', r: 3.4, d: 52, dayH: 9.93, tilt: 3.13, au: 5.2, P: 4332.6, moons: 95, km: 69911,
-    tex: { map: 'jupiter.jpg' }, atmo: [0xf0d8b0, 1.02, .5], eyebrow: '05 — JUPITER · 5.20 AU',
-    desc: 'أكبر الكواكب، وكتلته أكثر من ضعف كتل بقية الكواكب مجتمعة. البقعة الحمراء العظيمة عاصفة أوسع من الأرض.' },
-  { key: 'saturn', astro: 'Saturn', ar: 'زحل', en: 'Saturn', kind: 'عملاق غازي', color: '#e2cc98', r: 2.9, d: 70, dayH: 10.66, tilt: 26.73, au: 9.58, P: 10759, moons: 274, km: 58232, ring: true,
-    tex: { map: 'saturn.jpg' }, atmo: [0xf2e2b8, 1.02, .45], eyebrow: '06 — SATURN · 9.58 AU',
-    desc: 'أشهر الكواكب بحلقاته المكوّنة من الجليد والصخور، وعرضها نحو 280,000 كم مع أن سمكها في الغالب لا يتجاوز عشرات الأمتار. كثافته أقل من كثافة الماء.' },
-  { key: 'uranus', astro: 'Uranus', ar: 'أورانوس', en: 'Uranus', kind: 'عملاق جليدي', color: '#9fd8e0', r: 2, d: 86, dayH: -17.24, tilt: 97.77, au: 19.2, P: 30687, moons: 29, km: 25362,
-    tex: { map: 'uranus.jpg' }, atmo: [0xbdf0f5, 1.025, .6], eyebrow: '07 — URANUS · 19.2 AU',
-    desc: 'يدور وهو مستلقٍ على جنبه بميل محوري يقارب 98°، فيقضي كل قطب 42 سنة في ضوء الشمس ثم 42 سنة في الظلام.' },
-  { key: 'neptune', astro: 'Neptune', ar: 'نبتون', en: 'Neptune', kind: 'عملاق جليدي', color: '#4d7fd6', r: 1.95, d: 100, dayH: 16.11, tilt: 28.32, au: 30.07, P: 60190, moons: 16, km: 24622,
-    tex: { map: 'neptune.jpg' }, atmo: [0x7fb0ff, 1.025, .7], eyebrow: '08 — NEPTUNE · 30.1 AU',
-    desc: 'أبعد الكواكب عن الشمس، ورياحه أسرع رياح مُقاسة في المجموعة الشمسية بسرعة تتجاوز 2,000 كم/ساعة.' }
+  { key: 'jupiter', astro: 'Jupiter', ar: 'المشتري', en: 'Jupiter', color: '#d6b48f', r: 3.4, d: 52, dayH: 9.93, tilt: 3.13, au: 5.2, P: 4332.6, moons: 95, km: 69911,
+    tex: { map: 'jupiter.jpg' }, atmo: [0xf0d8b0, 1.02, .5], eyebrow: '05 — JUPITER · 5.20 AU' },
+  { key: 'saturn', astro: 'Saturn', ar: 'زحل', en: 'Saturn', color: '#e2cc98', r: 2.9, d: 70, dayH: 10.66, tilt: 26.73, au: 9.58, P: 10759, moons: 274, km: 58232, ring: true,
+    tex: { map: 'saturn.jpg' }, atmo: [0xf2e2b8, 1.02, .45], eyebrow: '06 — SATURN · 9.58 AU' },
+  { key: 'uranus', astro: 'Uranus', ar: 'أورانوس', en: 'Uranus', color: '#9fd8e0', r: 2, d: 86, dayH: -17.24, tilt: 97.77, au: 19.2, P: 30687, moons: 29, km: 25362,
+    tex: { map: 'uranus.jpg' }, atmo: [0xbdf0f5, 1.025, .6], eyebrow: '07 — URANUS · 19.2 AU' },
+  { key: 'neptune', astro: 'Neptune', ar: 'نبتون', en: 'Neptune', color: '#4d7fd6', r: 1.95, d: 100, dayH: 16.11, tilt: 28.32, au: 30.07, P: 60190, moons: 16, km: 24622,
+    tex: { map: 'neptune.jpg' }, atmo: [0x7fb0ff, 1.025, .7], eyebrow: '08 — NEPTUNE · 30.1 AU' }
 ];
 const byKey = Object.fromEntries(BODIES.map(b => [b.key, b]));
 const fmt = n => n.toLocaleString('en-US');
 const period = P => P < 1000 ? `${fmt(+P.toFixed(1))} يوم` : `${(P / 365.25).toFixed(2)} سنة`;
 const dayLen = h => { const a = Math.abs(h), s = a > 48 ? `${(a / 24).toFixed(1)} يوم` : `${a.toFixed(1)} ساعة`; return h < 0 ? s + ' (عكسي)' : s; };
+// only the Moon and Mars carry explanations (text, numbers, places); the other bodies show just their name
+const EXPLAINED = new Set(['moon', 'mars']);
 BODIES.forEach(b => {
-  if (b.stats) return;
+  if (!EXPLAINED.has(b.key) || b.stats) return;
   b.stats = [['القطر', `${fmt(b.km * 2)} km`], ['البعد عن الشمس', `${b.au} AU`], ['السنة', period(b.P)], ['اليوم', dayLen(b.dayH)],
              ['الأقمار', fmt(b.moons)], ['ميل المحور', `${b.tilt}°`]];
 });
@@ -705,8 +708,7 @@ function focusOn(key, opts = {}) {
   for (const k in objs) if (k !== 'sun') (objs[k].orbit || objs[k].mesh).visible = !cine || k === cine || k === keep;
   if (cine) fillCine(cine);
   showMarkersFor(cine);
-  document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.key === key));
-  showInfo(null);
+  document.querySelectorAll('.orb-btn').forEach(c => c.setAttribute('aria-pressed', c.dataset.key === key));
 }
 /* ---------- places: second zoom onto a point of the surface ---------- */
 const surfacePoint = (key, pl, lift = 1) => {
@@ -857,23 +859,14 @@ const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const easeOut = t => 1 - Math.pow(1 - t, 4);
 
 /* ---------- panels ---------- */
-const info = $('info');
 const statsHTML = b => b.stats.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
-function showInfo(key) {
-  if (!key) { info.hidden = true; return; }
-  const b = objs[key].b;
-  $('iKind').textContent = b.kind; $('iName').textContent = b.ar; $('iLatin').textContent = b.en;
-  $('iDesc').textContent = b.desc; $('iStats').innerHTML = statsHTML(b);
-  info.hidden = false;
-}
 function fillCine(key) {
-  const b = objs[key].b;
+  const b = objs[key].b, rich = EXPLAINED.has(key);
   $('cEyebrow').textContent = b.eyebrow;
   $('cTitle').textContent = b.ar;
-  $('cSub').textContent = b.desc;
-  $('cHud').innerHTML = statsHTML(b);
+  $('cSub').hidden = $('cHud').hidden = $('cCoords').hidden = !rich;
+  if (rich) { $('cSub').textContent = b.desc; $('cHud').innerHTML = statsHTML(b); }
 }
-$('closeInfo').onclick = () => focusOn(null);
 $('cBack').onclick = () => focusOn(null);
 addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
@@ -884,10 +877,13 @@ addEventListener('keydown', e => {
 
 /* ---------- UI ---------- */
 const chips = $('chips'), labelsEl = $('labels'), labels = {};
+// mini-globe sizes in the bottom bar (px): roughly by real size, squeezed so all fit
+const ORB_SIZE = { sun: 40, mercury: 20, venus: 27, earth: 29, moon: 16, mars: 23, jupiter: 40, saturn: 34, uranus: 30, neptune: 30 };
 BODIES.forEach(b => {
   const c = document.createElement('button');
-  c.className = 'chip'; c.dataset.key = b.key; c.setAttribute('aria-pressed', 'false');
-  c.innerHTML = `<i style="background:${b.color}"></i>${b.ar}`;
+  c.type = 'button'; c.className = 'orb-btn' + (b.key === 'moon' ? ' sat' : ''); c.dataset.key = b.key; c.setAttribute('aria-pressed', 'false');
+  c.innerHTML = `<span class="orb-slot"><span class="orb${b.key === 'sun' ? ' sun' : ''}${b.ring ? ' ring' : ''}" style="--size:${ORB_SIZE[b.key]}px;--tone:${b.color}"></span></span><span class="orb-name"></span>`;
+  c.lastChild.textContent = b.ar;
   c.onclick = () => focusOn(b.key);
   chips.appendChild(c);
   const l = document.createElement('button');
@@ -896,7 +892,12 @@ BODIES.forEach(b => {
   labelsEl.appendChild(l); labels[b.key] = l;
 });
 const playBtn = $('play');
-const syncPlay = () => { playBtn.textContent = playing ? '⏸ إيقاف' : '▶ تشغيل'; playBtn.setAttribute('aria-label', playing ? 'إيقاف مؤقت' : 'تشغيل'); };
+const ICON_PAUSE = '<svg viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="1.5" width="2.8" height="9" rx=".6"/><rect x="7.2" y="1.5" width="2.8" height="9" rx=".6"/></svg>';
+const ICON_PLAY = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.6v8.8L10.4 6z"/></svg>';
+const syncPlay = () => {
+  playBtn.innerHTML = playing ? ICON_PAUSE : ICON_PLAY;
+  playBtn.setAttribute('aria-label', playing ? 'إيقاف مؤقت' : 'تشغيل'); playBtn.title = playing ? 'إيقاف مؤقت' : 'تشغيل';
+};
 playBtn.onclick = () => { playing = !playing; syncPlay(); }; syncPlay();
 $('overview').onclick = () => focusOn(null);
 $('today').onclick = () => { simDays = spinDays = nowDays(); };
@@ -1008,7 +1009,7 @@ function frame() {
   controls.update();
   updateLabels();
   updateMarkers();
-  if (cine && (tick++ & 3) === 0) updateCoords();
+  if (cine && EXPLAINED.has(cine) && (tick++ & 3) === 0) updateCoords();
 
   const fast = daysPerSec() > .5 && playing && !cine;
   const ds = (fast ? dateFmtDay : dateFmt).format(new Date(J2000 + simDays * 864e5));
@@ -1017,7 +1018,19 @@ function frame() {
   requestAnimationFrame(frame);
 }
 
+function paintOrbs() {
+  const MAPS = { earth: 'earth_day.jpg' };
+  document.querySelectorAll('.orb-btn').forEach(btn => {
+    const b = byKey[btn.dataset.key], t = TEX[MAPS[b.key] || (b.tex && b.tex.map)];
+    if (!t || !t.image) return;
+    const c = document.createElement('canvas'); c.width = 192; c.height = 96;
+    const x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(t.image, 0, 0, c.width, c.height);
+    btn.querySelector('.orb').style.backgroundImage = `url(${c.toDataURL('image/jpeg', .85)})`;
+  });
+}
+
 Promise.all(TEX_FILES.map(loadTex)).then(() => {
+  paintOrbs();
   try { build(); place(); }
   catch (e) { window.__loadFail('تعذّر بناء المشهد: ' + e.message + ' — جهازك أو متصفحك قد لا يدعم WebGL 2.'); throw e; }
   $('loading').classList.add('done');
