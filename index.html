@@ -7036,7 +7036,7 @@ ${lines}
     const onlinePayment=!!window.durmanPaymob?.isOnline(selectedPayment);
     if(onlinePayment){
       if(!window.durmanPaymob.ready()){toast('الدفع الإلكتروني غير متاح حالياً؛ اختر طريقة دفع أخرى','alert-circle');return}
-      order.paymentGateway='paymob';
+      order.paymentGateway=window.durmanPaymob.auto()?'paymob':'paymob-payme';
       order.paymentStatus='pending';
     }
 
@@ -8406,7 +8406,7 @@ function indexEnterTargets(scope = document) {
   .durman-pay-overlay h3{margin:0 0 8px;font-size:1.15rem}
   .durman-pay-overlay p{margin:0;font-size:.85rem;opacity:.8}
   @keyframes durmanSpin{to{transform:rotate(360deg)}}
-  #paymentResultModal .modal-card{width:min(560px,94vw)}
+  #paymentResultModal .modal-card,#paymeModal .modal-card{width:min(560px,94vw)}
   .pay-result{padding:38px 34px;text-align:center}
   .pay-result .pay-icon{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;margin:0 auto 16px;font-size:2rem}
   .pay-result.ok .pay-icon{background:rgba(62,68,41,.1);color:#3e4429}
@@ -8416,16 +8416,40 @@ function indexEnterTargets(scope = document) {
   .pay-result .pay-meta{display:grid;gap:6px;margin:18px auto;max-width:360px;font-size:.82rem;text-align:right}
   .pay-result .pay-meta div{display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border-radius:12px;background:var(--cream)}
   .pay-result .pay-actions{display:grid;gap:10px;margin-top:18px}
+  /* صفحة PayMe: العميل يكتب المبلغ بنفسه، فنعرضه بوضوح مع زر نسخ */
+  .payme-box{padding:34px 30px;text-align:center}
+  .payme-box h2{margin:0 0 8px}
+  .payme-box .payme-lead{color:var(--muted);font-size:.82rem;line-height:1.9;margin:0 0 20px}
+  .payme-copy{display:grid;gap:10px;margin:0 auto 18px;max-width:380px}
+  .payme-copy button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:13px 16px;border-radius:14px;border:1px solid rgba(62,68,41,.18);background:var(--cream);cursor:pointer;font-family:inherit;text-align:right}
+  .payme-copy button:hover{border-color:var(--green)}
+  .payme-copy .k{font-size:.72rem;color:var(--muted);font-weight:700}
+  .payme-copy .v{font-size:1.05rem;font-weight:900;color:var(--green);direction:ltr}
+  .payme-copy .c{font-size:.66rem;font-weight:800;color:var(--green);background:rgba(62,68,41,.09);border-radius:999px;padding:5px 10px;white-space:nowrap}
+  .payme-steps{text-align:right;max-width:380px;margin:0 auto 20px;padding:0;list-style:none;display:grid;gap:9px;counter-reset:s}
+  .payme-steps li{counter-increment:s;position:relative;padding:0 34px 0 0;font-size:.8rem;line-height:1.85;color:var(--ink)}
+  .payme-steps li:before{content:counter(s);position:absolute;right:0;top:1px;width:23px;height:23px;border-radius:50%;background:var(--green);color:#fbefd0;font-size:.68rem;font-weight:900;display:grid;place-items:center}
+  .payme-actions{display:grid;gap:10px}
+  .payme-warn{margin-top:14px;font-size:.72rem;color:var(--muted);line-height:1.8}
   .pay-badge{display:inline-block;padding:4px 9px;border-radius:999px;font-size:.66rem;font-weight:800;white-space:nowrap}
   .pay-badge.paid{background:rgba(62,68,41,.12);color:#3e4429}
+  .pay-badge.manual{background:rgba(62,68,41,.12);color:#3e4429}
   .pay-badge.pending{background:rgba(108,109,90,.14);color:#6c6d5a}
   .pay-badge.claimed{background:#fff3d6;color:#8a5a00}
   .pay-badge.failed,.pay-badge.refunded,.pay-badge.voided{background:rgba(183,59,59,.1);color:#b73b3b}
   .pay-cell small{display:block;color:var(--muted);font-size:.62rem;margin-top:3px}
   .pay-cell .pay-warn{display:block;color:#b73b3b;font-size:.62rem;font-weight:800;margin-top:3px}
+  .pay-cell .pay-confirm{margin-top:6px;font-size:.64rem;padding:5px 9px;border-radius:9px;border:1px solid rgba(62,68,41,.25);background:#fff;color:var(--green);font-weight:800;cursor:pointer;font-family:inherit}
+  .pay-cell .pay-confirm:hover{background:var(--cream)}
   #paymobSettingsForm .pay-switch{display:flex;align-items:center;gap:10px;font-weight:800;font-size:.85rem}
   #paymobSettingsForm .pay-switch input{width:20px;height:20px;accent-color:var(--green)}
   #paymobSettingsForm .pay-help{font-size:.72rem;color:var(--muted);line-height:1.8;display:block;margin-top:6px}
+  #paymobSettingsForm .pay-modes{display:grid;gap:10px}
+  #paymobSettingsForm .pay-mode{display:flex;gap:11px;align-items:flex-start;border:1px solid rgba(62,68,41,.16);border-radius:14px;padding:12px 14px;cursor:pointer}
+  #paymobSettingsForm .pay-mode.on{border-color:var(--green);background:rgba(62,68,41,.05)}
+  #paymobSettingsForm .pay-mode input{margin-top:3px;width:17px;height:17px;accent-color:var(--green)}
+  #paymobSettingsForm .pay-mode b{display:block;font-size:.84rem}
+  #paymobSettingsForm .pay-mode small{display:block;color:var(--muted);font-size:.71rem;line-height:1.75;margin-top:3px}
   #paymobHealth{margin-top:10px;font-size:.76rem;line-height:1.8}
   #paymobHealth .ok{color:#3e4429;font-weight:800}
   #paymobHealth .bad{color:#b73b3b;font-weight:800}
@@ -8436,7 +8460,7 @@ function indexEnterTargets(scope = document) {
   const ONLINE='الدفع الإلكتروني';
   const KEY='subbhaPayments';
   const PENDING_KEY='durmanPendingPayment';
-  const DEFAULTS={enabled:false,serverUrl:'',methods:'بطاقة بنكية · OmanNet · Apple Pay'};
+  const DEFAULTS={enabled:false,mode:'server',serverUrl:'',paymeUrl:'',methods:'بطاقة بنكية · OmanNet · Apple Pay'};
   const $q=s=>document.querySelector(s);
   const esc=s=>(typeof escapeHtml==='function'?escapeHtml(String(s==null?'':s)):String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])));
   const say=(m,i)=>{if(typeof toast==='function')toast(m,i);else alert(m)};
@@ -8446,14 +8470,19 @@ function indexEnterTargets(scope = document) {
   let settings=readLocal();
 
   function normalize(raw){
-    const url=String(raw?.serverUrl||'').trim().replace(/\/+$/,'');
+    const https=u=>{const v=String(u||'').trim().replace(/\/+$/,'');return /^https:\/\/[^\s/]+\./i.test(v)?v:''};
+    const mode=raw?.mode==='payme'?'payme':'server';
     return {
       enabled:raw?.enabled===true||raw?.enabled==='true'||raw?.enabled==='on',
-      serverUrl:/^https:\/\/[^\s/]+/i.test(url)?url:'',
+      mode,
+      serverUrl:https(raw?.serverUrl),
+      paymeUrl:https(raw?.paymeUrl),
       methods:String(raw?.methods||DEFAULTS.methods).trim().slice(0,80)||DEFAULTS.methods
     };
   }
-  const ready=()=>settings.enabled&&!!settings.serverUrl;
+  const link=()=>settings.mode==='payme'?settings.paymeUrl:settings.serverUrl;
+  const ready=()=>settings.enabled&&!!link();
+  const auto=()=>settings.mode==='server';
 
   /* ---------- خيار الدفع في نافذة إتمام الطلب ---------- */
   function applyOption(){
@@ -8465,7 +8494,11 @@ function indexEnterTargets(scope = document) {
         box.insertAdjacentHTML('beforeend',`<button type="button" class="pay-option pay-online" data-pay="${ONLINE}"><span>${ONLINE}</span><small>${esc(settings.methods)}</small></button>`);
         btn=box.querySelector('[data-pay="'+ONLINE+'"]');
       }else{const s=btn.querySelector('small');if(s)s.textContent=settings.methods;}
-      if(!note)box.insertAdjacentHTML('afterend',`<div class="durman-pay-note" hidden><i data-lucide="shield-check"></i><span>تُحوَّل إلى صفحة دفع آمنة من بايموب لإدخال بيانات البطاقة، ولا تمر بيانات بطاقتك عبر موقعنا. بعد نجاح الدفع تعود إلى الموقع ويُرسل تأكيد الطلب عبر واتساب.</span></div>`);
+      if(!note)box.insertAdjacentHTML('afterend','<div class="durman-pay-note" hidden><i data-lucide="shield-check"></i><span></span></div>');
+      const span=box.parentElement?.querySelector('.durman-pay-note span');
+      if(span)span.textContent=auto()
+        ?'تُحوَّل إلى صفحة دفع آمنة من بايموب لإدخال بيانات البطاقة، ولا تمر بيانات بطاقتك عبر موقعنا. بعد نجاح الدفع تعود إلى الموقع ويُرسل تأكيد الطلب عبر واتساب.'
+        :'تُفتح صفحة دفع آمنة من بايموب، تكتب فيها المبلغ ورقم الطلب كما سيظهران لك، ولا تمر بيانات بطاقتك عبر موقعنا. نؤكد لك الطلب عبر واتساب بعد وصول المبلغ.';
     }else{
       if(btn){
         const wasActive=btn.classList.contains('active');btn.remove();
@@ -8487,7 +8520,7 @@ function indexEnterTargets(scope = document) {
     const submit=form.querySelector('button[type="submit"]');
     if(submit){
       if(!submit.dataset.defaultLabel)submit.dataset.defaultLabel=submit.textContent;
-      submit.textContent=online?'الدفع الآن بأمان 🔒':submit.dataset.defaultLabel;
+      submit.textContent=online?(auto()?'الدفع الآن بأمان 🔒':'متابعة إلى صفحة الدفع 🔒'):submit.dataset.defaultLabel;
     }
     const note=form.querySelector('.durman-pay-note');if(note)note.hidden=!online;
   }
@@ -8506,7 +8539,7 @@ function indexEnterTargets(scope = document) {
   }
   document.addEventListener('DOMContentLoaded',()=>{applyOption();subscribe();});
 
-  /* ---------- بدء الدفع ---------- */
+  /* ---------- أدوات مشتركة ---------- */
   function overlay(show){
     let el=$q('.durman-pay-overlay');
     if(!show){el?.remove();return}
@@ -8516,7 +8549,26 @@ function indexEnterTargets(scope = document) {
   function savePending(p){try{localStorage.setItem(PENDING_KEY,JSON.stringify(p))}catch(e){}}
   function readPending(){try{return JSON.parse(localStorage.getItem(PENDING_KEY)||'null')}catch(e){return null}}
   function clearPending(){try{localStorage.removeItem(PENDING_KEY)}catch(e){}}
+  function clearCartAfterPay(){
+    try{cart=[];saveLocal();renderCart();}catch(e){}
+    try{appliedCoupon=null;updateCheckoutDiscountSummary();}catch(e){}
+    try{$q('#checkoutForm')?.reset();window.subbhaGift?.reset();}catch(e){}
+    try{const c=$q('#checkoutCouponCode');if(c)c.value='';}catch(e){}
+    try{$q('#checkoutModal')?.classList.remove('open');document.body.classList.remove('no-scroll');}catch(e){}
+    clearPending();
+  }
+  function openWhatsApp(msg){
+    window.open(`https://api.whatsapp.com/send?phone=${STORE.whatsapp}&text=${encodeURIComponent(msg)}`,'_blank');
+  }
+  function payLine(msg,text){
+    const line=`💳 *طريقة الدفع:* ${text}`;
+    if(!msg)return line;
+    const re=new RegExp('^.*'+ONLINE.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'.*$','m');
+    return re.test(msg)?msg.replace(re,line):msg.replace(/\n\n🔖/,`\n${line}\n\n🔖`);
+  }
+  const paidMessage=(msg,info)=>payLine(msg,`${ONLINE} — مدفوع ✅ (رقم العملية ${info.transactionId||'—'})`);
 
+  /* ---------- بدء الدفع ---------- */
   async function begin(order,msg){
     if(!ready()){say('الدفع الإلكتروني غير مفعّل حالياً','alert-circle');return false}
     const pending={
@@ -8524,6 +8576,7 @@ function indexEnterTargets(scope = document) {
       customer:{name:order.customer?.name||'',phone:order.customer?.phone||''}
     };
     savePending(pending);
+    if(settings.mode==='payme'){showPayme(pending);return true}
     overlay(true);
     try{
       const res=await fetch(settings.serverUrl+'/create',{
@@ -8547,20 +8600,71 @@ function indexEnterTargets(scope = document) {
     }
   }
 
-  /* ---------- العودة من صفحة الدفع ---------- */
-  function paidMessage(msg,info){
-    const line=`💳 *طريقة الدفع:* ${ONLINE} — مدفوع ✅ (رقم العملية ${info.transactionId||'—'})`;
-    if(!msg)return line;
-    const re=new RegExp('^.*'+ONLINE.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'.*$','m');
-    return re.test(msg)?msg.replace(re,line):msg.replace(/\n\n🔖/,`\n${line}\n\n🔖`);
+  /* ---------- وضع PayMe: بدون خادم، العميل يكتب المبلغ ---------- */
+  function showPayme(pending){
+    $q('#paymeModal')?.remove();
+    const amount=fmt(pending.total);
+    document.body.insertAdjacentHTML('beforeend',`
+      <div class="modal open" id="paymeModal">
+        <div class="modal-backdrop" data-close-payme></div>
+        <div class="modal-card">
+          <button class="icon-btn modal-close" data-close-payme><i data-lucide="x"></i></button>
+          <div class="payme-box">
+            <h2>الدفع عبر بايموب</h2>
+            <p class="payme-lead">صفحة الدفع تطلب منك كتابة المبلغ بنفسك. انسخ المبلغ ورقم الطلب من هنا أولاً.</p>
+            <div class="payme-copy">
+              <button type="button" data-copy="${esc(amount)}"><span class="k">المبلغ المطلوب</span><span class="v">${esc(amount)} OMR</span><span class="c">نسخ</span></button>
+              <button type="button" data-copy="${esc(pending.orderNumber)}"><span class="k">رقم الطلب</span><span class="v">#${esc(pending.orderNumber)}</span><span class="c">نسخ</span></button>
+            </div>
+            <ol class="payme-steps">
+              <li>اضغط «فتح صفحة الدفع».</li>
+              <li>اكتب المبلغ <b>${esc(amount)}</b> ريال عُماني تماماً.</li>
+              <li>اكتب رقم الطلب <b>#${esc(pending.orderNumber)}</b> في خانة الملاحظات.</li>
+              <li>أكمل الدفع، ثم ارجع هنا وأرسل الطلب عبر واتساب.</li>
+            </ol>
+            <div class="payme-actions">
+              <button class="btn btn-primary" data-payme-open>فتح صفحة الدفع</button>
+              <button class="btn btn-soft" data-payme-done>دفعت — أرسل الطلب عبر واتساب</button>
+            </div>
+            <p class="payme-warn">طلبك محفوظ باسم <b>#${esc(pending.orderNumber)}</b>. نؤكده لك عبر واتساب بعد ما نتأكد من وصول المبلغ.</p>
+          </div>
+        </div>
+      </div>`);
+    document.body.classList.add('no-scroll');
+    try{lucide.createIcons()}catch(e){}
+    const modal=$q('#paymeModal');
+    const close=()=>{modal.remove();document.body.classList.remove('no-scroll')};
+    modal.addEventListener('click',async e=>{
+      const copy=e.target.closest('[data-copy]');
+      if(copy){
+        try{await navigator.clipboard.writeText(copy.dataset.copy);const c=copy.querySelector('.c');if(c){c.textContent='تم النسخ ✓';setTimeout(()=>{c.textContent='نسخ'},1600)}}
+        catch(err){say('انسخ القيمة يدوياً','alert-circle')}
+        return;
+      }
+      if(e.target.closest('[data-payme-open]')){window.open(settings.paymeUrl,'_blank','noopener');return}
+      if(e.target.closest('[data-payme-done]')){
+        const msg=payLine(pending.msg,`${ONLINE} عبر بايموب — دفع العميل، بانتظار تأكيد الإدارة`);
+        await markClaimed(pending.orderId);
+        clearCartAfterPay();
+        close();
+        openWhatsApp(msg);
+        say('تم إرسال الطلب. نؤكد لك وصول المبلغ قريباً','check-circle');
+        return;
+      }
+      if(e.target.closest('[data-close-payme]'))close();
+    });
   }
+  async function markClaimed(orderId){
+    const d=db();if(!d)return;
+    try{if(window.firebase?.auth&&!firebase.auth().currentUser)await firebase.auth().signInAnonymously();}catch(e){}
+    try{await d.ref(`subbha/orders/${orderId}/paymentReturn`).set({success:true,claimedByCustomer:true,mode:'payme',at:new Date().toISOString()});}
+    catch(err){console.warn('payme claim write failed',err)}
+  }
+
+  /* ---------- العودة من صفحة الدفع (وضع الخادم) ---------- */
   function finishLocally(pending,info){
-    try{cart=[];saveLocal();renderCart();}catch(e){}
-    try{if(typeof orders!=='undefined'){const o=orders.find(x=>x.id===pending.orderId);if(o){o.paymentReturn=info;}saveLocal();}}catch(e){}
-    try{appliedCoupon=null;updateCheckoutDiscountSummary();}catch(e){}
-    try{$q('#checkoutForm')?.reset();window.subbhaGift?.reset();}catch(e){}
-    try{const c=$q('#checkoutCouponCode');if(c)c.value='';}catch(e){}
-    clearPending();
+    try{if(typeof orders!=='undefined'){const o=orders.find(x=>x.id===pending.orderId);if(o)o.paymentReturn=info;saveLocal();}}catch(e){}
+    clearCartAfterPay();
   }
   async function recordReturn(orderId,info){
     const d=db();if(!d)return;
@@ -8599,16 +8703,8 @@ function indexEnterTargets(scope = document) {
     const close=()=>{modal.remove();document.body.classList.remove('no-scroll')};
     modal.addEventListener('click',e=>{
       if(e.target.closest('[data-close-pay]')){close();return}
-      if(e.target.closest('[data-pay-whatsapp]')){
-        const msg=paidMessage(pending?.msg||'',info);
-        window.open(`https://api.whatsapp.com/send?phone=${STORE.whatsapp}&text=${encodeURIComponent(msg)}`,'_blank');
-        return;
-      }
-      if(e.target.closest('[data-pay-retry]')&&pending){
-        const order={id:pending.orderId,total:pending.total,customer:pending.customer,items:[]};
-        begin(order,pending.msg);
-        return;
-      }
+      if(e.target.closest('[data-pay-whatsapp]')){openWhatsApp(paidMessage(pending?.msg||'',info));return}
+      if(e.target.closest('[data-pay-retry]')&&pending){begin({id:pending.orderId,total:pending.total,customer:pending.customer,items:[]},pending.msg);return}
       if(e.target.closest('[data-pay-change]')){
         close();
         try{$q('#checkoutModal')?.classList.add('open');document.body.classList.add('no-scroll')}catch(e){}
@@ -8637,27 +8733,32 @@ function indexEnterTargets(scope = document) {
     if(orderId)recordReturn(orderId,info);
     if(ok&&pending)finishLocally(pending,info);
     showResult(ok,pending,info);
-    if(ok&&pending?.msg){
-      // نافذة واتساب تحتاج ضغطة من المستخدم؛ الزر في النافذة يفتحها.
-    }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(handleReturn,600));
   else setTimeout(handleReturn,600);
 
   /* ---------- لوحة الإدارة: حالة الدفع في جدول الطلبات ---------- */
   function badge(o){
-    if(o.paymentGateway!=='paymob'&&o.payment!==ONLINE)return '';
+    if(!String(o.paymentGateway||'').startsWith('paymob')&&o.payment!==ONLINE)return '';
     const st=o.paymentStatus||'pending';
-    let cls='pending',text='بانتظار الدفع';
+    let cls='pending',text='بانتظار الدفع',extra='';
     if(st==='paid'&&o.paymentVerified){cls='paid';text='مدفوع ✅'}
+    else if(st==='paid'){cls='manual';text='مدفوع (تأكيد الإدارة)'}
     else if(st==='refunded'){cls='refunded';text='مسترجع'}
     else if(st==='voided'){cls='voided';text='ملغي من بايموب'}
     else if(st==='failed'){cls='failed';text='فشل الدفع'}
-    else if(o.paymentReturn?.success){cls='claimed';text='أبلغ العميل بالدفع — بانتظار تأكيد بايموب'}
+    else if(o.paymentReturn?.success){
+      cls='claimed';
+      text=o.paymentReturn.claimedByCustomer?'أبلغ العميل بالدفع — راجع لوحة بايموب':'أبلغ العميل بالدفع — بانتظار تأكيد بايموب';
+      extra=`<button class="pay-confirm" data-confirm-pay="${o.id}">تأكيد استلام المبلغ</button>`;
+    }
     else if(o.paymentReturn&&o.paymentReturn.success===false){cls='failed';text='لم يكتمل الدفع'}
     const tx=o.paymobTransactionId||o.paymentReturn?.transactionId||'';
     const mismatch=o.paymentVerified&&o.paidAmount!=null&&Math.abs(Number(o.paidAmount)-Number(o.total||0))>0.0005;
-    return `<span class="pay-badge ${cls}">${text}</span>${tx?`<small>رقم العملية ${esc(tx)}${o.paymentCard?` — ${esc(o.paymentCard)}`:''}</small>`:''}${mismatch?`<span class="pay-warn">⚠️ المبلغ المدفوع ${fmt(o.paidAmount)} ر.ع يختلف عن إجمالي الطلب</span>`:''}`;
+    return `<span class="pay-badge ${cls}">${text}</span>`
+      +(tx?`<small>رقم العملية ${esc(tx)}${o.paymentCard?` — ${esc(o.paymentCard)}`:''}</small>`:'')
+      +(mismatch?`<span class="pay-warn">⚠️ المبلغ المدفوع ${fmt(o.paidAmount)} ر.ع يختلف عن إجمالي الطلب</span>`:'')
+      +extra;
   }
   function decorateOrders(){
     if(typeof orders==='undefined')return;
@@ -8673,40 +8774,74 @@ function indexEnterTargets(scope = document) {
       });
     });
   }
+  // تأكيد يدوي بعد مراجعة لوحة بايموب (وضع PayMe لا يؤكد تلقائياً)
+  document.addEventListener('click',async e=>{
+    const btn=e.target.closest('[data-confirm-pay]');if(!btn)return;
+    e.preventDefault();e.stopImmediatePropagation();
+    const id=Number(btn.dataset.confirmPay);
+    const o=typeof orders!=='undefined'?orders.find(x=>x.id===id):null;if(!o)return;
+    if(!confirm(`تأكيد استلام مبلغ ${fmt(o.total)} ر.ع للطلب #${String(id).slice(-6)}؟\nتأكد أولاً من ظهور العملية في لوحة بايموب.`))return;
+    const d=db();if(!d){say('السحابة غير متصلة؛ لم يُحفظ التأكيد','alert-circle');return}
+    const update={paymentStatus:'paid',paymentVerified:false,paymentConfirmedBy:'admin',paymentUpdatedAt:new Date().toISOString()};
+    try{await d.ref(`subbha/orders/${id}`).update(update);}
+    catch(err){console.warn('manual confirm failed',err);say('تعذر حفظ التأكيد في السحابة','alert-circle');return}
+    Object.assign(o,update);
+    try{saveLocal()}catch(e){}
+    try{renderAdmin('orders')}catch(e){}
+    say('تم تأكيد استلام المبلغ','check-circle');
+  },true);
 
   /* ---------- لوحة الإدارة: إعدادات الدفع ---------- */
   function settingsCard(){
+    const server=settings.mode!=='payme';
     return `<div class="admin-card" id="paymobSettingsCard">
       <h3 style="margin-top:0">الدفع الإلكتروني (بايموب عُمان)</h3>
-      <small style="color:var(--muted);line-height:1.8;display:block">المفاتيح السرية لا توضع في الموقع. ارفع ملف <b>paymob-worker/worker.js</b> على Cloudflare Workers حسب الشرح في <b>paymob-worker/README.md</b>، ثم ضع رابطه هنا.</small>
+      <small style="color:var(--muted);line-height:1.8;display:block">اختر طريقة التشغيل. الطريقة الأولى تؤكد الدفع تلقائياً وهي الأفضل، والثانية تعمل بالموقع وحده بدون أي خادم.</small>
       <form id="paymobSettingsForm" class="admin-form" style="margin-top:14px">
+        <div class="form-field span-2 pay-modes">
+          <label class="pay-mode ${server?'on':''}"><input type="radio" name="mode" value="server" ${server?'checked':''}>
+            <span><b>خادم الدفع — تأكيد تلقائي ✅ (الأفضل)</b>
+            <small>الطلب يصير «مدفوع ✅» وحده بعد نجاح الدفع، والمبلغ يُرسل تلقائياً. يحتاج رفع ملف <b>worker.js</b> على Cloudflare مرة واحدة (مجاناً) حسب <b>paymob-worker/README.md</b>.</small></span></label>
+          <label class="pay-mode ${server?'':'on'}"><input type="radio" name="mode" value="payme" ${server?'':'checked'}>
+            <span><b>رابط PayMe — بدون خادم</b>
+            <small>يشتغل بملف الموقع وحده. العميل يكتب المبلغ ورقم الطلب بنفسه في صفحة بايموب، وأنت تتأكد من وصول المبلغ في لوحة بايموب ثم تضغط «تأكيد استلام المبلغ» عند الطلب. رابط PayMe يعمل في الوضع الحقيقي (Live) فقط.</small></span></label>
+        </div>
+        <div class="form-field span-2" data-mode-field="server"><label>رابط خادم الدفع (Worker URL)</label><input name="serverUrl" dir="ltr" placeholder="https://durman-pay.xxxx.workers.dev" value="${esc(settings.serverUrl)}"><span class="pay-help">انسخه من صفحة الـ Worker في Cloudflare.</span></div>
+        <div class="form-field span-2" data-mode-field="payme"><label>رابط PayMe</label><input name="paymeUrl" dir="ltr" placeholder="https://oman.paymob.com/payme/yourbusiness" value="${esc(settings.paymeUrl)}"><span class="pay-help">من لوحة بايموب: Payment Links ← PayMe ← انسخ الرابط.</span></div>
         <div class="form-field span-2"><label class="pay-switch"><input type="checkbox" name="enabled" ${settings.enabled?'checked':''}> تفعيل خيار «${ONLINE}» للعملاء</label></div>
-        <div class="form-field span-2"><label>رابط خادم الدفع (Worker URL)</label><input name="serverUrl" dir="ltr" placeholder="https://durman-pay.xxxx.workers.dev" value="${esc(settings.serverUrl)}"><span class="pay-help">يبدأ بـ https:// — انسخه من صفحة الـ Worker في Cloudflare.</span></div>
         <div class="form-field span-2"><label>الوسائل الظاهرة تحت الخيار</label><input name="methods" value="${esc(settings.methods)}" placeholder="${esc(DEFAULTS.methods)}"></div>
         <div class="form-field span-2" style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn btn-primary" type="submit">حفظ إعدادات الدفع</button>
-          <button class="btn btn-soft" type="button" id="paymobHealthBtn">اختبار الاتصال بالخادم</button>
+          <button class="btn btn-soft" type="button" id="paymobHealthBtn" data-mode-field="server">اختبار الاتصال بالخادم</button>
         </div>
         <div class="form-field span-2" id="paymobHealth"></div>
       </form>
     </div>`;
+  }
+  function syncModeFields(){
+    const form=$q('#paymobSettingsForm');if(!form)return;
+    const mode=form.querySelector('[name=mode]:checked')?.value||'server';
+    form.querySelectorAll('[data-mode-field]').forEach(el=>{el.style.display=el.dataset.modeField===mode?'':'none'});
+    form.querySelectorAll('.pay-mode').forEach(l=>l.classList.toggle('on',l.querySelector('input').checked));
   }
   if(typeof renderAdmin==='function'){
     const prev=renderAdmin;
     renderAdmin=function(){
       const r=prev.apply(this,arguments);
       const sf=document.getElementById('settingsForm');
-      if(sf&&!document.getElementById('paymobSettingsCard'))sf.closest('.admin-card')?.insertAdjacentHTML('afterend',settingsCard());
+      if(sf&&!document.getElementById('paymobSettingsCard')){sf.closest('.admin-card')?.insertAdjacentHTML('afterend',settingsCard());syncModeFields();}
       decorateOrders();
       return r;
     };
   }
+  document.addEventListener('change',e=>{if(e.target.name==='mode'&&e.target.form?.id==='paymobSettingsForm')syncModeFields()});
   document.addEventListener('submit',async e=>{
     if(e.target.id!=='paymobSettingsForm')return;
     e.preventDefault();e.stopImmediatePropagation();
     const fd=new FormData(e.target);
-    const next=normalize({enabled:fd.get('enabled')==='on',serverUrl:fd.get('serverUrl'),methods:fd.get('methods')});
-    if(next.enabled&&!next.serverUrl){say('اكتب رابط خادم الدفع بصيغة https:// قبل التفعيل','alert-circle');return}
+    const next=normalize({enabled:fd.get('enabled')==='on',mode:fd.get('mode'),serverUrl:fd.get('serverUrl'),paymeUrl:fd.get('paymeUrl'),methods:fd.get('methods')});
+    if(next.enabled&&next.mode==='server'&&!next.serverUrl){say('اكتب رابط خادم الدفع بصيغة https:// قبل التفعيل','alert-circle');return}
+    if(next.enabled&&next.mode==='payme'&&!next.paymeUrl){say('اكتب رابط PayMe بصيغة https:// قبل التفعيل','alert-circle');return}
     const d=db();if(!d){say('السحابة غير متصلة؛ لم تُحفظ إعدادات الدفع','alert-circle');return}
     try{await d.ref('subbha/settings/payments').set({...next,updatedAt:new Date().toISOString()});}
     catch(err){console.warn('Payment settings save failed',err);say('تعذر حفظ إعدادات الدفع في السحابة','alert-circle');return}
@@ -8716,7 +8851,7 @@ function indexEnterTargets(scope = document) {
   document.addEventListener('click',async e=>{
     if(!e.target.closest('#paymobHealthBtn'))return;
     const form=$q('#paymobSettingsForm'),out=$q('#paymobHealth');if(!form||!out)return;
-    const url=normalize({serverUrl:form.elements.serverUrl.value,enabled:true}).serverUrl;
+    const url=normalize({serverUrl:form.elements.serverUrl.value}).serverUrl;
     if(!url){out.innerHTML='<span class="bad">اكتب رابط الخادم أولاً (https://…)</span>';return}
     out.textContent='جارٍ الاختبار…';
     try{
@@ -8729,7 +8864,7 @@ function indexEnterTargets(scope = document) {
     }catch(err){out.innerHTML=`<span class="bad">تعذر الوصول للخادم: ${esc(err.message)}</span>`;}
   });
 
-  window.durmanPaymob={ONLINE,isOnline:v=>v===ONLINE,ready,begin,settings:()=>({...settings}),paidMessage};
+  window.durmanPaymob={ONLINE,isOnline:v=>v===ONLINE,ready,auto,begin,settings:()=>({...settings}),paidMessage};
 })();
 </script>
 
