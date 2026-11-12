@@ -154,6 +154,48 @@ function firebasePatch($path, $data) {
 /* ------------------------------------------------------------- health */
 function actionHealth() {
     $key = (string) cfg('PAYMOB_SECRET_KEY');
+    $items = [
+        'المفتاح السري (Secret Key)'   => $key !== '',
+        'المفتاح العام (Public Key)'   => cfg('PAYMOB_PUBLIC_KEY') !== '',
+        'مفتاح التوقيع (HMAC Secret)'  => cfg('PAYMOB_HMAC_SECRET') !== '',
+        'أرقام التكامل (Integration IDs)' => count(integrationIds()) > 0,
+        'رابط الموقع (SITE_URL)'       => cfg('SITE_URL') !== '',
+        'قاعدة البيانات (Firebase)'    => cfg('FIREBASE_DATABASE_URL') !== '' && (cfg('FIREBASE_API_KEY') !== '' || cfg('FIREBASE_DATABASE_SECRET') !== ''),
+    ];
+    // عند الفتح من المتصفح نعرض صفحة عربية مقروءة بدل JSON
+    if (str_contains(strtolower($_SERVER['HTTP_ACCEPT'] ?? ''), 'text/html')) {
+        $ready = !in_array(false, $items, true);
+        $mode = $key === '' ? 'المفاتيح غير مضبوطة' : (str_contains($key, '_test_') ? 'تجريبي (Test)' : 'حقيقي (Live)');
+        header('Content-Type: text/html; charset=utf-8');
+        $rows = '';
+        foreach ($items as $label => $ok) {
+            $rows .= '<li class="' . ($ok ? 'ok' : 'bad') . '"><span>' . ($ok ? '✓' : '✗') . '</span>' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</li>';
+        }
+        $hook = selfUrl();
+        echo '<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">'
+           . '<meta name="viewport" content="width=device-width,initial-scale=1"><title>فحص خادم الدفع — دُرمان</title><style>'
+           . 'body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f5f2e8;color:#2a2c22;'
+           . 'font-family:"SF Arabic","Noto Kufi Arabic","Segoe UI",system-ui,sans-serif;padding:24px}'
+           . '.card{background:#fff;border-radius:22px;padding:30px;max-width:520px;width:100%;box-shadow:0 20px 50px rgba(62,68,41,.12)}'
+           . 'h1{margin:0 0 6px;font-size:1.3rem}.sub{color:#6c6d5a;font-size:.85rem;margin:0 0 18px}'
+           . '.state{padding:13px 16px;border-radius:14px;font-weight:800;margin-bottom:18px}'
+           . '.state.on{background:rgba(62,68,41,.1);color:#3e4429}.state.off{background:#fdecec;color:#b73b3b}'
+           . 'ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}'
+           . 'li{display:flex;align-items:center;gap:10px;font-size:.88rem;padding:10px 13px;border-radius:12px;background:#faf8f0}'
+           . 'li span{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:900;color:#fff}'
+           . 'li.ok span{background:#3e4429}li.bad span{background:#b73b3b}li.bad{background:#fdecec}'
+           . '.urls{margin-top:20px;padding-top:16px;border-top:1px solid rgba(62,68,41,.12);font-size:.78rem;color:#6c6d5a;line-height:2}'
+           . 'code{background:#f0ede2;padding:3px 7px;border-radius:7px;direction:ltr;display:inline-block;font-size:.75rem}'
+           . '</style></head><body><div class="card"><h1>خادم الدفع — دُرمان</h1>'
+           . '<p class="sub">الوضع: ' . htmlspecialchars($mode, ENT_QUOTES, 'UTF-8') . '</p>'
+           . '<div class="state ' . ($ready ? 'on' : 'off') . '">' . ($ready ? 'جاهز ✅ — أكمل الخطوات في الأسفل' : 'ناقص ⚠️ — عبّئ القيم المعلّمة بـ ✗ في أعلى ملف pay.php') . '</div>'
+           . '<ul>' . $rows . '</ul>'
+           . '<div class="urls"><b>ضع هذين في لوحة بايموب:</b><br>Webhook: <code>' . htmlspecialchars($hook . '/webhook', ENT_QUOTES, 'UTF-8') . '</code><br>'
+           . 'Redirect: <code>' . htmlspecialchars(rtrim((string) cfg('SITE_URL'), '/') . '/?paymob=return', ENT_QUOTES, 'UTF-8') . '</code><br><br>'
+           . '<b>ضع هذا في لوحة إدارة الموقع:</b><br><code>' . htmlspecialchars($hook, ENT_QUOTES, 'UTF-8') . '</code></div>'
+           . '</div></body></html>';
+        exit;
+    }
     out([
         'ok' => true,
         'service' => 'durman-paymob-php',
