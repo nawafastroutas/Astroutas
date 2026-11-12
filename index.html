@@ -4324,7 +4324,7 @@ html:not(.js) .splash {
           <div class="payment-options" id="paymentOptions">
             <button type="button" class="pay-option active" data-pay="الدفع عند الاستلام"><i data-lucide="banknote" aria-hidden="true"></i><span>الدفع عند الاستلام</span><small>تدفع نقداً عند وصول الطلب</small></button>
             <button type="button" class="pay-option" data-pay="تحويل بنكي"><i data-lucide="landmark" aria-hidden="true"></i><span>تحويل بنكي</span><small>نرسل لك بيانات الحساب</small></button>
-            <button type="button" class="pay-option" data-pay="رابط دفع"><i data-lucide="link" aria-hidden="true"></i><span>رابط دفع</span><small>نرسل لك رابطاً عبر واتساب</small></button>
+            <button type="button" class="pay-option pay-online" data-pay="الدفع الإلكتروني" hidden><i data-lucide="credit-card" aria-hidden="true"></i><span>الدفع الإلكتروني</span><small>بطاقة بنكية · OmanNet · Apple Pay</small></button>
           </div>
         </section>
 
@@ -7869,7 +7869,7 @@ ${lines}
       'لا، الطلب يتم برقم هاتفك فقط. ويمكنك رؤية طلباتك السابقة من «حسابي» بإدخال رقمك على نفس الجهاز.',
       '',
       'ما طرق الدفع المتاحة؟',
-      'الدفع عند الاستلام، أو التحويل البنكي، أو الدفع الإلكتروني بالبطاقة (Visa، Mastercard، OmanNet، Apple Pay) عبر بوابة بايموب الآمنة، أو رابط دفع. تختار الطريقة المناسبة عند إتمام الطلب.',
+      'الدفع عند الاستلام، أو التحويل البنكي، أو الدفع الإلكتروني بالبطاقة (Visa، Mastercard، OmanNet، Apple Pay) عبر بوابة بايموب الآمنة. تختار الطريقة المناسبة عند إتمام الطلب.',
       '',
       'هل يمكنني إهداء سبحة لشخص آخر؟',
       'نعم. اضغط «أهدِ هذا المنتج» أو فعّل «أرسلها هدية» عند إتمام الطلب، واكتب اسم المُهدى إليه ورقمه، واختر إن كان اسمك يظهر له أو لا.',
@@ -8544,23 +8544,21 @@ function indexEnterTargets(scope = document) {
   /* ---------- خيار الدفع في نافذة إتمام الطلب ---------- */
   function applyOption(){
     const box=$q('#paymentOptions');if(!box)return;
-    let btn=box.querySelector('[data-pay="'+ONLINE+'"]');
+    const btn=box.querySelector('[data-pay="'+ONLINE+'"]');
+    if(!btn)return;
     const note=box.parentElement?.querySelector('.durman-pay-note');
     if(ready()){
-      if(!btn){
-        box.insertAdjacentHTML('beforeend',`<button type="button" class="pay-option pay-online" data-pay="${ONLINE}"><span>${ONLINE}</span><small>${esc(settings.methods)}</small></button>`);
-        btn=box.querySelector('[data-pay="'+ONLINE+'"]');
-      }else{const s=btn.querySelector('small');if(s)s.textContent=settings.methods;}
+      btn.hidden=false;
+      const sm=btn.querySelector('small');if(sm)sm.textContent=settings.methods;
       if(!note)box.insertAdjacentHTML('afterend','<div class="durman-pay-note" hidden><i data-lucide="shield-check"></i><span></span></div>');
       const span=box.parentElement?.querySelector('.durman-pay-note span');
       if(span)span.textContent=auto()
         ?'تُحوَّل إلى صفحة دفع آمنة من بايموب لإدخال بيانات البطاقة، ولا تمر بيانات بطاقتك عبر موقعنا. بعد نجاح الدفع تعود إلى الموقع ويُرسل تأكيد الطلب عبر واتساب.'
         :'تُفتح صفحة دفع آمنة من بايموب، تكتب فيها المبلغ ورقم الطلب كما سيظهران لك، ولا تمر بيانات بطاقتك عبر موقعنا. نؤكد لك الطلب عبر واتساب بعد وصول المبلغ.';
     }else{
-      if(btn){
-        const wasActive=btn.classList.contains('active');btn.remove();
-        if(wasActive)box.querySelector('[data-pay]')?.click();
-      }
+      const wasActive=btn.classList.contains('active');
+      btn.hidden=true;btn.classList.remove('active');
+      if(wasActive)box.querySelector('[data-pay]:not([hidden])')?.click();
       note?.remove();
     }
     syncChoice();
@@ -8577,7 +8575,7 @@ function indexEnterTargets(scope = document) {
     const submit=document.querySelector('#checkoutModal button[type="submit"]');
     if(submit){
       if(!submit.dataset.defaultLabel)submit.dataset.defaultLabel=submit.textContent;
-      submit.textContent=online?(auto()?'الدفع الآن بأمان 🔒':'متابعة إلى صفحة الدفع 🔒'):submit.dataset.defaultLabel;
+      submit.textContent=online?'ادفع الآن 🔒':submit.dataset.defaultLabel;
     }
     const note=form.querySelector('.durman-pay-note');if(note)note.hidden=!online;
   }
@@ -8962,6 +8960,7 @@ function indexEnterTargets(scope = document) {
   #checkoutModal .pay-option.active small{color:var(--green);opacity:.85}
   #checkoutModal .pay-option.active i,#checkoutModal .pay-option.active svg{opacity:1}
   #checkoutModal .pay-option.pay-online{gap:5px}
+  #checkoutModal .pay-option[hidden]{display:none}
 
   /* صندوق الإهداء */
   #checkoutModal .gift-box{padding:15px 16px;border-radius:16px;border:1px dashed rgba(62,68,41,.3);background:#faf8f0}
