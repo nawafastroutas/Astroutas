@@ -6,10 +6,34 @@
 > ⚠️ **لا تضع `PAYMOB_SECRET_KEY` أو `HMAC Secret` داخل `index.html` أبداً.** أي زائر
 > يفتح «عرض مصدر الصفحة» ويقرأهما، فيقدر ينشئ عمليات دفع ويسترجع أموالاً باسم متجرك.
 
-### الخادم لا يُرفع إلى موقعك
+### اختر طريقة التشغيل
 
-`worker.js` **لا يُرفع إلى subbha.com**. مكانه Cloudflare، خدمة أخرى مجانية. موقعك يبقى
-ملف `index.html` واحداً كما هو.
+| | `pay.php` (الأسهل) | `worker.js` |
+|---|---|---|
+| أين يُرفع | بجانب `index.html` على نفس استضافتك | Cloudflare Workers (حساب مجاني) |
+| يحتاج | استضافة تدعم PHP (أي استضافة فيها cPanel) | تسجيل في Cloudflare |
+| المفاتيح | داخل الملف نفسه (المتصفح لا يقرأ PHP) | في إعدادات الـ Worker |
+| الرابط في لوحة الإدارة | `https://subbha.com/pay.php` | `https://durman-pay.xxx.workers.dev` |
+
+الاثنان يعملان بنفس الطريقة تماماً. إن كانت استضافتك تدعم PHP فاستخدم `pay.php`:
+ترفعه مثل `index.html` بالضبط، وتكتفي بتعبئة المفاتيح في أعلاه. إن كان موقعك على
+GitHub Pages (أو أي استضافة ملفات ثابتة لا تشغّل PHP) فاستخدم `worker.js`.
+
+**في الحالتين لا تضع المفاتيح في `index.html`.**
+
+#### خطوات `pay.php`
+
+1. افتح `pay.php` واملأ `PAYMOB_SECRET_KEY` و`PAYMOB_PUBLIC_KEY` و`PAYMOB_HMAC_SECRET`
+   و`PAYMOB_INTEGRATION_IDS` و`SITE_URL`.
+2. ارفعه بجانب `index.html`.
+3. افتح `https://subbha.com/pay.php/health` في المتصفح؛ يجب أن تظهر كل البنود `true`.
+4. في بايموب اضبط: Webhook = `https://subbha.com/pay.php/webhook` و
+   Redirect = `https://subbha.com/?paymob=return`.
+5. في لوحة إدارة الموقع ← الإعدادات ← الدفع الإلكتروني: ضع `https://subbha.com/pay.php`،
+   اضغط «اختبار الاتصال»، فعّل الخيار واحفظ.
+
+> إن أعطت الاستضافة خطأ 404 على `pay.php/health`، استخدم `pay.php?action=health`
+> وضع الرابط نفسه في بايموب بصيغة `pay.php?action=webhook`.
 
 ### تفضّل بدون خادم؟
 
@@ -48,7 +72,7 @@
 - **Payment Integration**: انسخ أرقام **Integration IDs** التي تريد تفعيلها (بطاقات،
   OmanNet، Apple Pay…). خذ أرقام نفس الوضع (Test مع Test).
 
-### 2) انشر الخادم على Cloudflare Workers (مجاني)
+### 2) انشر الخادم على Cloudflare Workers (إن لم تستخدم `pay.php`)
 1. سجّل في [dash.cloudflare.com](https://dash.cloudflare.com) ← **Workers & Pages** ←
    **Create** ← **Start with Hello World** ← سمِّه مثلاً `durman-pay` ← **Deploy**.
 2. اضغط **Edit code**، امسح الموجود، والصق كامل محتوى `worker.js` من هذا المجلد، ثم **Deploy**.
