@@ -549,7 +549,13 @@ html:not(.js) .splash {
         "trash-2": '<path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6"/>',
         "user": '<path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/>',
         "truck": '<path d="M3 6h11v10H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/>',
-        "x": '<path d="M6 6l12 12M18 6 6 18"/>'
+        "x": '<path d="M6 6l12 12M18 6 6 18"/>',
+        "banknote": '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/>',
+        "landmark": '<path d="M3 21h18M5 21V10M9.5 21V10M14.5 21V10M19 21V10"/><path d="m12 3 9 5H3l9-5z"/>',
+        "link": '<path d="M9.5 14.5a3.5 3.5 0 0 0 5 0l3-3a3.5 3.5 0 1 0-5-5l-1 1"/><path d="M14.5 9.5a3.5 3.5 0 0 0-5 0l-3 3a3.5 3.5 0 1 0 5 5l1-1"/>',
+        "chevron-down": '<path d="m6 9 6 6 6-6"/>',
+        "credit-card": '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+        "map-pin": '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>'
       };
       function createIcons(){
         document.querySelectorAll('i[data-lucide]').forEach(el => {
@@ -4281,17 +4287,53 @@ html:not(.js) .splash {
 
   <div class="modal" id="checkoutModal">
     <div class="modal-backdrop" data-close-checkout></div>
-    <div class="modal-card" style="width:min(720px,96vw)">
+    <div class="modal-card checkout-card">
       <button class="icon-btn modal-close" data-close-checkout><i data-lucide="x"></i></button>
+      <div class="checkout-grid">
       <form class="checkout-form" id="checkoutForm">
-        <span class="eyebrow">إتمام الطلب</span>
-        <h2>بيانات التوصيل</h2>
-        <div class="form-grid">
-          <div class="form-field"><label>الاسم الكامل</label><input required name="name" placeholder="اكتب الاسم"></div>
-          <div class="form-field"><label>رقم الهاتف</label><input required name="phone" inputmode="tel" placeholder="9xxxxxxx"></div>
-          <div class="form-field span-2 gift-box">
-            <label class="gift-switch"><input type="checkbox" name="isGift" id="giftToggle"><span class="gift-switch-ui" aria-hidden="true"></span><span><b>🎁 أرسلها هدية</b><small>نوصّل الطلب لشخص تحبه، باسمك أو بدون اسمك</small></span></label>
-            <div class="gift-fields" id="giftFields" hidden>
+        <header class="co-head">
+          <span class="eyebrow">إتمام الطلب</span>
+          <h2>بياناتك وعنوان التوصيل</h2>
+          <p>نراجع الطلب ونؤكده معك عبر واتساب، ونتفق على وقت التوصيل.</p>
+        </header>
+
+        <section class="co-sec">
+          <h3><span class="co-num">1</span> بياناتك</h3>
+          <div class="form-grid">
+            <div class="form-field"><label>الاسم الكامل</label><input required name="name" placeholder="اكتب الاسم"></div>
+            <div class="form-field"><label>رقم الهاتف</label><input required name="phone" inputmode="tel" placeholder="9xxxxxxx"></div>
+          </div>
+        </section>
+
+        <section class="co-sec">
+          <h3><span class="co-num">2</span> عنوان التوصيل</h3>
+          <div class="form-grid">
+            <div class="form-field"><label>المحافظة</label>
+              <select required name="governorate">
+                <option value="">اختر المحافظة</option><option>مسقط</option><option>شمال الباطنة</option><option>جنوب الباطنة</option><option>الداخلية</option><option>شمال الشرقية</option><option>جنوب الشرقية</option><option>الظاهرة</option><option>البريمي</option><option>الوسطى</option><option>ظفار</option><option>مسندم</option>
+            
+              </select>
+            </div>
+            <div class="form-field"><label>الولاية</label><input required name="wilayat" placeholder="الولاية"></div>
+            <div class="form-field span-2"><label>العنوان بالتفصيل</label><textarea required name="address" placeholder="المنطقة، رقم المنزل، أقرب معلم"></textarea></div>
+          </div>
+        </section>
+
+        <section class="co-sec">
+          <h3><span class="co-num">3</span> طريقة الدفع</h3>
+          <div class="payment-options" id="paymentOptions">
+            <button type="button" class="pay-option active" data-pay="الدفع عند الاستلام"><i data-lucide="banknote" aria-hidden="true"></i><span>الدفع عند الاستلام</span><small>تدفع نقداً عند وصول الطلب</small></button>
+            <button type="button" class="pay-option" data-pay="تحويل بنكي"><i data-lucide="landmark" aria-hidden="true"></i><span>تحويل بنكي</span><small>نرسل لك بيانات الحساب</small></button>
+            <button type="button" class="pay-option" data-pay="رابط دفع"><i data-lucide="link" aria-hidden="true"></i><span>رابط دفع</span><small>نرسل لك رابطاً عبر واتساب</small></button>
+          </div>
+        </section>
+
+        <section class="co-sec">
+          <h3><span class="co-num">4</span> الإهداء والملاحظات <small class="co-opt">اختياري</small></h3>
+          <div class="form-grid">
+            <div class="form-field span-2 gift-box">
+              <label class="gift-switch"><input type="checkbox" name="isGift" id="giftToggle"><span class="gift-switch-ui" aria-hidden="true"></span><span><b>🎁 أرسلها هدية</b><small>نوصّل الطلب لشخص تحبه، باسمك أو بدون اسمك</small></span></label>
+              <div class="gift-fields" id="giftFields" hidden>
               <div class="form-grid">
                 <div class="form-field"><label>اسم المُهدى إليه</label><input name="recipientName" placeholder="اسم الشخص"></div>
                 <div class="form-field"><label>رقم المُهدى إليه</label><input name="recipientPhone" inputmode="tel" placeholder="9xxxxxxx"></div>
@@ -4305,26 +4347,37 @@ html:not(.js) .splash {
               </div>
               <p class="gift-hint">العنوان التالي هو عنوان توصيل الهدية. اسمك ورقمك أعلاه للتواصل معك فقط.</p>
             </div>
-          </div>
-          <div class="form-field"><label>المحافظة</label>
-            <select required name="governorate">
-              <option value="">اختر المحافظة</option><option>مسقط</option><option>شمال الباطنة</option><option>جنوب الباطنة</option><option>الداخلية</option><option>شمال الشرقية</option><option>جنوب الشرقية</option><option>الظاهرة</option><option>البريمي</option><option>الوسطى</option><option>ظفار</option><option>مسندم</option>
-            </select>
-          </div>
-          <div class="form-field"><label>الولاية</label><input required name="wilayat" placeholder="الولاية"></div>
-          <div class="form-field span-2"><label>العنوان بالتفصيل</label><textarea required name="address" placeholder="المنطقة، رقم المنزل، أقرب معلم"></textarea></div>
-          <div class="form-field span-2">
-            <label>طريقة الدفع</label>
-            <div class="payment-options" id="paymentOptions">
-              <button type="button" class="pay-option active" data-pay="الدفع عند الاستلام">الدفع عند الاستلام</button>
-              <button type="button" class="pay-option" data-pay="تحويل بنكي">تحويل بنكي</button>
-              <button type="button" class="pay-option" data-pay="رابط دفع">رابط دفع</button>
             </div>
+            <div class="form-field span-2"><label>ملاحظات الطلب</label><textarea name="notes" placeholder="أي تفاصيل تحب نعرفها، مثل وقت التوصيل المناسب"></textarea></div>
           </div>
-          <div class="form-field span-2"><label>ملاحظات الطلب</label><textarea name="notes" placeholder="اختياري"></textarea></div>
-        </div>
-        <button class="btn btn-primary" type="submit" style="width:100%;margin-top:18px">تأكيد وإرسال الطلب عبر واتساب</button>
+        </section>
       </form>
+
+      <aside class="checkout-summary" id="checkoutSummary">
+        <div class="cs-inner">
+        <div class="cs-panel">
+          <div class="cs-head">
+            <h3>ملخص الطلب</h3>
+            <button type="button" class="cs-toggle" data-summary-toggle aria-expanded="false">
+              <span class="cs-count" data-summary-count></span>
+              <i data-lucide="chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="cs-items" data-summary-items></div>
+          <div class="cs-coupon" data-coupon-slot></div>
+          <div class="cs-totals" data-summary-totals></div>
+        </div>
+        <div class="cs-action">
+          <button class="btn btn-primary cs-submit" type="submit" form="checkoutForm">تأكيد وإرسال الطلب عبر واتساب</button>
+          <ul class="cs-trust">
+            <li><i data-lucide="shield-check" aria-hidden="true"></i> بياناتك تُستخدم للتوصيل فقط</li>
+            <li><i data-lucide="message-circle" aria-hidden="true"></i> نؤكد الطلب معك عبر واتساب</li>
+            <li><i data-lucide="package-check" aria-hidden="true"></i> نفحص القطعة قبل الشحن</li>
+          </ul>
+        </div>
+        </div>
+      </aside>
+      </div>
     </div>
   </div>
 
@@ -6959,10 +7012,12 @@ ${lines}
   };
 
   function ensureCouponCheckout(){
-    const form=document.querySelector('#checkoutForm');if(!form||form.querySelector('#checkoutCouponCode'))return;
+    const form=document.querySelector('#checkoutForm');if(!form||document.querySelector('#checkoutCouponCode'))return;
     const submit=form.querySelector('button[type="submit"]');
     const block=document.createElement('div');block.className='coupon-checkout';block.innerHTML='<label style="display:block;font-size:.76rem;margin-bottom:8px">كود الخصم</label><div class="coupon-checkout-row"><input id="checkoutCouponCode" type="text" dir="ltr" placeholder="أدخل كود الخصم"><button type="button" class="btn btn-soft" id="applyCheckoutCoupon">تطبيق</button></div><div class="coupon-message" id="checkoutCouponMessage">الكود صالح للاستخدام مرة واحدة فقط.</div><div class="checkout-discount-summary" id="checkoutDiscountSummary"></div>';
-    submit?form.insertBefore(block,submit):form.appendChild(block);
+    const slot=document.querySelector('[data-coupon-slot]');
+    if(slot)slot.appendChild(block);
+    else submit?form.insertBefore(block,submit):form.appendChild(block);
   }
   function updateCheckoutDiscountSummary(){
     const box=document.querySelector('#checkoutDiscountSummary');if(!box)return;const s=cartPriceSummary();
@@ -6970,6 +7025,8 @@ ${lines}
   }
   const originalOpenCheckout=openCheckout;
   openCheckout=function(){originalOpenCheckout();ensureCouponCheckout();updateCheckoutDiscountSummary()};
+  // ملخص الطلب يحتاج نفس حسبة الخصومات، فنكشفها للإضافة التي ترسمه.
+  window.subbhaPricing={summary:cartPriceSummary,itemPrice:productDiscountInfo,coupon:()=>appliedCoupon};
 
   function applyCouponFromInput(){
     const input=document.querySelector('#checkoutCouponCode'),msg=document.querySelector('#checkoutCouponMessage');const code=String(input?.value||'').trim().toUpperCase();
@@ -8517,7 +8574,7 @@ function indexEnterTargets(scope = document) {
   function syncChoice(){
     const form=$q('#checkoutForm');if(!form)return;
     const online=currentChoice()===ONLINE;
-    const submit=form.querySelector('button[type="submit"]');
+    const submit=document.querySelector('#checkoutModal button[type="submit"]');
     if(submit){
       if(!submit.dataset.defaultLabel)submit.dataset.defaultLabel=submit.textContent;
       submit.textContent=online?(auto()?'الدفع الآن بأمان 🔒':'متابعة إلى صفحة الدفع 🔒'):submit.dataset.defaultLabel;
@@ -8865,6 +8922,215 @@ function indexEnterTargets(scope = document) {
   });
 
   window.durmanPaymob={ONLINE,isOnline:v=>v===ONLINE,ready,auto,begin,settings:()=>({...settings}),paidMessage};
+})();
+</script>
+
+<style id="durman-checkout-style">
+  /* ===== إتمام الطلب: نموذج مقسّم + ملخص حي ===== */
+  #checkoutModal .modal-card.checkout-card{width:min(1080px,96vw);padding:0;overflow:hidden}
+  .checkout-grid{display:grid;grid-template-columns:1fr 352px;align-items:start;max-height:min(90dvh,900px);overflow:auto}
+  #checkoutModal .checkout-form{padding:40px 38px 34px;min-width:0}
+  .co-head{margin-bottom:26px}
+  .co-head h2{margin:10px 0 7px;font-size:clamp(1.4rem,3vw,1.85rem)}
+  .co-head p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.9}
+  .co-sec{padding:22px 0 0;border-top:1px solid rgba(62,68,41,.09);margin-top:22px}
+  .co-sec:first-of-type{border-top:0;margin-top:0;padding-top:0}
+  .co-sec>h3{display:flex;align-items:center;gap:10px;margin:0 0 15px;font-size:.95rem;font-weight:900;color:var(--ink)}
+  .co-num{width:25px;height:25px;flex:none;border-radius:50%;background:var(--green);color:#fbefd0;font-size:.74rem;font-weight:900;display:grid;place-items:center}
+  .co-opt{margin-inline-start:auto;font-size:.66rem;font-weight:800;color:var(--muted);background:var(--cream);border-radius:999px;padding:4px 10px}
+  #checkoutModal .form-field > label:not(.gift-switch){font-size:.73rem;font-weight:800;color:var(--ink);margin-bottom:7px;display:block}
+  /* مفتاح الإهداء يحتفظ بتخطيطه الأصلي */
+  #checkoutModal .gift-box .gift-switch{display:flex;align-items:center;gap:12px;margin:0}
+  #checkoutModal .gift-switch-ui{flex:0 0 44px;height:26px;display:block}
+  #checkoutModal .form-field input,#checkoutModal .form-field select,#checkoutModal .form-field textarea{
+    font-size:.85rem;padding:12px 14px;border-radius:13px;border:1px solid rgba(62,68,41,.16);background:#fff;transition:border-color .15s,box-shadow .15s}
+  #checkoutModal .form-field input::placeholder,#checkoutModal .form-field textarea::placeholder{font-size:.82rem;color:#a8a89a}
+  #checkoutModal .form-field input:focus,#checkoutModal .form-field select:focus,#checkoutModal .form-field textarea:focus{
+    border-color:var(--green);box-shadow:0 0 0 3px rgba(62,68,41,.10)}
+  #checkoutModal .form-field textarea{min-height:92px}
+  #checkoutModal .form-field textarea[name="address"]{min-height:84px}
+
+  /* خيارات الدفع */
+  #checkoutModal .payment-options{grid-template-columns:repeat(3,1fr);gap:11px}
+  #checkoutModal .pay-option{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;
+    padding:15px 11px;border-radius:15px;border:1.5px solid rgba(62,68,41,.14);background:#fff;cursor:pointer;
+    font-size:.79rem;font-weight:800;color:var(--ink);transition:border-color .15s,background .15s,transform .15s}
+  #checkoutModal .pay-option i,#checkoutModal .pay-option svg{width:20px;height:20px;color:var(--green);opacity:.75}
+  #checkoutModal .pay-option small{font-size:.63rem;font-weight:700;color:var(--muted);line-height:1.6}
+  #checkoutModal .pay-option:hover{border-color:rgba(62,68,41,.4);background:#fcfbf6}
+  #checkoutModal .pay-option.active{border-color:var(--green);background:rgba(62,68,41,.06);color:var(--green)}
+  #checkoutModal .pay-option.active small{color:var(--green);opacity:.85}
+  #checkoutModal .pay-option.active i,#checkoutModal .pay-option.active svg{opacity:1}
+  #checkoutModal .pay-option.pay-online{gap:5px}
+
+  /* صندوق الإهداء */
+  #checkoutModal .gift-box{padding:15px 16px;border-radius:16px;border:1px dashed rgba(62,68,41,.3);background:#faf8f0}
+  #checkoutModal .gift-box .gift-fields{margin-top:14px;padding-top:14px;border-top:1px dashed rgba(62,68,41,.2)}
+
+  /* الملخص */
+  .checkout-summary{align-self:stretch;background:linear-gradient(180deg,#f7f4e9,#fbf9f2);
+    border-inline-start:1px solid rgba(62,68,41,.1)}
+  .cs-inner{position:sticky;top:0;display:flex;flex-direction:column;gap:16px;padding:30px 26px 26px;
+    max-height:min(90dvh,900px);overflow:auto;box-sizing:border-box}
+  .cs-head{padding-inline-end:38px}
+  .cs-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .cs-head h3{margin:0;font-size:1rem;font-weight:900}
+  .cs-toggle{display:none;align-items:center;gap:6px;background:none;border:0;font-family:inherit;font-size:.72rem;
+    font-weight:800;color:var(--green);cursor:pointer;padding:4px}
+  .cs-toggle i,.cs-toggle svg{width:15px;height:15px;transition:transform .2s}
+  .cs-toggle[aria-expanded="true"] i,.cs-toggle[aria-expanded="true"] svg{transform:rotate(180deg)}
+  .cs-items{display:grid;gap:11px;max-height:230px;overflow:auto;padding-inline-end:2px}
+  .cs-item{display:flex;gap:11px;align-items:center}
+  .cs-thumb{width:46px;height:46px;flex:none;border-radius:12px;overflow:hidden;background:#fff;border:1px solid rgba(62,68,41,.1);display:grid;place-items:center}
+  .cs-thumb img{width:100%;height:100%;object-fit:cover}
+  .cs-thumb span{width:17px;height:17px;border-radius:50%;background:radial-gradient(circle at 32% 30%,#8e9568,#3e4429)}
+  .cs-item-body{flex:1;min-width:0}
+  .cs-item-name{font-size:.78rem;font-weight:800;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .cs-item-qty{font-size:.67rem;color:var(--muted);margin-top:2px}
+  .cs-item-price{font-size:.79rem;font-weight:900;color:var(--green);white-space:nowrap;direction:ltr}
+  .cs-item-price del{display:block;font-size:.64rem;font-weight:700;color:var(--muted)}
+  .cs-empty{font-size:.78rem;color:var(--muted);text-align:center;padding:18px 0}
+  .cs-totals{display:grid;gap:8px;padding-top:14px;border-top:1px solid rgba(62,68,41,.12)}
+  .cs-row{display:flex;justify-content:space-between;gap:12px;font-size:.78rem;color:var(--muted)}
+  .cs-row b{font-weight:800;color:var(--ink);direction:ltr}
+  .cs-row.save{color:#2f6b45}
+  .cs-row.save b{color:#2f6b45}
+  .cs-row.grand{margin-top:4px;padding-top:11px;border-top:1px solid rgba(62,68,41,.12);font-size:.88rem;color:var(--ink);font-weight:900}
+  .cs-row.grand b{font-size:1.3rem;color:var(--green)}
+  .cs-action{display:grid;gap:12px;padding-top:4px}
+  .cs-submit{width:100%;padding:16px;font-size:.88rem}
+  .cs-trust{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+  .cs-trust li{display:flex;align-items:center;gap:7px;font-size:.68rem;color:var(--muted);line-height:1.6}
+  .cs-trust i,.cs-trust svg{width:14px;height:14px;flex:none;color:var(--green);opacity:.8}
+  /* كود الخصم داخل الملخص */
+  #checkoutModal .coupon-checkout{margin:0;padding:13px;border-radius:14px;border:1px dashed rgba(62,68,41,.28);background:rgba(255,255,255,.75)}
+  #checkoutModal .coupon-checkout input{border-radius:11px;border:1px solid rgba(62,68,41,.18);font-size:.8rem;padding:10px 12px}
+  #checkoutModal .coupon-checkout .btn{padding:10px 15px;font-size:.78rem}
+  #checkoutModal .coupon-message{font-size:.68rem;margin-top:7px;line-height:1.6}
+  #checkoutModal .checkout-discount-summary{display:none!important}
+
+  @media(max-width:900px){
+    #checkoutModal .modal-card.checkout-card{width:min(560px,96vw)}
+    .checkout-grid{grid-template-columns:1fr;display:flex;flex-direction:column;align-items:stretch;max-height:92dvh}
+    #checkoutModal .checkout-form{order:2;padding:4px 20px 0}
+    .checkout-summary,.cs-inner{display:contents}
+    .cs-panel{order:1;position:static;padding:22px 20px 18px;margin:0;background:linear-gradient(180deg,#f7f4e9,#fbf9f2);
+      border-bottom:1px solid rgba(62,68,41,.1);display:grid;gap:13px}
+    .cs-toggle{display:inline-flex}
+    .cs-head{padding-inline-end:58px}
+    /* مطوي: العنوان والإجمالي فقط. مفتوح: القطع والكود وتفاصيل الحساب */
+    .cs-panel .cs-items,.cs-panel .cs-coupon,.cs-panel .cs-row:not(.grand){display:none}
+    .cs-panel.open .cs-items{display:grid;max-height:190px}
+    .cs-panel.open .cs-coupon{display:block}
+    .cs-panel.open .cs-row:not(.grand){display:flex}
+    .cs-totals{padding-top:0;border-top:0}
+    .cs-panel.open .cs-totals{padding-top:13px;border-top:1px solid rgba(62,68,41,.12)}
+    .cs-row.grand{margin-top:0;padding-top:0;border-top:0}
+    .cs-panel.open .cs-row.grand{margin-top:4px;padding-top:11px;border-top:1px solid rgba(62,68,41,.12)}
+    .cs-action{order:3;position:sticky;bottom:0;z-index:3;width:100%;box-sizing:border-box;align-self:stretch;
+      background:#fff;padding:13px 20px 17px;margin:0;border-top:1px solid rgba(62,68,41,.12);
+      box-shadow:0 -10px 24px rgba(42,46,28,.07);display:grid;gap:9px}
+    .cs-trust{grid-template-columns:1fr;gap:5px}
+    .cs-trust li:nth-child(n+2){display:none}
+    .co-head{margin-bottom:20px;padding-top:16px}
+    .co-sec{padding-top:18px;margin-top:18px}
+    #checkoutModal .payment-options{grid-template-columns:1fr}
+    #checkoutModal .pay-option{flex-direction:row;justify-content:flex-start;text-align:start;gap:11px;padding:13px 14px}
+    #checkoutModal .pay-option span{font-size:.82rem}
+    #checkoutModal .pay-option small{display:block;margin-top:2px}
+    #checkoutModal .pay-option>span{display:flex;flex-direction:column}
+  }
+  @media(max-width:560px){
+    #checkoutModal .checkout-form{padding:2px 16px 0}
+    .cs-panel{padding:20px 16px 16px}
+    .cs-action{padding:12px 16px 16px}
+    #checkoutModal .form-grid{grid-template-columns:1fr}
+    #checkoutModal .span-2{grid-column:span 1}
+  }
+</style>
+<script id="durman-checkout">
+(function(){
+  'use strict';
+  const $q=s=>document.querySelector(s);
+  const esc=s=>(typeof escapeHtml==='function'?escapeHtml(String(s==null?'':s)):String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])));
+  const fmt=v=>{try{return money(v)}catch(e){return Number(v||0).toFixed(3)}};
+  const open=()=>$q('#checkoutModal')?.classList.contains('open');
+
+  function itemImage(p){
+    const src=(p&&Array.isArray(p.images)&&p.images[0])||p?.image||'';
+    return src?`<img src="${esc(src)}" alt="" loading="lazy">`:'<span aria-hidden="true"></span>';
+  }
+  function lines(){
+    const list=(typeof cart!=='undefined'&&Array.isArray(cart))?cart:[];
+    const all=(typeof products!=='undefined'&&Array.isArray(products))?products:[];
+    const price=window.subbhaPricing?.itemPrice;
+    return list.map(i=>{
+      const p=all.find(x=>x.id===i.id);
+      const d=price&&p?price(p):null;
+      const unit=d?d.final:Number(p?.price||0);
+      const was=d&&d.percent?d.original:0;
+      return {name:p?.name||'منتج',qty:i.qty,img:itemImage(p),total:unit*i.qty,wasTotal:was*i.qty,percent:d?d.percent:0};
+    });
+  }
+  function render(){
+    const panel=$q('#checkoutSummary');if(!panel)return;
+    const items=lines();
+    const count=items.reduce((n,i)=>n+Number(i.qty||0),0);
+    const box=panel.querySelector('[data-summary-items]');
+    if(box)box.innerHTML=items.length?items.map(i=>`
+      <div class="cs-item">
+        <div class="cs-thumb">${i.img}</div>
+        <div class="cs-item-body">
+          <div class="cs-item-name">${esc(i.name)}</div>
+          <div class="cs-item-qty">الكمية: ${esc(i.qty)}${i.percent?` · خصم ${esc(i.percent)}%`:''}</div>
+        </div>
+        <div class="cs-item-price">${fmt(i.total)} ر.ع${i.wasTotal&&i.wasTotal>i.total?`<del>${fmt(i.wasTotal)} ر.ع</del>`:''}</div>
+      </div>`).join(''):'<div class="cs-empty">السلة فارغة</div>';
+
+    const c=panel.querySelector('[data-summary-count]');
+    if(c)c.textContent=count?`${count} ${count===1?'قطعة':count===2?'قطعتان':'قطع'}`:'لا توجد قطع';
+
+    const s=window.subbhaPricing?.summary?.();
+    const totals=panel.querySelector('[data-summary-totals]');
+    if(totals){
+      if(s){
+        const saved=Number(s.productDiscount||0)+Number(s.couponDiscount||0);
+        totals.innerHTML=`
+          <div class="cs-row"><span>المجموع</span><b>${fmt(s.subtotal)} ر.ع</b></div>
+          ${s.productDiscount?`<div class="cs-row save"><span>خصم المنتجات</span><b>−${fmt(s.productDiscount)} ر.ع</b></div>`:''}
+          ${s.couponDiscount?`<div class="cs-row save"><span>كود الخصم (${esc(s.couponPercent)}%)</span><b>−${fmt(s.couponDiscount)} ر.ع</b></div>`:''}
+          <div class="cs-row"><span>التوصيل</span><b>يُحدَّد عند التأكيد</b></div>
+          <div class="cs-row grand"><span>الإجمالي</span><b>${fmt(s.total)} ر.ع</b></div>
+          ${saved?`<div class="cs-row save"><span>وفّرت</span><b>${fmt(saved)} ر.ع</b></div>`:''}`;
+      }else{
+        const sum=items.reduce((n,i)=>n+i.total,0);
+        totals.innerHTML=`<div class="cs-row grand"><span>الإجمالي</span><b>${fmt(sum)} ر.ع</b></div>`;
+      }
+    }
+    try{lucide.createIcons()}catch(e){}
+  }
+
+  // فتح/طي قائمة القطع على الجوال
+  document.addEventListener('click',e=>{
+    const t=e.target.closest('[data-summary-toggle]');if(!t)return;
+    const panel=t.closest('.cs-panel');if(!panel)return;
+    const on=panel.classList.toggle('open');
+    t.setAttribute('aria-expanded',on?'true':'false');
+  });
+  // تحديث الملخص مع كل تغيّر يمسّ الأسعار
+  document.addEventListener('click',e=>{
+    if(e.target.closest('#applyCheckoutCoupon'))setTimeout(render,60);
+  });
+  if(typeof window.openCheckout==='function'){
+    const prev=window.openCheckout;
+    window.openCheckout=function(){const r=prev.apply(this,arguments);setTimeout(render,0);return r};
+  }
+  if(typeof window.renderCart==='function'){
+    const prev=window.renderCart;
+    window.renderCart=function(){const r=prev.apply(this,arguments);if(open())setTimeout(render,0);return r};
+  }
+  document.addEventListener('DOMContentLoaded',render);
+  window.durmanCheckoutSummary=render;
 })();
 </script>
 
