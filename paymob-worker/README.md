@@ -73,10 +73,23 @@ GitHub Pages (أو أي استضافة ملفات ثابتة لا تشغّل PHP
   OmanNet، Apple Pay…). خذ أرقام نفس الوضع (Test مع Test).
 
 ### 2) انشر الخادم على Cloudflare Workers (إن لم تستخدم `pay.php`)
+
+**الأسرع — بضغطة واحدة:** افتح هذا الرابط وسجّل الدخول لـ Cloudflare، وهو ينشر الخادم من
+هذا المستودع مباشرة:
+
+```
+https://deploy.workers.cloudflare.com/?url=https://github.com/nawafastroutas/Astroutas/tree/claude/optimistic-archimedes-r1slqi/paymob-worker
+```
+
+**أو يدوياً:**
 1. سجّل في [dash.cloudflare.com](https://dash.cloudflare.com) ← **Workers & Pages** ←
    **Create** ← **Start with Hello World** ← سمِّه مثلاً `durman-pay` ← **Deploy**.
 2. اضغط **Edit code**، امسح الموجود، والصق كامل محتوى `worker.js` من هذا المجلد، ثم **Deploy**.
 3. انسخ رابط الـ Worker، يكون بالشكل `https://durman-pay.<اسمك>.workers.dev`.
+
+> `wrangler.toml` في هذا المجلد يحمل القيم غير السرية فقط (رابط الموقع وقاعدة البيانات).
+> المفاتيح الأربعة تُضاف بعد النشر من **Settings ← Variables and Secrets** كـ **Secret**،
+> فلا تُكتب في أي ملف ولا تُرفع إلى GitHub.
 
 ### 3) أدخل المتغيرات
 في صفحة الـ Worker ← **Settings** ← **Variables and Secrets**. اجعل الأربعة الأولى

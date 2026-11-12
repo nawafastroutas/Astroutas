@@ -1,0 +1,14 @@
+# إعداد نشر خادم الدفع على Cloudflare Workers.
+# يسمح بالنشر بضغطة واحدة من هذا المستودع، ثم تُضاف المفاتيح من لوحة Cloudflare
+# في خانات Secrets المشفّرة — لا تُكتب هنا ولا في أي ملف.
+
+name = "durman-pay"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+[vars]
+# قيم غير سرية فقط. المفاتيح تُضاف كـ Secrets من لوحة Cloudflare.
+SITE_URL = "https://subbha.com"
+FIREBASE_DATABASE_URL = "https://ubhha-dd0e9-default-rtdb.firebaseio.com"
+FIREBASE_API_KEY = "AIzaSyC9LRDGZgxWjFKfop7nS7K4Y9cocMkM7EU"
+AMOUNT_MULTIPLIER = "1000"
